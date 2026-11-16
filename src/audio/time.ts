@@ -28,3 +28,15 @@ export function beatsToTicks(beats: number | Fraction): number {
 export function ticksToBeats(ticks: number): number {
   return ticks / TICKS_PER_BEAT;
 }
+
+/**
+ * Lead-in: the clock can start some beats before beat 0 (a count-in). The
+ * Transport cannot count below zero, so its tick 0 stands for beat -leadIn.
+ */
+export function beatToTransportTicks(beat: number | Fraction, leadInBeats: number): number {
+  return beatsToTicks(toNumber(beat) + leadInBeats);
+}
+
+export function transportTicksToBeat(ticks: number, leadInBeats: number): number {
+  return ticksToBeats(ticks) - leadInBeats;
+}

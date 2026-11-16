@@ -14,7 +14,13 @@
 import * as Tone from 'tone';
 import { TEMPO } from '../config';
 import type { Fraction } from '../content/music';
-import { beatsToSeconds, beatsToTicks, secondsToBeats, TICKS_PER_BEAT } from './time';
+import {
+  beatsToSeconds,
+  beatToTransportTicks,
+  secondsToBeats,
+  TICKS_PER_BEAT,
+  transportTicksToBeat,
+} from './time';
 
 export type ClockState = 'stopped' | 'running';
 
@@ -31,6 +37,8 @@ class Clock {
   /** Audio time at which the current run ends, once a stop has been asked for. */
   private stopAt: number | null = null;
   private lastBeat = 0;
+  /** Beats of count-in before beat 0 in the current run. */
+  private leadInBeats = 0;
 
   private get transport() {
     const transport = Tone.getTransport();
@@ -66,16 +74,18 @@ class Clock {
   /**
    * The beat being heard right now. Tone schedules a little ahead of the
    * audio; this reads the position at the true current audio time, so visuals
-   * driven from it line up with the sound. Negative just before the first
-   * beat sounds; 0 when stopped.
+   * driven from it line up with the sound. Negative during a count-in and just
+   * before the first beat sounds; 0 when stopped.
    */
   get beat(): number {
     if (this.phase !== 'running') return 0;
     const heard = Tone.immediate();
-    if (heard < this.startedAt) return -secondsToBeats(this.startedAt - heard, this.tempo);
+    if (heard < this.startedAt) {
+      return -this.leadInBeats - secondsToBeats(this.startedAt - heard, this.tempo);
+    }
     // Between the audible stop and the stop being reported, hold the last position.
     if (this.stopAt !== null && heard >= this.stopAt) return this.lastBeat;
-    this.lastBeat = this.transport.getTicksAtTime(heard) / TICKS_PER_BEAT;
+    this.lastBeat = transportTicksToBeat(this.transport.getTicksAtTime(heard), this.leadInBeats);
     return this.lastBeat;
   }
 
@@ -94,7 +104,7 @@ class Clock {
 
   /** Run a callback when the clock reaches a beat. Returns an id for `clear`. */
   schedule(beat: number | Fraction, callback: ScheduledCallback): number {
-    return this.transport.schedule(callback, `${beatsToTicks(beat)}i`);
+    return this.transport.schedule(callback, `${beatToTransportTicks(beat, this.leadInBeats)}i`);
   }
 
   clear(id: number): void {
@@ -106,16 +116,33 @@ class Clock {
     this.transport.cancel(0);
   }
 
-  /** Start counting from a beat (default: the beginning). Stop first if running. */
-  start(fromBeat: number | Fraction = 0): void {
+  /** Beats of count-in before beat 0. */
+  get leadIn(): number {
+    return this.leadInBeats;
+  }
+
+  /**
+   * Set how many beats the next run starts before beat 0 (a count-in), and
+   * clear the schedule. Call it before scheduling anything for that run:
+   * scheduling at beat 0 always means the first beat of the music, and beats
+   * down to -leadIn can be scheduled for count-in clicks.
+   */
+  prepare(leadInBeats = 0): void {
+    if (this.phase === 'running') this.stop();
+    this.transport.cancel(0);
+    this.leadInBeats = Math.max(0, leadInBeats);
+  }
+
+  /** Start counting, from the start of the lead-in if there is one. Stop first if running. */
+  start(): void {
     const transport = this.transport;
     if (this.phase === 'running') this.stop();
     const at = Tone.now();
-    transport.ticks = beatsToTicks(fromBeat);
+    transport.ticks = 0;
     transport.start(at);
     this.startedAt = at;
     this.stopAt = null;
-    this.lastBeat = 0;
+    this.lastBeat = -this.leadInBeats;
     this.phase = 'running';
     for (const listener of this.startListeners) listener();
   }

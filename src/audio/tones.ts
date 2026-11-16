@@ -4,7 +4,7 @@
  * interface and lazy-loads them.
  */
 import * as Tone from 'tone';
-import { PLAYBACK } from '../config';
+import { METRONOME, PLAYBACK } from '../config';
 import { midiToFrequency } from '../content/music';
 
 export interface GuitarTone {
@@ -52,6 +52,29 @@ export function createNylonGuitar(): GuitarTone {
     },
     silence() {
       sampler.releaseAll();
+    },
+  };
+}
+
+export interface ClickSound {
+  /** Sound one click at an audio-context time; the accent is louder. */
+  play(accent: boolean, audioTime: number): void;
+}
+
+/**
+ * The metronome click: a very short burst of high-passed noise, so it is high
+ * and has no pitch a guitar could be confused with (spec section 5).
+ */
+export function createClick(): ClickSound {
+  const filter = new Tone.Filter(METRONOME.highpassHz, 'highpass').toDestination();
+  const synth = new Tone.NoiseSynth({
+    noise: { type: 'white' },
+    envelope: { attack: 0.001, decay: METRONOME.decaySeconds, sustain: 0, release: 0.01 },
+  }).connect(filter);
+  return {
+    play(accent, audioTime) {
+      synth.volume.setValueAtTime(accent ? METRONOME.accentDb : METRONOME.beatDb, audioTime);
+      synth.triggerAttackRelease(METRONOME.decaySeconds, audioTime);
     },
   };
 }
