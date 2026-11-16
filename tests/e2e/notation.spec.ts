@@ -121,7 +121,10 @@ test('the waltz shows F sharp in the key signature and no accidentals on notes',
 }) => {
   await openPiece(page, 'p4-g-waltz');
   await expect(page.locator('#score svg .vf-keysignature').first()).toBeAttached();
-  await expect(page.locator('.malco-note .vf-accidental')).toHaveCount(0);
+  // With markers off, the only music glyphs in the notes are 21 noteheads and the dots of
+  // the two dotted notes: no accidental is drawn on any F sharp.
+  await page.locator('#fingering-level').selectOption('none');
+  await expect(page.locator('.malco-note .vf-notehead text[font-size="30pt"]')).toHaveCount(21 + 2);
   await expect(page.locator('.piece-meta')).toHaveText('Key of G · 3/4');
 });
 

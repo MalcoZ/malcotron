@@ -8,6 +8,7 @@ import { createNylonGuitar } from '../audio/tones';
 import { FINGERING, LAYOUT, TEMPO, type FingeringLevel } from '../config';
 import { loadAllPieces } from '../content/loader';
 import type { Piece } from '../content/types';
+import { buildPiece } from '../content/validate';
 import { Playhead } from '../notation/playhead';
 import { notationFontsReady, ScoreRenderer } from '../notation/renderer';
 import { createAboutDialog } from './about';
@@ -314,6 +315,8 @@ export function startApp(root: HTMLElement): void {
     },
   );
 
-  // For end-to-end tests and debugging in the console.
-  Object.assign(window, { malcotron: { renderer, player, clock, playhead, theme } });
+  // For end-to-end tests and debugging in the console. `show` draws any piece
+  // given as content JSON, after validating it.
+  const show = (raw: { id: string }) => selectPiece(buildPiece(raw, `${raw.id}.json`));
+  Object.assign(window, { malcotron: { renderer, player, clock, playhead, theme, show } });
 }
