@@ -1,0 +1,12 @@
+{
+  "id": "p1-first-steps",
+  "title": "First Steps",
+  "composer": "Original (Malcotron)",
+  "source": "Original exercise",
+  "key": "C",
+  "time": "4/4",
+  "position": 0,
+  "suggestedTempo": 60,
+  "requires": { "pitchStage": "P1", "rhythmStage": "R1" },
+  "bars": ["C5/q D5/q E5/h", "F5/q E5/q D5/h", "E5/q D5/q B4/q G4/q", "C5/w"]
+}

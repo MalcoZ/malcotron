@@ -1,0 +1,19 @@
+{
+  "id": "p4-g-waltz",
+  "title": "Little Waltz in G",
+  "composer": "Original (Malcotron)",
+  "source": "Original exercise",
+  "key": "G",
+  "time": "3/4",
+  "position": 0,
+  "suggestedTempo": 72,
+  "requires": { "pitchStage": "P4", "rhythmStage": "R4" },
+  "bars": [
+    "G4/q B4/8 A4/8 B4/q",
+    "D5/q C5/8 B4/8 A4/q",
+    "F#4/8 G4/8 A4/8 B4/8 C5/q",
+    "D5/q. C5/8 A4/q",
+    "B4/q A4/8 F#4/8 A4/q",
+    "G4/h."
+  ]
+}

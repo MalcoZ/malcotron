@@ -1,0 +1,12 @@
+{
+  "id": "broken-requires-too-low",
+  "title": "Broken: requires too low",
+  "composer": "Test fixture",
+  "source": "Deliberately broken: eighth notes need R3 and low notes need P3, but it claims P1 and R1",
+  "key": "C",
+  "time": "4/4",
+  "position": 0,
+  "suggestedTempo": 60,
+  "requires": { "pitchStage": "P1", "rhythmStage": "R1" },
+  "bars": ["C5/8 D5/8 E5/q G4/h", "E3/q G3/q C4/h"]
+}

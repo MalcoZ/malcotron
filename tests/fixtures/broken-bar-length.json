@@ -1,0 +1,12 @@
+{
+  "id": "broken-bar-length",
+  "title": "Broken: wrong bar length",
+  "composer": "Test fixture",
+  "source": "Deliberately broken: bar 2 has five beats in 4/4",
+  "key": "C",
+  "time": "4/4",
+  "position": 0,
+  "suggestedTempo": 60,
+  "requires": { "pitchStage": "P1", "rhythmStage": "R1" },
+  "bars": ["C5/q D5/q E5/h", "F5/q E5/q D5/h G5/q", "C5/w"]
+}

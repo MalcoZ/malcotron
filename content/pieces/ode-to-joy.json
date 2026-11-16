@@ -1,0 +1,21 @@
+{
+  "id": "ode-to-joy",
+  "title": "Ode to Joy",
+  "composer": "Ludwig van Beethoven",
+  "source": "Symphony No. 9, Op. 125 (1824), theme; arranged for this app, rhythm simplified for R1",
+  "key": "C",
+  "time": "4/4",
+  "position": 0,
+  "suggestedTempo": 80,
+  "requires": { "pitchStage": "P1", "rhythmStage": "R1" },
+  "bars": [
+    "E5/q E5/q F5/q G5/q",
+    "G5/q F5/q E5/q D5/q",
+    "C5/q C5/q D5/q E5/q",
+    "E5/q D5/q D5/h",
+    "E5/q E5/q F5/q G5/q",
+    "G5/q F5/q E5/q D5/q",
+    "C5/q C5/q D5/q E5/q",
+    "D5/q C5/q C5/h"
+  ]
+}

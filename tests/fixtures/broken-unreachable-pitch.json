@@ -1,0 +1,12 @@
+{
+  "id": "broken-unreachable-pitch",
+  "title": "Broken: unreachable pitch",
+  "composer": "Test fixture",
+  "source": "Deliberately broken: A5 is at fret 5, outside open position",
+  "key": "C",
+  "time": "4/4",
+  "position": 0,
+  "suggestedTempo": 60,
+  "requires": { "pitchStage": "P3", "rhythmStage": "R1" },
+  "bars": ["E5/q F5/q G5/q A5/q", "G5/w"]
+}

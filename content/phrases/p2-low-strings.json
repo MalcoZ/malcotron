@@ -1,0 +1,12 @@
+{
+  "id": "p2-low-strings",
+  "title": "Down Low",
+  "composer": "Original (Malcotron)",
+  "source": "Original exercise",
+  "key": "C",
+  "time": "4/4",
+  "position": 0,
+  "suggestedTempo": 60,
+  "requires": { "pitchStage": "P2", "rhythmStage": "R1" },
+  "bars": ["C4/q B3/q A3/q G3/q", "F3/q E3/q F3/q G3/q", "A3/q B3/q C4/q D4/q", "C4/w"]
+}
