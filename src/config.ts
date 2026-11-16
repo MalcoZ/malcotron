@@ -71,6 +71,8 @@ export const LAYOUT = {
   /** Font for tab fret numbers, finger numbers and string numbers. */
   numberFont: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
   tabNumberFontSize: 10,
+  /** Size of the labels drawn under notes in lessons. */
+  noteLabelFontSize: 9,
   /** Breathing room between a barline (or signature) and the first note (unzoomed px). */
   noteStartPadding: 8,
 } as const;

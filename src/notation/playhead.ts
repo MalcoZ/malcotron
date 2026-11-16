@@ -29,6 +29,8 @@ export class Playhead {
   private current: NoteHandle | null = null;
   private currentSystem = -1;
   private reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  /** Called on every animation frame while running, with the beat being heard. */
+  onFrame: ((beat: number) => void) | null = null;
   /** Notified whenever the highlighted note changes (null when nothing is highlighted). */
   onNoteChange: ((handle: NoteHandle | null) => void) | null = null;
 
@@ -58,7 +60,9 @@ export class Playhead {
         this.clear();
         return;
       }
-      this.update(this.source.beat);
+      const beat = this.source.beat;
+      this.update(beat);
+      this.onFrame?.(beat);
       this.frame = requestAnimationFrame(tick);
     };
     this.frame = requestAnimationFrame(tick);

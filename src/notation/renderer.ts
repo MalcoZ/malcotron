@@ -50,6 +50,8 @@ export interface RenderOptions {
   zoom: number;
   fingeringLevel: FingeringLevel;
   colors: NotationColors;
+  /** Text to draw under notes, by handleKey(barIndex, noteIndex). */
+  labels?: ReadonlyMap<string, string>;
 }
 
 export interface NoteHandle {
@@ -192,6 +194,8 @@ interface SystemHeights {
   tabStaveY: number;
   /** Baseline of the position label. */
   labelY: number;
+  /** Baseline of the row of note labels. */
+  noteLabelY: number;
   /** Height of the system with the tab hidden, and with it shown. */
   notationHeight: number;
   totalHeight: number;
@@ -201,7 +205,11 @@ interface SystemHeights {
  * Work out how tall a system must be from the notes on it: low notes need
  * room for ledger lines below, high notes above, and markers sit above that.
  */
-function measureSystemHeights(notes: readonly PieceNote[], level: FingeringLevel): SystemHeights {
+function measureSystemHeights(
+  notes: readonly PieceNote[],
+  level: FingeringLevel,
+  hasLabels: boolean,
+): SystemHeights {
   // Distances are measured down from the top staff line; one staff step is half a line gap.
   const probe = new Stave(0, 0, 100);
   const lineGap = probe.getSpacingBetweenLines();
@@ -235,6 +243,10 @@ function measureSystemHeights(notes: readonly PieceNote[], level: FingeringLevel
   const labelY = top - 3;
   if (level !== 'none') top -= LAYOUT.positionLabelAllowance;
 
+  // Labels share one row under everything else on the system.
+  const labelRowY = bottom + LAYOUT.noteLabelFontSize + 4;
+  if (hasLabels) bottom = labelRowY + 4;
+
   const origin = LAYOUT.systemPadding - top; // y of the top staff line
   const notationHeight = origin + bottom + LAYOUT.systemPadding;
   const tabTopLine = origin + bottom + LAYOUT.tabGap;
@@ -242,6 +254,7 @@ function measureSystemHeights(notes: readonly PieceNote[], level: FingeringLevel
     staveY: origin - topLineOffset,
     tabStaveY: tabTopLine - tabTopLineOffset,
     labelY: origin + labelY,
+    noteLabelY: origin + labelRowY,
     notationHeight,
     totalHeight: tabTopLine + tabHeight + LAYOUT.tabBelow + LAYOUT.systemPadding,
   };
@@ -342,6 +355,7 @@ export class ScoreRenderer {
   /** Draw the piece into the container, replacing whatever was there. */
   render(piece: Piece, options: RenderOptions): void {
     const { zoom, fingeringLevel, colors } = options;
+    const labels = options.labels ?? new Map<string, string>();
     this.container.replaceChildren();
     this.container.classList.toggle('tab-visible', this.tabVisible);
     this.handleMap = new Map();
@@ -374,7 +388,8 @@ export class ScoreRenderer {
       this.container.append(el);
 
       const systemNotes = system.widths.flatMap((_, i) => piece.bars[system.firstBar + i]!);
-      const heights = measureSystemHeights(systemNotes, fingeringLevel);
+      const hasLabels = systemNotes.some((n) => labels.has(handleKey(n.barIndex, n.noteIndex)));
+      const heights = measureSystemHeights(systemNotes, fingeringLevel, hasLabels);
       el.dataset.notationHeight = String(heights.notationHeight * zoom);
       el.dataset.totalHeight = String(heights.totalHeight * zoom);
 
@@ -509,6 +524,23 @@ export class ScoreRenderer {
             x: centre * zoom,
           });
         }
+      }
+
+      // --- Note labels: one row under the staff, centred on their notes ---
+      if (hasLabels) {
+        const group = ctx.openGroup('labels') as SVGGElement;
+        group.classList.add('malco-labels');
+        ctx.save();
+        ctx.setFont(LAYOUT.numberFont, LAYOUT.noteLabelFontSize, '600');
+        for (const note of systemNotes) {
+          const text = labels.get(handleKey(note.barIndex, note.noteIndex));
+          const handle = this.handleMap.get(handleKey(note.barIndex, note.noteIndex));
+          if (!text || !handle) continue;
+          const width = ctx.measureText(text).width;
+          ctx.fillText(text, handle.x / zoom - width / 2, heights.noteLabelY);
+        }
+        ctx.restore();
+        ctx.closeGroup();
       }
 
       const last = drawn[drawn.length - 1]!;
