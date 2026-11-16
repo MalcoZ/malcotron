@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest';
  */
 const ALLOWED: Record<string, RegExp[]> = {
   // Debounce for redrawing the score after a window resize.
-  'ui/app.ts': [/setTimeout/],
+  'ui/score-panel.ts': [/setTimeout/],
 };
 
 const FORBIDDEN = [/\bsetTimeout\b/, /\bsetInterval\b/, /\bDate\.now\b/, /\bperformance\.now\b/];

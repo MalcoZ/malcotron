@@ -5,8 +5,19 @@ function link(href: string, text: string): HTMLAnchorElement {
 }
 
 /** The About dialog: what the app is, and credit for the third-party assets it ships. */
-export function createAboutDialog(): HTMLDialogElement {
+export function createAboutDialog(onResetProgress: () => void): HTMLDialogElement {
   const close = h('button', { type: 'button', className: 'btn', textContent: 'Close' });
+  const reset = h('button', {
+    type: 'button',
+    className: 'btn',
+    id: 'reset-progress',
+    textContent: 'Reset progress',
+  });
+  reset.addEventListener('click', () => {
+    if (window.confirm('Forget which lessons you have completed? This cannot be undone.')) {
+      onResetProgress();
+    }
+  });
   const dialog = h(
     'dialog',
     { className: 'about', id: 'about-dialog' },
@@ -38,7 +49,12 @@ export function createAboutDialog(): HTMLDialogElement {
       ),
       h('li', {}, 'Audio by ', link('https://tonejs.github.io/', 'Tone.js'), ' (MIT).'),
     ),
-    h('div', { className: 'about-actions' }, close),
+    h('h3', { textContent: 'Your progress' }),
+    h('p', {
+      className: 'muted',
+      textContent: 'Lesson progress is saved in this browser only.',
+    }),
+    h('div', { className: 'about-actions' }, reset, close),
   );
   close.addEventListener('click', () => dialog.close());
   return dialog;

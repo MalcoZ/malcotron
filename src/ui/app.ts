@@ -1,25 +1,25 @@
 /**
- * The M0 app shell: one page with a header, a dev-only piece picker, the score
- * and a control row (Play/Stop, tempo, Peek tab, fingering level).
+ * The app shell: header, the current screen, and the fixed bar under it.
+ * Screens are chosen by the URL hash (src/ui/router.ts).
  */
 import { clock } from '../audio/clock';
 import { Player } from '../audio/player';
-import { createNylonGuitar } from '../audio/tones';
-import { FINGERING, LAYOUT, TEMPO, type FingeringLevel } from '../config';
+import { createClick, createNylonGuitar } from '../audio/tones';
+import { LAYOUT } from '../config';
 import { loadAllPieces } from '../content/loader';
 import type { Piece } from '../content/types';
 import { buildPiece } from '../content/validate';
-import { Playhead } from '../notation/playhead';
-import { notationFontsReady, ScoreRenderer } from '../notation/renderer';
+import { loadCourse } from '../course/loader';
+import { Progress } from '../course/progress';
+import { notationFontsReady } from '../notation/renderer';
 import { createAboutDialog } from './about';
+import type { AppContext, View } from './context';
 import { h } from './dom';
+import { createHome } from './home';
+import { createLessonDone, createLessonView } from './lesson-view';
+import { createPieceView } from './piece-view';
+import { parseRoute } from './router';
 import { ThemeController } from './theme';
-
-const LEVEL_LABELS: Record<FingeringLevel, string> = {
-  all: 'Every note',
-  'first-of-bar': 'First of bar',
-  none: 'Hidden',
-};
 
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -28,16 +28,19 @@ function isTypingTarget(target: EventTarget | null): boolean {
   return target instanceof HTMLInputElement && target.type !== 'range';
 }
 
+function storage(): Storage | null {
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
 export function startApp(root: HTMLElement): void {
   const theme = new ThemeController();
-  const pieces = loadAllPieces();
-
-  // --- State -----------------------------------------------------------------
-  const requested = new URLSearchParams(location.search).get('piece');
-  let piece: Piece = pieces.find((p) => p.id === requested) ?? pieces[0]!;
-  let zoom: number = LAYOUT.zoomDefault;
-  let fingeringLevel: FingeringLevel = FINGERING.defaultLevel;
-  let fontsReady = false;
+  const tone = createNylonGuitar();
+  const player = new Player(tone, createClick());
+  const progress = new Progress(storage());
 
   // --- Header ----------------------------------------------------------------
   const themeButton = h('button', {
@@ -45,12 +48,6 @@ export function startApp(root: HTMLElement): void {
     className: 'btn btn-quiet',
     id: 'theme-toggle',
   });
-  // --- Dev bar: piece picker and staff zoom ------------------------------------
-  const pieceSelect = h('select', { id: 'piece-select' });
-  for (const p of pieces) {
-    pieceSelect.append(h('option', { value: p.id, textContent: p.title }));
-  }
-  pieceSelect.value = piece.id;
   const zoomSelect = h('select', { id: 'zoom-select' });
   const zoomSteps = Math.round((LAYOUT.zoomMax - LAYOUT.zoomMin) / LAYOUT.zoomStep);
   for (let i = 0; i <= zoomSteps; i++) {
@@ -59,89 +56,36 @@ export function startApp(root: HTMLElement): void {
       h('option', { value: value.toFixed(2), textContent: `${Math.round(value * 100)}%` }),
     );
   }
-  zoomSelect.value = zoom.toFixed(2);
-  const devBar = h(
-    'div',
-    { className: 'dev-bar' },
-    h('span', { className: 'dev-tag', textContent: 'Dev' }),
-    h('label', {}, h('span', { textContent: 'Piece' }), pieceSelect),
-    h('label', {}, h('span', { textContent: 'Staff size' }), zoomSelect),
-  );
-
+  zoomSelect.value = LAYOUT.zoomDefault.toFixed(2);
   const header = h(
     'header',
     { className: 'app-header' },
-    h('h1', { className: 'app-name', textContent: 'Malcotron' }),
-    devBar,
+    h(
+      'h1',
+      { className: 'app-name' },
+      h('a', { href: '#/', id: 'home-link', textContent: 'Malcotron' }),
+    ),
+    h('div', { className: 'spacer' }),
+    h('label', { className: 'header-field' }, h('span', { textContent: 'Staff size' }), zoomSelect),
     themeButton,
   );
 
-  // --- Score -------------------------------------------------------------------
   const narrowNote = h('p', {
     className: 'narrow-note',
     id: 'narrow-note',
     hidden: true,
     textContent: 'Malcotron works best on a larger screen (at least 1024 px wide).',
   });
-  const titleEl = h('h2', { className: 'piece-title' });
-  const composerEl = h('p', { className: 'piece-composer' });
-  const metaEl = h('p', { className: 'piece-meta' });
-  const systemsEl = h('div', { className: 'systems', id: 'score' });
-  systemsEl.setAttribute('role', 'img');
-  const sheet = h(
-    'div',
-    { className: 'sheet' },
-    h('div', { className: 'piece-head' }, titleEl, composerEl, metaEl),
-    systemsEl,
-  );
-  const scoreArea = h('main', { className: 'score-area', id: 'score-area' }, narrowNote, sheet);
+  const viewSlot = h('div', { className: 'view-slot' });
+  const main = h('main', { className: 'score-area', id: 'score-area' }, narrowNote, viewSlot);
+  const bottom = h('div', { className: 'bottom-bar', id: 'bottom-bar' });
 
-  // --- Control row ---------------------------------------------------------------
-  const playButton = h('button', {
-    type: 'button',
-    className: 'btn btn-primary play',
-    id: 'play',
-    disabled: true,
-    textContent: 'Loading sound…',
+  const about = createAboutDialog(() => {
+    progress.reset();
+    about.close();
+    if (location.hash === '' || location.hash === '#/') show();
+    else location.hash = '#/';
   });
-  const tempoSlider = h('input', {
-    type: 'range',
-    id: 'tempo',
-    min: String(TEMPO.min),
-    max: String(TEMPO.max),
-    step: '1',
-  });
-  tempoSlider.setAttribute('aria-label', 'Tempo in beats per minute');
-  const tempoReadout = h('output', { className: 'tempo-readout', id: 'tempo-readout' });
-  tempoReadout.htmlFor.add('tempo');
-  const tabButton = h('button', { type: 'button', className: 'btn', id: 'peek-tab' });
-  const levelSelect = h('select', { id: 'fingering-level' });
-  for (const level of FINGERING.levels) {
-    levelSelect.append(h('option', { value: level, textContent: LEVEL_LABELS[level] }));
-  }
-  levelSelect.value = fingeringLevel;
-
-  const controls = h(
-    'div',
-    { className: 'controls' },
-    playButton,
-    h(
-      'div',
-      { className: 'tempo' },
-      h('span', { className: 'control-label', textContent: 'Tempo' }),
-      tempoSlider,
-      tempoReadout,
-      h('span', { className: 'tempo-unit', textContent: 'BPM' }),
-    ),
-    h('div', { className: 'spacer' }),
-    h('label', { className: 'field' }, h('span', { textContent: 'Fingering' }), levelSelect),
-    tabButton,
-  );
-  controls.setAttribute('role', 'toolbar');
-  controls.setAttribute('aria-label', 'Playback and display');
-
-  // --- Footer ----------------------------------------------------------------------
-  const about = createAboutDialog();
   const aboutButton = h('button', {
     type: 'button',
     className: 'link',
@@ -152,123 +96,100 @@ export function startApp(root: HTMLElement): void {
   const footer = h(
     'footer',
     { className: 'app-footer' },
-    h('span', {
-      className: 'keys',
-      textContent: 'Space: play or stop · T: peek at tab',
-    }),
+    h('span', { className: 'keys', id: 'key-hints' }),
     aboutButton,
   );
 
-  root.replaceChildren(header, scoreArea, controls, footer, about);
+  root.replaceChildren(header, main, bottom, footer, about);
 
-  // --- Wiring ------------------------------------------------------------------------
-  const renderer = new ScoreRenderer(systemsEl);
-  const tone = createNylonGuitar();
-  const player = new Player(tone);
-  const playhead = new Playhead(renderer, clock, scoreArea);
+  // --- Screens -----------------------------------------------------------------
+  const ctx: AppContext = {
+    theme,
+    player,
+    soundReady: tone.loaded,
+    course: loadCourse(),
+    pieces: loadAllPieces(),
+    progress,
+    zoom: LAYOUT.zoomDefault,
+    navigate(path) {
+      const hash = `#${path}`;
+      if (location.hash === hash) show();
+      else location.hash = hash;
+    },
+  };
 
-  function draw(): void {
-    if (!fontsReady) return;
-    const palette = theme.palette;
-    renderer.render(piece, {
-      zoom,
-      fingeringLevel,
-      colors: { ink: palette.ink, staff: palette.staff, background: palette.surface },
-    });
-    playhead.rendered();
+  let view: View | null = null;
+  /** A piece shown through the debug hook rather than a route. */
+  let adHocPiece: Piece | null = null;
+
+  /** Replace the screen. The old one is torn down before the new one is built, as they share the player. */
+  function mount(create: () => View, hints: string): void {
+    view?.destroy();
+    const next = create();
+    view = next;
+    viewSlot.replaceChildren(next.el);
+    bottom.replaceChildren(...(next.bottomEl ? [next.bottomEl] : []));
+    bottom.hidden = next.bottomEl === null;
+    footer.querySelector('#key-hints')!.textContent = hints;
+    main.scrollTop = 0;
   }
 
+  function show(): void {
+    const route = parseRoute(location.hash);
+    adHocPiece = null;
+    if (route.name === 'lesson' || route.name === 'lesson-done') {
+      const lesson = ctx.course.lessons.find((l) => l.id === route.id);
+      if (lesson && route.name === 'lesson-done') {
+        mount(() => createLessonDone(ctx, lesson), 'Enter: next lesson');
+        return;
+      }
+      if (lesson && route.name === 'lesson') {
+        const step = lesson.steps[Math.min(route.step, lesson.steps.length - 1)]!;
+        const playable = step.type === 'practice' || step.type === 'check';
+        mount(
+          () => createLessonView(ctx, lesson, route.step, main),
+          !step.piece
+            ? 'Enter: next step'
+            : playable
+              ? 'Space: listen · R: your turn · M: click · T: peek at tab · Enter: next step'
+              : 'Space: listen · T: peek at tab · Enter: next step',
+        );
+        return;
+      }
+    }
+    if (route.name === 'piece') {
+      const piece = ctx.pieces.find((p) => p.id === route.id);
+      if (piece) {
+        mount(
+          () => createPieceView(ctx, piece, main),
+          'Space: listen · R: your turn · M: click · T: peek at tab · ←/→: tempo',
+        );
+        return;
+      }
+    }
+    document.title = 'Malcotron';
+    mount(() => createHome(ctx), '');
+  }
+
+  // --- Wiring ------------------------------------------------------------------------
   function updateThemeButton(): void {
     const next = theme.theme === 'dark' ? 'light' : 'dark';
     themeButton.textContent = next === 'dark' ? 'Dark theme' : 'Light theme';
     themeButton.setAttribute('aria-label', `Switch to ${next} theme`);
   }
-
-  function updateTabButton(): void {
-    const shown = renderer.isTabVisible;
-    tabButton.textContent = shown ? 'Hide tab' : 'Peek tab';
-    tabButton.setAttribute('aria-pressed', String(shown));
-    tabButton.classList.toggle('is-on', shown);
-  }
-
-  function updatePlayButton(): void {
-    if (playButton.disabled) return;
-    playButton.textContent = player.isPlaying ? 'Stop' : 'Play';
-    playButton.classList.toggle('is-playing', player.isPlaying);
-  }
-
-  function setTempo(bpm: number): void {
-    tempoSlider.value = String(bpm);
-    tempoReadout.textContent = tempoSlider.value;
-    clock.setTempo(Number(tempoSlider.value));
-  }
-
-  function selectPiece(next: Piece): void {
-    piece = next;
-    player.load(piece, piece.suggestedTempo);
-    playhead.setTimeline(player.currentTimeline!);
-    setTempo(piece.suggestedTempo);
-    titleEl.textContent = piece.title;
-    composerEl.textContent = piece.composer;
-    metaEl.textContent = `Key of ${piece.key} · ${piece.time}`;
-    systemsEl.setAttribute('aria-label', `Notation: ${piece.title}`);
-    document.title = `${piece.title} · Malcotron`;
-    scoreArea.scrollTop = 0;
-    draw();
-  }
-
-  function toggleTab(): void {
-    renderer.setTabVisible(!renderer.isTabVisible);
-    updateTabButton();
-    playhead.reveal();
-  }
-
-  function togglePlay(): void {
-    if (playButton.disabled) return;
-    void player.toggle();
-  }
-
   themeButton.addEventListener('click', () => theme.toggle());
-  theme.onChange(() => {
-    updateThemeButton();
-    draw();
-  });
-  pieceSelect.addEventListener('change', () => {
-    const next = pieces.find((p) => p.id === pieceSelect.value);
-    if (next) selectPiece(next);
-  });
+  theme.onChange(updateThemeButton);
+  updateThemeButton();
+
   zoomSelect.addEventListener('change', () => {
-    zoom = Number(zoomSelect.value);
-    draw();
-  });
-  levelSelect.addEventListener('change', () => {
-    fingeringLevel = levelSelect.value as FingeringLevel;
-    draw();
-  });
-  tempoSlider.addEventListener('input', () => setTempo(Number(tempoSlider.value)));
-  tabButton.addEventListener('click', toggleTab);
-  playButton.addEventListener('click', togglePlay);
-
-  player.onStateChange((playing) => {
-    updatePlayButton();
-    if (playing) playhead.start();
-    else {
-      playhead.clear();
-      scoreArea.scrollTo({ top: 0 });
-    }
+    ctx.zoom = Number(zoomSelect.value);
+    view?.redraw?.();
   });
 
-  // Keyboard: Space plays or stops, T peeks at tab (spec section 8).
   document.addEventListener('keydown', (event) => {
     if (event.ctrlKey || event.metaKey || event.altKey || about.open) return;
     if (isTypingTarget(event.target)) return;
-    if (event.code === 'Space') {
-      event.preventDefault();
-      if (!event.repeat) togglePlay();
-    } else if (event.key === 't' || event.key === 'T') {
-      event.preventDefault();
-      if (!event.repeat) toggleTab();
-    }
+    if (view?.handleKey?.(event)) event.preventDefault();
   });
   // A focused button would also "click" when Space is released; the keydown above already acted.
   document.addEventListener('keyup', (event) => {
@@ -277,48 +198,48 @@ export function startApp(root: HTMLElement): void {
     }
   });
 
-  // Redraw when the score area changes width. This debounce is UI housekeeping,
-  // not musical timing, so a plain timer is fine here.
-  let lastWidth = 0;
-  let resizeTimer: ReturnType<typeof setTimeout> | undefined;
-  new ResizeObserver(() => {
-    const width = systemsEl.clientWidth;
-    if (width === lastWidth) return;
-    lastWidth = width;
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(draw, LAYOUT.resizeDebounceMs);
-  }).observe(systemsEl);
-
   const narrow = window.matchMedia(`(max-width: ${LAYOUT.minSupportedWidth - 1}px)`);
   const updateNarrow = () => (narrowNote.hidden = !narrow.matches);
   narrow.addEventListener('change', updateNarrow);
   updateNarrow();
 
-  updateThemeButton();
-  updateTabButton();
-  selectPiece(piece);
+  window.addEventListener('hashchange', show);
 
+  // Notation needs its fonts before the first draw.
   void notationFontsReady().then(() => {
-    fontsReady = true;
-    lastWidth = systemsEl.clientWidth;
-    draw();
+    show();
     root.dataset.ready = 'true';
   });
-
   tone.loaded.then(
-    () => {
-      playButton.disabled = false;
-      updatePlayButton();
-      root.dataset.sound = 'ready';
-    },
-    () => {
-      playButton.textContent = 'Sound failed to load';
-      root.dataset.sound = 'failed';
-    },
+    () => (root.dataset.sound = 'ready'),
+    () => (root.dataset.sound = 'failed'),
   );
 
   // For end-to-end tests and debugging in the console. `show` draws any piece
   // given as content JSON, after validating it.
-  const show = (raw: { id: string }) => selectPiece(buildPiece(raw, `${raw.id}.json`));
-  Object.assign(window, { malcotron: { renderer, player, clock, playhead, theme, show } });
+  const debug = {
+    player,
+    clock,
+    theme,
+    progress,
+    course: ctx.course,
+    get panel() {
+      return view?.panel ?? null;
+    },
+    get renderer() {
+      return view?.panel?.renderer ?? null;
+    },
+    get playhead() {
+      return view?.panel?.playhead ?? null;
+    },
+    show(raw: { id: string }) {
+      const piece = buildPiece(raw, `${raw.id}.json`);
+      adHocPiece = piece;
+      mount(() => createPieceView(ctx, piece, main), '');
+    },
+    get adHocPiece() {
+      return adHocPiece;
+    },
+  };
+  Object.assign(window, { malcotron: debug });
 }
