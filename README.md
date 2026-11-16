@@ -5,14 +5,14 @@ pitch and rhythm, in every position. The learner plays real guitar into the mic;
 checks each note and adapts what comes next.
 
 - Full specification: [`SPEC.md`](SPEC.md)
-- Current milestone brief: [`M0-BRIEF.md`](M0-BRIEF.md)
+- Milestone briefs: [`M0-BRIEF.md`](M0-BRIEF.md), [`M1-BRIEF.md`](M1-BRIEF.md)
 - Choices made while building: [`DECISIONS.md`](DECISIONS.md)
 - Third-party assets and licenses: [`ASSETS.md`](ASSETS.md)
 
-**Status: milestone 0 (foundations).** The app loads a piece from a content file, draws it as guitar
-notation with fingering and position markers, shows matching tab on demand, and plays it in a nylon
-guitar tone with a playhead, in light and dark themes. The mic, the learning engine and saved
-progress come in later milestones.
+**Status: milestone 1 (guided lessons).** Opening the site starts a guided course. Chapter 1 takes a
+tab reader from the five lines of the staff to playing Ode to Joy, in ten short lessons: each step
+explains one idea, shows it on the staff with labels, and has you play it with a count-in and click.
+There is no mic yet, so you check yourself; listening and grading arrive in milestone 2.
 
 Live site: <https://malcoz.github.io/malcotron/>
 
@@ -52,16 +52,17 @@ npx playwright install chromium
 ## Layout
 
 ```
-/content       piece and phrase JSON files
+/content       pieces, phrases, lessons and curriculum.json
 /public        static files (guitar samples)
 /src
   /content     music core, fingering function, stage check, validator, loader
   /notation    VexFlow rendering, note handles, playhead
   /audio       timeline, clock, guitar tone, playback
-  /listen      mic pipeline (M1)
-  /engine      skills and scheduling (M2)
-  /ui          app shell, themes
-  /store       saved progress (M3)
+  /listen      mic pipeline (M2)
+  /course      lesson model, validator, progress
+  /engine      skills and scheduling (M3)
+  /ui          app shell, Home, lesson and piece screens, themes
+  /store       saved progress (M4)
   config.ts    every tunable number
 /tools         content validator CLI
 /tests         unit, end-to-end, fixtures
@@ -69,10 +70,15 @@ npx playwright install chromium
 
 ## Adding content
 
-Add a JSON file under `content/pieces` or `content/phrases` in the format described in `SPEC.md`
-section 7, then run `npm run validate`. The validator checks that every token parses, every bar
-matches the meter, every pitch can be reached in the declared position, and `requires` is not lower
-than the stages the notes and rhythms need. Only public-domain compositions and original exercises
+- **Pieces and phrases:** add a JSON file under `content/pieces` or `content/phrases` in the format
+  in `SPEC.md` section 7.
+- **Lessons:** add a JSON file under `content/lessons` (format in `SPEC.md` section 7, "Lesson
+  format") and list its id in `content/curriculum.json`.
+
+Then run `npm run validate`. It checks that every token parses, every bar matches the meter, every
+pitch can be reached in its position, nothing needs a higher stage than it declares, lesson text is
+within the length limit, each lesson explains before it asks and ends with a check, and every lesson
+is listed in the curriculum once. Only public-domain compositions and original exercises and wording
 may be added.
 
 ## Deploying
