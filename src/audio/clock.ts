@@ -89,6 +89,28 @@ class Clock {
     return this.lastBeat;
   }
 
+  /**
+   * The beat at an audio-context time (for example when the mic heard a note).
+   * This is the only place audio time is turned into beats. Only meaningful
+   * while the clock is running.
+   */
+  beatAt(audioTime: number): number {
+    if (audioTime < this.startedAt) {
+      return -this.leadInBeats - secondsToBeats(this.startedAt - audioTime, this.tempo);
+    }
+    return transportTicksToBeat(this.transport.getTicksAtTime(audioTime), this.leadInBeats);
+  }
+
+  /** Audio time at which the current run started. */
+  get startedAtAudioTime(): number {
+    return this.startedAt;
+  }
+
+  /** The audio sample rate. */
+  get sampleRate(): number {
+    return Tone.getContext().sampleRate;
+  }
+
   /** Audio-context time now, in seconds. */
   get audioTime(): number {
     return Tone.immediate();
@@ -130,19 +152,37 @@ class Clock {
   prepare(leadInBeats = 0): void {
     if (this.phase === 'running') this.stop();
     this.transport.cancel(0);
+    this.transport.loop = false;
     this.leadInBeats = Math.max(0, leadInBeats);
   }
 
-  /** Start counting, from the start of the lead-in if there is one. Stop first if running. */
-  start(): void {
+  /**
+   * Repeat the stretch between two beats until stopped. Events scheduled
+   * inside it fire on every pass, with no gap at the join.
+   */
+  setLoop(startBeat: number, endBeat: number): void {
+    const transport = this.transport;
+    transport.setLoopPoints(
+      `${beatToTransportTicks(startBeat, this.leadInBeats)}i`,
+      `${beatToTransportTicks(endBeat, this.leadInBeats)}i`,
+    );
+    transport.loop = true;
+  }
+
+  /**
+   * Start counting: from the start of the lead-in if there is one, or from
+   * `fromBeat`. Stop first if running.
+   */
+  start(fromBeat?: number): void {
     const transport = this.transport;
     if (this.phase === 'running') this.stop();
+    const from = fromBeat ?? -this.leadInBeats;
     const at = Tone.now();
-    transport.ticks = 0;
+    transport.ticks = beatToTransportTicks(from, this.leadInBeats);
     transport.start(at);
     this.startedAt = at;
     this.stopAt = null;
-    this.lastBeat = -this.leadInBeats;
+    this.lastBeat = from;
     this.phase = 'running';
     for (const listener of this.startListeners) listener();
   }

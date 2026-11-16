@@ -38,11 +38,12 @@ describe('progress', () => {
   it('moves on when a lesson is completed, and records the self-check', () => {
     const progress = new Progress(memoryStore());
     progress.visit('a', 4);
-    progress.complete('a', 'got-it', new Date('2026-11-16T10:00:00Z'));
+    progress.complete('a', 'got-it', 0.9, new Date('2026-11-16T10:00:00Z'));
     expect(progress.isCompleted('a')).toBe(true);
     expect(progress.record('a')).toEqual({
       completedAt: '2026-11-16T10:00:00.000Z',
       selfCheck: 'got-it',
+      accuracy: 0.9,
     });
     expect(progress.next(LESSONS)).toEqual({ lesson: 'b', step: 0 });
   });
@@ -109,8 +110,8 @@ describe('progress', () => {
     expect(parseProgress(text)).toEqual({
       version: 1,
       completed: {
-        a: { completedAt: '2026-11-16T10:00:00.000Z', selfCheck: 'got-it' },
-        c: { completedAt: '2026-11-16T11:00:00.000Z', selfCheck: null },
+        a: { completedAt: '2026-11-16T10:00:00.000Z', selfCheck: 'got-it', accuracy: null },
+        c: { completedAt: '2026-11-16T11:00:00.000Z', selfCheck: null, accuracy: null },
       },
       current: null,
     });

@@ -26,6 +26,10 @@ export interface Palette {
   onAccent: string;
   /** Soft accent tint behind the sounding note. */
   accentSoft: string;
+  /** Grade colours, used only for feedback (spec section 8). */
+  good: string;
+  warn: string;
+  bad: string;
 }
 
 export const PALETTES: Record<ThemeName, Palette> = {
@@ -39,6 +43,9 @@ export const PALETTES: Record<ThemeName, Palette> = {
     accent: '#1f4fbf',
     onAccent: '#ffffff',
     accentSoft: '#d9e3fb',
+    good: '#1a7a3c',
+    warn: '#96590a',
+    bad: '#b3261e',
   },
   dark: {
     bg: '#121419',
@@ -50,6 +57,9 @@ export const PALETTES: Record<ThemeName, Palette> = {
     accent: '#8fb2ff',
     onAccent: '#0c1730',
     accentSoft: '#273552',
+    good: '#6fd08c',
+    warn: '#f0b354',
+    bad: '#ff8a80',
   },
 };
 
@@ -63,6 +73,9 @@ const CSS_VARS: Record<keyof Palette, string> = {
   accent: '--accent',
   onAccent: '--on-accent',
   accentSoft: '--accent-soft',
+  good: '--good',
+  warn: '--warn',
+  bad: '--bad',
 };
 
 // --- Contrast (WCAG 2.x) -----------------------------------------------------

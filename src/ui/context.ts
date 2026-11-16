@@ -2,6 +2,8 @@ import type { Player } from '../audio/player';
 import type { Piece } from '../content/types';
 import type { Progress } from '../course/progress';
 import type { Course } from '../course/types';
+import type { CalibrationStore } from '../listen/calibration';
+import type { MicInput } from '../listen/mic';
 import type { ScorePanel } from './score-panel';
 import type { ThemeController } from './theme';
 
@@ -9,11 +11,13 @@ import type { ThemeController } from './theme';
 export interface AppContext {
   readonly theme: ThemeController;
   readonly player: Player;
-  /** Resolves when the guitar samples have loaded. */
-  readonly soundReady: Promise<void>;
+  /** Resolves when the current guitar tone's samples have loaded. */
+  soundReady: Promise<void>;
   readonly course: Course;
   readonly pieces: readonly Piece[];
   readonly progress: Progress;
+  readonly mic: MicInput;
+  readonly calibration: CalibrationStore;
   /** Staff zoom, shared by all screens (dev control in the header). */
   zoom: number;
   /** Go to a route such as "/lesson/p1-open-strings/2". */

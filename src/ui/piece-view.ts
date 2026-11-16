@@ -23,6 +23,7 @@ export function createPieceView(ctx: AppContext, piece: Piece, scroller: HTMLEle
       h('p', { className: 'piece-source', id: 'piece-source', textContent: piece.source }),
       panel.scoreEl,
     ),
+    panel.resultEl,
   );
   document.title = `${piece.title} · Malcotron`;
   panel.load({

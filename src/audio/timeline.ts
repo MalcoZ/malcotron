@@ -34,6 +34,8 @@ export interface Timeline {
   /** Start beat of each bar. */
   readonly barStartBeats: readonly Fraction[];
   readonly beatsPerBar: Fraction;
+  /** The time signature, for the metronome's pulse. */
+  readonly meter: { readonly beats: number; readonly beatUnit: number };
 }
 
 export function buildTimeline(piece: Piece): Timeline {
@@ -88,6 +90,7 @@ export function buildTimeline(piece: Piece): Timeline {
     totalBeats: frac(beatsPerBar.n * piece.bars.length, beatsPerBar.d),
     barStartBeats,
     beatsPerBar,
+    meter: { beats: piece.meter.beats, beatUnit: piece.meter.beatUnit },
   };
 }
 

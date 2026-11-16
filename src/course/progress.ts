@@ -11,6 +11,8 @@ export interface LessonRecord {
   completedAt: string;
   /** The learner's answer on the check step, if they gave one. */
   selfCheck: SelfCheck | null;
+  /** Share of notes with the right pitch on the check step, when the mic graded it (0 to 1). */
+  accuracy: number | null;
 }
 
 export interface ProgressData {
@@ -46,6 +48,10 @@ export function parseProgress(text: string | null): ProgressData {
           completedAt: record.completedAt,
           selfCheck:
             record.selfCheck === 'got-it' || record.selfCheck === 'again' ? record.selfCheck : null,
+          accuracy:
+            typeof record.accuracy === 'number' && record.accuracy >= 0 && record.accuracy <= 1
+              ? record.accuracy
+              : null,
         };
       }
     }
@@ -99,8 +105,13 @@ export class Progress {
     this.save();
   }
 
-  complete(lessonId: string, selfCheck: SelfCheck | null, now: Date = new Date()): void {
-    this.data.completed[lessonId] = { completedAt: now.toISOString(), selfCheck };
+  complete(
+    lessonId: string,
+    selfCheck: SelfCheck | null,
+    accuracy: number | null = null,
+    now: Date = new Date(),
+  ): void {
+    this.data.completed[lessonId] = { completedAt: now.toISOString(), selfCheck, accuracy };
     this.data.current = null;
     this.save();
   }

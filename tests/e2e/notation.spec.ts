@@ -65,6 +65,7 @@ test('Peek tab shows and hides the tab without moving the notation', async ({ pa
   await expect(button).toHaveAttribute('aria-pressed', 'false');
   const before = await noteXs(page);
   expect(before).toHaveLength(30);
+  expect(new Set(before).size).toBeGreaterThan(10); // real positions, not one repeated value
 
   await button.click();
   await expect(tab).toBeVisible();

@@ -40,10 +40,10 @@ export async function setTempo(page: Page, bpm: number): Promise<void> {
   await expect(page.locator('#tempo-readout')).toHaveText(String(bpm));
 }
 
-/** Left edge of every notation note, in page pixels, in score order. */
+/** Left edge of every notehead, in page pixels, in score order. */
 export async function noteXs(page: Page): Promise<number[]> {
   return page
-    .locator('.malco-note')
+    .locator('.malco-note .vf-notehead')
     .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().x * 100) / 100));
 }
 

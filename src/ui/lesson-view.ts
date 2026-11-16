@@ -4,11 +4,10 @@
  */
 import { parseInline } from '../course/lessons';
 import { nextLesson } from '../course/loader';
-import type { SelfCheck } from '../course/progress';
 import type { Lesson, Step } from '../course/types';
 import type { AppContext, View } from './context';
 import { h } from './dom';
-import { ScorePanel } from './score-panel';
+import { ScorePanel, type TurnOutcome } from './score-panel';
 
 const STEP_KIND: Record<Step['type'], string> = {
   explain: 'Read',
@@ -25,8 +24,8 @@ function paragraph(text: string): HTMLParagraphElement {
   return p;
 }
 
-/** Answers given on check steps this visit, kept while the learner moves between steps. */
-const answers = new Map<string, SelfCheck>();
+/** Results on practice and check steps this visit, kept while the learner moves between steps. */
+const outcomes = new Map<string, TurnOutcome>();
 
 export function createLessonView(
   ctx: AppContext,
@@ -74,46 +73,13 @@ export function createLessonView(
     ...step.text.map(paragraph),
   );
 
-  const selfCheck = h('div', { className: 'self-check', id: 'self-check', hidden: true });
   let panel: ScorePanel | null = null;
   const body = h('div', { className: 'step', dataset: { type: step.type } }, text);
+  const answerKey = `${lesson.id}:${step.index}`;
 
   if (step.piece) {
     panel = new ScorePanel(ctx, scroller);
-    body.append(h('div', { className: 'sheet sheet-lesson' }, panel.scoreEl), selfCheck);
-  } else {
-    body.classList.add('step-text-only');
-  }
-
-  // --- "How did it go?" after a Your turn pass -----------------------------------
-  const answerKey = `${lesson.id}:${step.index}`;
-  const gotIt = h('button', {
-    type: 'button',
-    className: 'btn',
-    id: 'got-it',
-    textContent: 'Got it',
-  });
-  const again = h('button', {
-    type: 'button',
-    className: 'btn',
-    id: 'again',
-    textContent: 'Again',
-  });
-  const verdict = h('span', { className: 'muted', id: 'self-check-result' });
-  selfCheck.append(h('strong', { textContent: 'How did it go?' }), gotIt, again, verdict);
-  gotIt.addEventListener('click', () => {
-    answers.set(answerKey, 'got-it');
-    verdict.textContent = isLast ? 'Good. Press Next to finish the lesson.' : 'Good. Press Next.';
-    next.focus();
-  });
-  again.addEventListener('click', () => {
-    if (!answers.has(answerKey)) answers.set(answerKey, 'again');
-    verdict.textContent = '';
-    selfCheck.hidden = true;
-    panel?.run('turn');
-  });
-
-  if (panel && step.piece) {
+    body.append(h('div', { className: 'sheet sheet-lesson' }, panel.scoreEl), panel.resultEl);
     panel.load({
       piece: step.piece,
       tempo: step.tempo,
@@ -122,11 +88,23 @@ export function createLessonView(
       showTab: step.showTab,
       yourTurn: canPlay,
       fingeringControl: false,
-      onTurnEnd: () => {
-        selfCheck.hidden = false;
-        gotIt.focus();
+      // The mic's grade, or the learner's own answer without a mic. The best result is kept.
+      onOutcome: (outcome) => {
+        const before = outcomes.get(answerKey);
+        outcomes.set(answerKey, {
+          accuracy:
+            outcome.accuracy === null
+              ? (before?.accuracy ?? null)
+              : Math.max(outcome.accuracy, before?.accuracy ?? 0),
+          selfCheck:
+            before?.selfCheck === 'got-it'
+              ? 'got-it'
+              : (outcome.selfCheck ?? before?.selfCheck ?? null),
+        });
       },
     });
+  } else {
+    body.classList.add('step-text-only');
   }
 
   // --- Back / Next -------------------------------------------------------------------
@@ -144,7 +122,8 @@ export function createLessonView(
       ctx.navigate(`/lesson/${lesson.id}/${step.index + 2}`);
       return;
     }
-    ctx.progress.complete(lesson.id, answers.get(answerKey) ?? null);
+    const outcome = outcomes.get(answerKey);
+    ctx.progress.complete(lesson.id, outcome?.selfCheck ?? null, outcome?.accuracy ?? null);
     ctx.navigate(`/lesson/${lesson.id}/done`);
   };
   back.addEventListener('click', goBack);

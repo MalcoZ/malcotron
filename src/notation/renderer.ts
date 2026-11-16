@@ -75,6 +75,8 @@ export interface SystemInfo {
   readonly lastBar: number;
   /** Right-hand end of the last bar, in CSS pixels from the left edge of the system. */
   readonly endX: number;
+  /** Left edge and width of each bar on this system, in CSS pixels. */
+  readonly bars: ReadonlyArray<{ barIndex: number; x: number; width: number }>;
 }
 
 export function handleKey(barIndex: number, noteIndex: number): string {
@@ -337,6 +339,20 @@ export class ScoreRenderer {
     return this.systemList;
   }
 
+  /** Where a bar is drawn: its system and its box within it. */
+  barBox(barIndex: number): { system: SystemInfo; x: number; width: number } | undefined {
+    for (const system of this.systemList) {
+      const bar = system.bars.find((b) => b.barIndex === barIndex);
+      if (bar) return { system, x: bar.x, width: bar.width };
+    }
+    return undefined;
+  }
+
+  /** The bar under a horizontal position within a system, if any. */
+  barAt(systemIndex: number, x: number): number | undefined {
+    return this.systemList[systemIndex]?.bars.find((b) => x >= b.x && x < b.x + b.width)?.barIndex;
+  }
+
   getHandle(barIndex: number, noteIndex: number): NoteHandle | undefined {
     return this.handleMap.get(handleKey(barIndex, noteIndex));
   }
@@ -550,6 +566,11 @@ export class ScoreRenderer {
         firstBar: system.firstBar,
         lastBar: last.barIndex,
         endX: (last.stave.getX() + last.stave.getWidth()) * zoom,
+        bars: drawn.map((d) => ({
+          barIndex: d.barIndex,
+          x: d.stave.getX() * zoom,
+          width: d.stave.getWidth() * zoom,
+        })),
       });
       this.sizeSystem(el);
     }

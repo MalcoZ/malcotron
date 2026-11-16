@@ -34,12 +34,15 @@ test('Home says where to start and lists the chapter', async ({ page }) => {
   await openRoute(page);
   await expect(page.locator('#next-title')).toHaveText('Lesson 1: Reading from the staff');
   await expect(page.locator('#continue')).toHaveText('Start');
-  await expect(page.locator('.chapter h3')).toHaveText('Chapter 1: First notes');
+  await expect(page.locator('[data-chapter] h3')).toHaveText('Chapter 1: First notes');
   await expect(page.locator('.lesson-list li')).toHaveCount(10);
-  await expect(page.locator('.chapter-count')).toHaveText('0 of 10 lessons done');
+  await expect(page.locator('[data-chapter] .chapter-count')).toHaveText('0 of 10 lessons done');
   await expect(page.locator('.lesson-list li.is-next .lesson-title')).toHaveText(
     'Reading from the staff',
   );
+  // Pieces are folded away until asked for.
+  await expect(page.locator('.piece-list')).toBeHidden();
+  await page.locator('#pieces summary').click();
   await expect(page.locator('.piece-list li')).toHaveCount(4);
 
   await page.locator('#continue').click();
@@ -323,14 +326,14 @@ test('finishing a lesson ticks it off, moves Continue on, and survives a reload'
   await page.locator('#done-home').click();
   await expect(page.locator('#next-title')).toHaveText('Lesson 2: Three open strings: G, B and E');
   await expect(page.locator('#continue')).toHaveText('Continue');
-  await expect(page.locator('.chapter-count')).toHaveText('1 of 10 lessons done');
+  await expect(page.locator('[data-chapter] .chapter-count')).toHaveText('1 of 10 lessons done');
   await expect(page.locator('.lesson-list li').first().locator('.lesson-state')).toHaveText(
     '✓ Done',
   );
 
   await page.reload();
   await expect(page.locator('#app')).toHaveAttribute('data-ready', 'true');
-  await expect(page.locator('.chapter-count')).toHaveText('1 of 10 lessons done');
+  await expect(page.locator('[data-chapter] .chapter-count')).toHaveText('1 of 10 lessons done');
   await expect(page.locator('#next-title')).toHaveText('Lesson 2: Three open strings: G, B and E');
 
   // Continue returns to the step the learner was on.
@@ -358,11 +361,11 @@ test('progress can be reset from the About dialog', async ({ page }) => {
   await openRoute(page, '/lesson/p1-the-staff/5');
   await page.locator('#next').click();
   await page.locator('#done-home').click();
-  await expect(page.locator('.chapter-count')).toHaveText('1 of 10 lessons done');
+  await expect(page.locator('[data-chapter] .chapter-count')).toHaveText('1 of 10 lessons done');
   page.once('dialog', (dialog) => void dialog.accept());
   await page.locator('#about-link').click();
   await page.locator('#reset-progress').click();
-  await expect(page.locator('.chapter-count')).toHaveText('0 of 10 lessons done');
+  await expect(page.locator('[data-chapter] .chapter-count')).toHaveText('0 of 10 lessons done');
   await expect(page.locator('#continue')).toHaveText('Start');
 });
 
@@ -387,6 +390,7 @@ test('links go straight to a step, and unknown addresses go Home', async ({ page
 
 test('pieces stay available for free practice, with their source shown', async ({ page }) => {
   await openRoute(page);
+  await page.locator('#pieces summary').click();
   await page.locator('.piece-list a[data-piece="ode-to-joy"]').click();
   await expect(page).toHaveURL(/#\/piece\/ode-to-joy$/);
   await expect(page.locator('.piece-title')).toHaveText('Ode to Joy');
@@ -394,6 +398,18 @@ test('pieces stay available for free practice, with their source shown', async (
   await expect(page.locator('.malco-note')).toHaveCount(30);
   await expect(page.locator('#turn')).toBeVisible();
   await expect(page.locator('#fingering-level')).toBeVisible();
+  // Every control fits on one row, with nothing pushed off the side of the page.
+  const layout = await page.evaluate(() => ({
+    wide: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    rows: new Set(
+      [...document.querySelectorAll('.controls > *')].map((el) => {
+        const r = el.getBoundingClientRect();
+        return Math.round((r.top + r.height / 2) / 10);
+      }),
+    ).size,
+  }));
+  expect(layout.wide).toBeLessThanOrEqual(0);
+  expect(layout.rows).toBe(1);
   // Arrow keys change the tempo by 5.
   await page.locator('body').press('ArrowRight');
   await expect(page.locator('#tempo-readout')).toHaveText('85');

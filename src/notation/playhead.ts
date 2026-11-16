@@ -22,6 +22,9 @@ export class Playhead {
   private readonly source: BeatSource;
   private readonly scroller: HTMLElement;
   private readonly line: HTMLDivElement;
+  /** Tint over the bar being played, so the eye can find its place (spec section 8). */
+  private readonly band: HTMLDivElement;
+  private currentBar = -1;
   private timeline: Timeline | null = null;
   private starts: number[] = [];
   private totalBeats = 0;
@@ -44,6 +47,9 @@ export class Playhead {
     this.line = document.createElement('div');
     this.line.className = 'playhead';
     this.line.setAttribute('aria-hidden', 'true');
+    this.band = document.createElement('div');
+    this.band.className = 'bar-band';
+    this.band.setAttribute('aria-hidden', 'true');
   }
 
   setTimeline(timeline: Timeline): void {
@@ -73,14 +79,18 @@ export class Playhead {
     cancelAnimationFrame(this.frame);
     this.setCurrent(null);
     this.line.remove();
+    this.band.remove();
     this.currentSystem = -1;
+    this.currentBar = -1;
   }
 
   /** The score was redrawn: its elements are new, so forget the old ones. */
   rendered(): void {
     this.current = null;
     this.currentSystem = -1;
+    this.currentBar = -1;
     this.line.remove();
+    this.band.remove();
     if (this.source.state === 'running') this.update(this.source.beat);
   }
 
@@ -99,6 +109,15 @@ export class Playhead {
 
     const system = this.renderer.systems[handle.systemIndex];
     if (!system) return;
+    if (handle.barIndex !== this.currentBar) {
+      this.currentBar = handle.barIndex;
+      const box = this.renderer.barBox(handle.barIndex);
+      if (box) {
+        this.band.style.left = `${box.x}px`;
+        this.band.style.width = `${box.width}px`;
+        box.system.el.prepend(this.band);
+      }
+    }
     if (handle.systemIndex !== this.currentSystem) {
       this.currentSystem = handle.systemIndex;
       system.el.append(this.line);

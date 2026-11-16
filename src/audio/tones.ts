@@ -1,10 +1,9 @@
 /**
- * Guitar tones. M0 ships one voice, a sampled nylon classical guitar from the
- * FluidR3_GM soundfont (see ASSETS.md). M1 adds three more behind the same
- * interface and lazy-loads them.
+ * Guitar tones: four sampled voices from the FluidR3_GM soundfont (see
+ * ASSETS.md). Only the chosen one is loaded.
  */
 import * as Tone from 'tone';
-import { METRONOME, PLAYBACK } from '../config';
+import { METRONOME, PLAYBACK, TONES, type ToneId } from '../config';
 import { midiToFrequency } from '../content/music';
 
 export interface GuitarTone {
@@ -27,7 +26,8 @@ function sampleUrls(): Record<number, string> {
   return urls;
 }
 
-export function createNylonGuitar(): GuitarTone {
+/** A sampled guitar voice. Its samples start loading when it is created. */
+export function createGuitar(id: ToneId): GuitarTone {
   let resolve!: () => void;
   let reject!: (error: Error) => void;
   const loaded = new Promise<void>((res, rej) => {
@@ -36,7 +36,7 @@ export function createNylonGuitar(): GuitarTone {
   });
   const sampler = new Tone.Sampler({
     urls: sampleUrls(),
-    baseUrl: `${import.meta.env.BASE_URL}samples/nylon/`,
+    baseUrl: `${import.meta.env.BASE_URL}samples/${id}/`,
     release: PLAYBACK.releaseSeconds,
     volume: PLAYBACK.melodyVolumeDb,
     onload: () => resolve(),
@@ -44,8 +44,8 @@ export function createNylonGuitar(): GuitarTone {
   }).toDestination();
 
   return {
-    id: 'nylon',
-    label: 'Nylon classical',
+    id,
+    label: TONES.find((t) => t.id === id)!.label,
     loaded,
     play(soundingMidi, seconds, audioTime) {
       sampler.triggerAttackRelease(midiToFrequency(soundingMidi), seconds, audioTime);
@@ -57,8 +57,8 @@ export function createNylonGuitar(): GuitarTone {
 }
 
 export interface ClickSound {
-  /** Sound one click at an audio-context time; the accent is louder. */
-  play(accent: boolean, audioTime: number): void;
+  /** Sound one click at an audio-context time: accent loudest, subdivisions quietest. */
+  play(kind: 'accent' | 'beat' | 'sub', audioTime: number): void;
 }
 
 /**
@@ -72,8 +72,14 @@ export function createClick(): ClickSound {
     envelope: { attack: 0.001, decay: METRONOME.decaySeconds, sustain: 0, release: 0.01 },
   }).connect(filter);
   return {
-    play(accent, audioTime) {
-      synth.volume.setValueAtTime(accent ? METRONOME.accentDb : METRONOME.beatDb, audioTime);
+    play(kind, audioTime) {
+      const db =
+        kind === 'accent'
+          ? METRONOME.accentDb
+          : kind === 'beat'
+            ? METRONOME.beatDb
+            : METRONOME.subDb;
+      synth.volume.setValueAtTime(db, audioTime);
       synth.triggerAttackRelease(METRONOME.decaySeconds, audioTime);
     },
   };

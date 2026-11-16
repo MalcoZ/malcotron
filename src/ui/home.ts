@@ -1,4 +1,4 @@
-/** Home: what comes next, the chapter list, and pieces for free practice. */
+/** Home: what comes next, the chapters (folded unless current), and pieces for free practice. */
 import type { AppContext, View } from './context';
 import { h } from './dom';
 
@@ -22,59 +22,82 @@ export function createHome(ctx: AppContext): View {
       ctx.navigate(`/lesson/${nextLesson.id}/${next.step + 1}`),
     );
     hero.append(
-      h('p', { className: 'eyebrow', textContent: started ? 'Next up' : 'Start here' }),
-      h('h2', { id: 'next-title', textContent: `Lesson ${number}: ${nextLesson.title}` }),
-      h('p', { className: 'muted', textContent: nextLesson.summary }),
+      h(
+        'div',
+        {},
+        h('p', { className: 'eyebrow', textContent: started ? 'Next up' : 'Start here' }),
+        h('h2', { id: 'next-title', textContent: `Lesson ${number}: ${nextLesson.title}` }),
+        h('p', { className: 'muted', textContent: nextLesson.summary }),
+      ),
       button,
     );
   } else {
     hero.append(
-      h('p', { className: 'eyebrow', textContent: 'All done' }),
-      h('h2', { id: 'next-title', textContent: 'You have finished every lesson so far' }),
-      h('p', {
-        className: 'muted',
-        textContent: 'More chapters are on the way. Any lesson can be read again below.',
-      }),
+      h(
+        'div',
+        {},
+        h('p', { className: 'eyebrow', textContent: 'All done' }),
+        h('h2', { id: 'next-title', textContent: 'You have finished every lesson so far' }),
+        h('p', {
+          className: 'muted',
+          textContent: 'More chapters are on the way. Any lesson can be read again below.',
+        }),
+      ),
     );
   }
 
+  // The chapter holding the next lesson is open; the rest are folded, so Home fits one screen.
+  const currentChapter =
+    course.chapters.find((c) => c.lessons.some((l) => l.id === nextLesson?.id)) ??
+    course.chapters.at(-1);
   const chapters = course.chapters.map((chapter) => {
     const done = chapter.lessons.filter((l) => progress.isCompleted(l.id)).length;
     const list = h('ol', { className: 'lesson-list' });
     for (const lesson of chapter.lessons) {
       const completed = progress.isCompleted(lesson.id);
       const isNext = lesson.id === nextLesson?.id;
-      const item = h(
-        'li',
-        { className: completed ? 'is-done' : isNext ? 'is-next' : '' },
+      const accuracy = progress.record(lesson.id)?.accuracy;
+      const state = completed
+        ? accuracy !== null && accuracy !== undefined
+          ? `✓ Done · ${Math.round(accuracy * 100)}%`
+          : '✓ Done'
+        : isNext
+          ? 'Next'
+          : '';
+      list.append(
         h(
-          'a',
-          { href: `#/lesson/${lesson.id}/1`, dataset: { lesson: lesson.id } },
-          h('span', { className: 'lesson-title', textContent: lesson.title }),
-          h('span', { className: 'lesson-summary', textContent: lesson.summary }),
-          h('span', {
-            className: 'lesson-state',
-            textContent: completed ? '✓ Done' : isNext ? 'Next' : '',
-          }),
+          'li',
+          { className: completed ? 'is-done' : isNext ? 'is-next' : '' },
+          h(
+            'a',
+            { href: `#/lesson/${lesson.id}/1`, dataset: { lesson: lesson.id } },
+            h('span', { className: 'lesson-title', textContent: lesson.title }),
+            h('span', { className: 'lesson-summary', textContent: lesson.summary }),
+            h('span', { className: 'lesson-state', textContent: state }),
+          ),
         ),
       );
-      list.append(item);
     }
-    return h(
-      'section',
-      { className: 'card chapter', dataset: { chapter: chapter.id } },
+    const details = h(
+      'details',
+      {
+        className: 'card chapter',
+        open: chapter === currentChapter,
+        dataset: { chapter: chapter.id },
+      },
       h(
-        'div',
+        'summary',
         { className: 'chapter-head' },
         h('h3', { textContent: chapter.title }),
+        h('span', { className: 'muted chapter-summary', textContent: chapter.summary }),
         h('span', {
           className: 'muted chapter-count',
           textContent: `${done} of ${chapter.lessons.length} lessons done`,
         }),
       ),
-      h('p', { className: 'muted', textContent: chapter.summary }),
       list,
     );
+    return details;
   });
 
   const pieceList = h('ul', { className: 'piece-list' });
@@ -93,13 +116,18 @@ export function createHome(ctx: AppContext): View {
     );
   }
   const pieces = h(
-    'section',
-    { className: 'card' },
-    h('h3', { textContent: 'Pieces and exercises' }),
-    h('p', {
-      className: 'muted',
-      textContent: 'Open any of these to practise freely, at any tempo.',
-    }),
+    'details',
+    { className: 'card chapter', id: 'pieces' },
+    h(
+      'summary',
+      { className: 'chapter-head' },
+      h('h3', { textContent: 'Pieces and exercises' }),
+      h('span', {
+        className: 'muted chapter-summary',
+        textContent: 'Practise freely, at any tempo.',
+      }),
+      h('span', { className: 'muted chapter-count', textContent: `${ctx.pieces.length} pieces` }),
+    ),
     pieceList,
   );
 

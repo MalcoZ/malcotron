@@ -29,6 +29,9 @@ describe.each(Object.keys(PALETTES) as ThemeName[])('%s theme meets WCAG AA', (n
     ['text on the Play button', p.onAccent, p.accent, TEXT],
     ['text on a pressed button', p.ink, p.accentSoft, TEXT],
     ['control borders on surfaces', p.border, p.surface, GRAPHIC],
+    ['a right note and its mark', p.good, p.surface, TEXT],
+    ['a late note and its mark', p.warn, p.surface, TEXT],
+    ['a wrong note and its mark', p.bad, p.surface, TEXT],
     ['control borders on the page background', p.border, p.bg, GRAPHIC],
   ];
   it.each(cases)('%s', (_what, fg, bg, min) => {

@@ -109,6 +109,7 @@ export const METRONOME = {
   /** Click levels in decibels: the first beat of each bar is louder. */
   accentDb: -6,
   beatDb: -14,
+  subDb: -24,
   /** Lowest frequency let through, so the click is high and unpitched (Hz). */
   highpassHz: 2500,
   /** Click length (seconds). */
@@ -163,6 +164,14 @@ export const LISTEN = {
   calibrationClicks: 8,
   calibrationBpm: 80,
 } as const;
+
+export const TONES = [
+  { id: 'nylon', label: 'Nylon classical' },
+  { id: 'steel', label: 'Steel acoustic' },
+  { id: 'clean', label: 'Clean electric' },
+  { id: 'jazz', label: 'Jazz electric' },
+] as const;
+export type ToneId = (typeof TONES)[number]['id'];
 
 export const STORAGE_KEYS = {
   /** Mic calibration for this browser and device (never exported). */

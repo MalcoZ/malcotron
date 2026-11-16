@@ -4,19 +4,23 @@
  */
 import { clock } from '../audio/clock';
 import { Player } from '../audio/player';
-import { createClick, createNylonGuitar } from '../audio/tones';
-import { LAYOUT } from '../config';
+import { createClick, createGuitar, type GuitarTone } from '../audio/tones';
+import { LAYOUT, STORAGE_KEYS, TONES, type ToneId } from '../config';
 import { loadAllPieces } from '../content/loader';
 import type { Piece } from '../content/types';
 import { buildPiece } from '../content/validate';
 import { loadCourse } from '../course/loader';
 import { Progress } from '../course/progress';
+import { CalibrationStore } from '../listen/calibration';
+import { RealMic, SimulatedMic, type MicInput } from '../listen/mic';
+import { simulateNotes, simulateTake, type SimulatedMistakes } from '../listen/simulate';
 import { notationFontsReady } from '../notation/renderer';
 import { createAboutDialog } from './about';
 import type { AppContext, View } from './context';
 import { h } from './dom';
 import { createHome } from './home';
 import { createLessonDone, createLessonView } from './lesson-view';
+import { createMicView } from './mic-view';
 import { createPieceView } from './piece-view';
 import { parseRoute } from './router';
 import { ThemeController } from './theme';
@@ -38,9 +42,27 @@ function storage(): Storage | null {
 
 export function startApp(root: HTMLElement): void {
   const theme = new ThemeController();
-  const tone = createNylonGuitar();
+  const store = storage();
+  const progress = new Progress(store);
+  const calibration = new CalibrationStore(store);
+  let mic: MicInput = new RealMic();
+
+  // Tones are created (and their samples fetched) only when first chosen.
+  const tones = new Map<ToneId, GuitarTone>();
+  const toneFor = (id: ToneId): GuitarTone => {
+    let tone = tones.get(id);
+    if (!tone) tones.set(id, (tone = createGuitar(id)));
+    return tone;
+  };
+  let savedTone: ToneId = 'nylon';
+  try {
+    const saved = JSON.parse(store?.getItem(STORAGE_KEYS.settings) ?? '{}') as { tone?: string };
+    if (TONES.some((t) => t.id === saved.tone)) savedTone = saved.tone as ToneId;
+  } catch {
+    // Unreadable settings: use the defaults.
+  }
+  const tone = toneFor(savedTone);
   const player = new Player(tone, createClick());
-  const progress = new Progress(storage());
 
   // --- Header ----------------------------------------------------------------
   const themeButton = h('button', {
@@ -57,6 +79,10 @@ export function startApp(root: HTMLElement): void {
     );
   }
   zoomSelect.value = LAYOUT.zoomDefault.toFixed(2);
+  const toneSelect = h('select', { id: 'tone-select' });
+  for (const t of TONES) toneSelect.append(h('option', { value: t.id, textContent: t.label }));
+  toneSelect.value = savedTone;
+  const micLink = h('a', { className: 'btn btn-quiet mic-link', id: 'mic-link', href: '#/mic' });
   const header = h(
     'header',
     { className: 'app-header' },
@@ -66,6 +92,8 @@ export function startApp(root: HTMLElement): void {
       h('a', { href: '#/', id: 'home-link', textContent: 'Malcotron' }),
     ),
     h('div', { className: 'spacer' }),
+    micLink,
+    h('label', { className: 'header-field' }, h('span', { textContent: 'Tone' }), toneSelect),
     h('label', { className: 'header-field' }, h('span', { textContent: 'Staff size' }), zoomSelect),
     themeButton,
   );
@@ -110,6 +138,10 @@ export function startApp(root: HTMLElement): void {
     course: loadCourse(),
     pieces: loadAllPieces(),
     progress,
+    get mic() {
+      return mic;
+    },
+    calibration,
     zoom: LAYOUT.zoomDefault,
     navigate(path) {
       const hash = `#${path}`;
@@ -157,12 +189,16 @@ export function startApp(root: HTMLElement): void {
         return;
       }
     }
+    if (route.name === 'mic') {
+      mount(() => createMicView(ctx), '');
+      return;
+    }
     if (route.name === 'piece') {
       const piece = ctx.pieces.find((p) => p.id === route.id);
       if (piece) {
         mount(
           () => createPieceView(ctx, piece, main),
-          'Space: listen · R: your turn · M: click · T: peek at tab · ←/→: tempo',
+          'Space: listen · R: your turn · M: click · L: loop · T: peek at tab · ←/→: tempo · click a bar to start there',
         );
         return;
       }
@@ -180,6 +216,31 @@ export function startApp(root: HTMLElement): void {
   themeButton.addEventListener('click', () => theme.toggle());
   theme.onChange(updateThemeButton);
   updateThemeButton();
+
+  toneSelect.addEventListener('change', () => {
+    const next = toneFor(toneSelect.value as ToneId);
+    player.stop();
+    player.setTone(next);
+    ctx.soundReady = next.loaded;
+    root.dataset.sound = 'loading';
+    void next.loaded.then(() => {
+      if (player.currentTone === next) root.dataset.sound = 'ready';
+    });
+    view?.panel?.watchSound();
+    try {
+      store?.setItem(STORAGE_KEYS.settings, JSON.stringify({ tone: next.id }));
+    } catch {
+      // The choice lasts for this visit.
+    }
+  });
+
+  function updateMicLink(): void {
+    const on = calibration.value.micEnabled;
+    micLink.textContent = on ? 'Mic: on' : 'Mic: off';
+    micLink.classList.toggle('is-on', on);
+  }
+  calibration.onChange(updateMicLink);
+  updateMicLink();
 
   zoomSelect.addEventListener('change', () => {
     ctx.zoom = Number(zoomSelect.value);
@@ -240,6 +301,31 @@ export function startApp(root: HTMLElement): void {
     get adHocPiece() {
       return adHocPiece;
     },
+    calibration,
+    /**
+     * Replace the mic with a simulated learner who plays each Your turn pass
+     * into the real listening pipeline, with the mistakes given.
+     */
+    simulateLearner(mistakes: SimulatedMistakes = {}) {
+      const sim = new SimulatedMic(clock.sampleRate);
+      mic = sim;
+      void sim.start();
+      calibration.update({ micEnabled: true });
+      debug.mistakes = mistakes;
+      debug.simulatedMic = sim;
+      player.onStateChange((playing) => {
+        if (playing && player.currentMode === 'turn' && player.currentTimeline && mic === sim) {
+          simulateTake(sim, clock, player.currentTimeline, debug.mistakes);
+        }
+      });
+      return sim;
+    },
+    /** With a simulated mic: play these notes (on the beat grid) during the current run. */
+    simulateNotes(notes: { beat: number; midi: number; durationBeats: number }[], lateMs = 0) {
+      if (debug.simulatedMic) simulateNotes(debug.simulatedMic, clock, notes, lateMs);
+    },
+    mistakes: {} as SimulatedMistakes,
+    simulatedMic: null as SimulatedMic | null,
   };
   Object.assign(window, { malcotron: debug });
 }
