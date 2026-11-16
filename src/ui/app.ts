@@ -14,6 +14,7 @@ import { Progress } from '../course/progress';
 import { CalibrationStore } from '../listen/calibration';
 import { RealMic, SimulatedMic, type MicInput } from '../listen/mic';
 import { simulateNotes, simulateTake, type SimulatedMistakes } from '../listen/simulate';
+import { renderTake, type SynthNote, type SynthOptions } from '../listen/synth';
 import { notationFontsReady } from '../notation/renderer';
 import { createAboutDialog } from './about';
 import type { AppContext, View } from './context';
@@ -302,6 +303,9 @@ export function startApp(root: HTMLElement): void {
       return adHocPiece;
     },
     calibration,
+    get mic() {
+      return mic;
+    },
     /**
      * Replace the mic with a simulated learner who plays each Your turn pass
      * into the real listening pipeline, with the mistakes given.
@@ -323,6 +327,15 @@ export function startApp(root: HTMLElement): void {
     /** With a simulated mic: play these notes (on the beat grid) during the current run. */
     simulateNotes(notes: { beat: number; midi: number; durationBeats: number }[], lateMs = 0) {
       if (debug.simulatedMic) simulateNotes(debug.simulatedMic, clock, notes, lateMs);
+    },
+    /** With a simulated mic: deliver a synthesized take at once (times in seconds). */
+    feedInstant(notes: SynthNote[], seconds: number, options: SynthOptions = {}) {
+      const sim = debug.simulatedMic;
+      if (!sim) return;
+      const samples = renderTake(notes, sim.sampleRate, seconds, options);
+      for (let i = 0; i + 512 <= samples.length; i += 512) {
+        sim.feed(samples.subarray(i, i + 512), i / sim.sampleRate);
+      }
     },
     mistakes: {} as SimulatedMistakes,
     simulatedMic: null as SimulatedMic | null,

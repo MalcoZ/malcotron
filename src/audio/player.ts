@@ -161,8 +161,9 @@ export class Player {
     }
     if (mode === 'heard') {
       for (const note of heard) {
-        if (note.beat < 0 || note.beat >= total) continue;
-        clock.schedule(note.beat, (audioTime) => {
+        // A note struck a hair before the first beat still belongs to the take.
+        if (note.beat < -0.5 || note.beat >= total) continue;
+        clock.schedule(Math.max(0, note.beat), (audioTime) => {
           const seconds = clock.beatsToSeconds(Math.max(0.25, note.durationBeats));
           this.tone.play(Math.round(note.midi), seconds, audioTime);
           for (const listener of this.looseListeners) listener(note, audioTime);

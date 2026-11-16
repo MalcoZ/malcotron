@@ -34,7 +34,7 @@ export function createAboutDialog(onResetProgress: () => void): HTMLDialogElemen
       h(
         'li',
         {},
-        'Nylon guitar samples: Fluid (R3) General MIDI SoundFont by Frank Wen, rendered to audio files in ',
+        'Guitar samples (all four tones): Fluid (R3) General MIDI SoundFont by Frank Wen, rendered to audio files in ',
         link('https://github.com/gleitz/midi-js-soundfonts', 'midi-js-soundfonts'),
         ' by Benjamin Gleitzman. Licensed under ',
         link('https://creativecommons.org/licenses/by/3.0/us/', 'Creative Commons Attribution 3.0'),

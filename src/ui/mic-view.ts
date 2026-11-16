@@ -131,6 +131,7 @@ export function createMicView(ctx: AppContext): View {
   let noise: { squares: number; samples: number } | null = null;
   const heardStrings = new Map<number, number>();
   let offsets: number[] | null = null;
+  let shown = 0;
 
   function refresh(): void {
     const state = mic.state;
@@ -178,7 +179,9 @@ export function createMicView(ctx: AppContext): View {
         return;
       }
       for (const frame of analyser.push(samples, time)) {
-        fill.style.width = `${Math.min(100, Math.sqrt(frame.level) * 140).toFixed(0)}%`;
+        // The meter jumps up at once and falls back slowly, so short sounds can be seen.
+        shown = Math.max(Math.min(100, Math.sqrt(frame.level) * 140), shown * 0.93);
+        fill.style.width = `${shown.toFixed(0)}%`;
         if (frame.midi !== null) {
           const nearest = Math.round(frame.midi);
           const cents = Math.round((frame.midi - nearest) * 100);

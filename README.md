@@ -5,14 +5,16 @@ pitch and rhythm, in every position. The learner plays real guitar into the mic;
 checks each note and adapts what comes next.
 
 - Full specification: [`SPEC.md`](SPEC.md)
-- Milestone briefs: [`M0-BRIEF.md`](M0-BRIEF.md), [`M1-BRIEF.md`](M1-BRIEF.md)
+- Milestone briefs: [`M0-BRIEF.md`](M0-BRIEF.md), [`M1-BRIEF.md`](M1-BRIEF.md), [`M2-BRIEF.md`](M2-BRIEF.md)
 - Choices made while building: [`DECISIONS.md`](DECISIONS.md)
 - Third-party assets and licenses: [`ASSETS.md`](ASSETS.md)
 
-**Status: milestone 1 (guided lessons).** Opening the site starts a guided course. Chapter 1 takes a
-tab reader from the five lines of the staff to playing Ode to Joy, in ten short lessons: each step
+**Status: milestone 2 (listen).** Opening the site starts a guided course. Chapter 1 takes a tab
+reader from the five lines of the staff to playing Ode to Joy, in ten short lessons: each step
 explains one idea, shows it on the staff with labels, and has you play it with a count-in and click.
-There is no mic yet, so you check yourself; listening and grading arrive in milestone 2.
+With the mic on, the app listens while you play, marks every note right, late or wrong, and says
+what to fix. Without a mic you check yourself. The listening has been tested on synthesized guitar
+only; it still needs real recordings (see `recordings/README.md`).
 
 Live site: <https://malcoz.github.io/malcotron/>
 
@@ -58,13 +60,14 @@ npx playwright install chromium
   /content     music core, fingering function, stage check, validator, loader
   /notation    VexFlow rendering, note handles, playhead
   /audio       timeline, clock, guitar tone, playback
-  /listen      mic pipeline (M2)
+  /listen      mic input, pitch detection, segmentation, alignment, grading, calibration
   /course      lesson model, validator, progress
   /engine      skills and scheduling (M3)
   /ui          app shell, Home, lesson and piece screens, themes
   /store       saved progress (M4)
   config.ts    every tunable number
-/tools         content validator CLI
+/recordings    test takes for the detection harness (not committed)
+/tools         content validator and detection harness
 /tests         unit, end-to-end, fixtures
 ```
 

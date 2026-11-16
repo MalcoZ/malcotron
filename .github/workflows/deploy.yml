@@ -33,6 +33,8 @@ jobs:
         run: npm test
       - name: Validate content
         run: npm run validate
+      - name: Detection harness (synthesized takes)
+        run: npm run harness
       - name: Build
         run: npm run build
       - name: Install Chromium for Playwright

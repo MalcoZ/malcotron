@@ -33,5 +33,10 @@ export default tseslint.config(
     files: ['tests/e2e/**/*.ts'],
     rules: { '@typescript-eslint/no-explicit-any': 'off' },
   },
+  {
+    // The mic capture worklet runs in the audio thread, which has its own globals.
+    files: ['public/capture-worklet.js'],
+    languageOptions: { globals: { ...globals.audioWorklet } },
+  },
   prettier,
 );
