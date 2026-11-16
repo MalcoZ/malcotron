@@ -83,7 +83,7 @@ test('ties, rests, accidentals, dots and sixteenths draw and play', async ({ pag
   const expected = await allNoteKeys(page);
   await page.locator('#play').click();
   await expect(page.locator('#play')).toHaveText('Stop');
-  await expect(page.locator('#play')).toHaveText('Play', { timeout: 20_000 });
+  await expect(page.locator('#play')).toHaveText('Listen', { timeout: 20_000 });
   expect(await highlights(page)).toEqual(expected);
   expect(errors).toEqual([]);
 });

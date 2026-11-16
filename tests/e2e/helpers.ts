@@ -17,10 +17,18 @@ export function trackErrors(page: Page): string[] {
   return errors;
 }
 
-/** Open a piece and wait until the notation has been drawn. */
-export async function openPiece(page: Page, id?: string): Promise<void> {
-  await page.goto(id ? `./?piece=${id}` : './');
+let visit = 0;
+
+/** Load the app at a route (a full page load each time) and wait until it has drawn. */
+export async function openRoute(page: Page, route = '/'): Promise<void> {
+  await page.goto(`./?v=${++visit}#${route}`);
   await expect(page.locator('#app')).toHaveAttribute('data-ready', 'true');
+}
+
+/** Open a piece for free practice and wait until the notation has been drawn. */
+export async function openPiece(page: Page, id = 'ode-to-joy'): Promise<void> {
+  await openRoute(page, `/piece/${id}`);
+  await expect(page.locator('.malco-note').first()).toBeAttached();
 }
 
 export async function waitForSound(page: Page): Promise<void> {

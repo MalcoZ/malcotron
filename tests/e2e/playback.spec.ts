@@ -33,13 +33,13 @@ const noteTimes = (page: import('@playwright/test').Page) =>
       (window as any).__notes as { beat: number; midi: number; seconds: number; time: number }[],
   );
 
-test('Play shows a loading state, then plays Ode to Joy to the end', async ({ page }) => {
+test('Listen shows a loading state, then plays Ode to Joy to the end', async ({ page }) => {
   const errors = trackErrors(page);
   await openPiece(page);
   const play = page.locator('#play');
   await waitForSound(page);
   await expect(play).toBeEnabled();
-  await expect(play).toHaveText('Play');
+  await expect(play).toHaveText('Listen');
   await expect(page.locator('#tempo-readout')).toHaveText('80'); // the piece's suggested tempo
 
   await setTempo(page, 220);
@@ -52,7 +52,7 @@ test('Play shows a loading state, then plays Ode to Joy to the end', async ({ pa
   await expect(page.locator('.playhead')).toBeVisible();
 
   // 32 beats at 220 BPM is under 9 seconds.
-  await expect(play).toHaveText('Play', { timeout: 20_000 });
+  await expect(play).toHaveText('Listen', { timeout: 20_000 });
 
   // The highlight visited every note, in order, and finished on the last one.
   const seen = await highlights(page);
@@ -87,7 +87,7 @@ for (const piece of PIECES.slice(1)) {
 
     await page.locator('#play').click();
     await expect(page.locator('#play')).toHaveText('Stop');
-    await expect(page.locator('#play')).toHaveText('Play', { timeout: 20_000 });
+    await expect(page.locator('#play')).toHaveText('Listen', { timeout: 20_000 });
 
     expect(await highlights(page)).toEqual(expected);
     const notes = await noteTimes(page);
@@ -109,7 +109,7 @@ for (const bpm of [30, 80]) {
     // C5/q D5/q E5/h: wait for the third note, then stop.
     await expect.poll(async () => (await noteTimes(page)).length, { timeout: 15_000 }).toBe(3);
     await page.locator('#play').click();
-    await expect(page.locator('#play')).toHaveText('Play');
+    await expect(page.locator('#play')).toHaveText('Listen');
 
     const notes = await noteTimes(page);
     const beat = 60 / bpm;
@@ -145,7 +145,7 @@ test('the highlight is on the note that is sounding', async ({ page }) => {
   });
   await page.locator('#play').click();
   await expect(page.locator('#play')).toHaveText('Stop');
-  await expect(page.locator('#play')).toHaveText('Play', { timeout: 20_000 });
+  await expect(page.locator('#play')).toHaveText('Listen', { timeout: 20_000 });
 
   const { samples, starts } = await page.evaluate(() => {
     const events = (window as any).malcotron.player.currentTimeline.events;
@@ -189,7 +189,7 @@ test('a tempo change during playback takes effect without a restart', async ({ p
   await expect.poll(async () => (await noteTimes(page)).length, { timeout: 15_000 }).toBe(3);
   await setTempo(page, 220);
   await expect(page.locator('#play')).toHaveText('Stop'); // still playing
-  await expect(page.locator('#play')).toHaveText('Play', { timeout: 20_000 });
+  await expect(page.locator('#play')).toHaveText('Listen', { timeout: 20_000 });
 
   // No restart: every note was struck exactly once, in order.
   expect(await highlights(page)).toEqual(expected);
@@ -223,7 +223,7 @@ test('the playhead follows onto the next system and scrolls it into view', async
   await expect(page.locator('.malco-tabnote.is-current')).toHaveCount(1);
   await expect.poll(systemOfPlayhead, { timeout: 15_000 }).toBe('1');
   await expect(page.locator('.system[data-system="1"]')).toBeInViewport({ ratio: 0.95 });
-  await expect(page.locator('#play')).toHaveText('Play', { timeout: 20_000 });
+  await expect(page.locator('#play')).toHaveText('Listen', { timeout: 20_000 });
 });
 
 test('Space starts and stops playback; Stop returns to the start', async ({ page }) => {
@@ -234,7 +234,7 @@ test('Space starts and stops playback; Stop returns to the start', async ({ page
   await expect(play).toHaveText('Stop');
   await expect(page.locator('.malco-note.is-current')).toHaveCount(1);
   await page.locator('body').press('Space');
-  await expect(play).toHaveText('Play');
+  await expect(play).toHaveText('Listen');
   await expect(page.locator('.is-current')).toHaveCount(0);
   await expect(page.locator('.playhead')).toHaveCount(0);
 
@@ -243,7 +243,7 @@ test('Space starts and stops playback; Stop returns to the start', async ({ page
   await page.keyboard.press('Space');
   await expect(play).toHaveText('Stop');
   await page.keyboard.press('Space');
-  await expect(play).toHaveText('Play');
+  await expect(play).toHaveText('Listen');
 });
 
 test('tempo slider covers 30 to 220 BPM', async ({ page }) => {
@@ -276,7 +276,7 @@ test.describe('with reduced motion', () => {
     await page.locator('#play').click();
     await expect(page.locator('#play')).toHaveText('Stop');
     await expect(page.locator('.malco-note.is-current')).toHaveCount(1); // highlight is kept
-    await expect(page.locator('#play')).toHaveText('Play', { timeout: 20_000 });
+    await expect(page.locator('#play')).toHaveText('Listen', { timeout: 20_000 });
     const positions = await page.evaluate(() => (window as any).__xs.size as number);
     // 11 notes: the playhead rests at 11 places at most, not hundreds.
     expect(positions).toBeGreaterThanOrEqual(8);
