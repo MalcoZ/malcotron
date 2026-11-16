@@ -115,7 +115,60 @@ export const METRONOME = {
   decaySeconds: 0.03,
 } as const;
 
+export const LISTEN = {
+  /** Analysis frame and hop, in samples (spec section 5). */
+  frameSize: 2048,
+  hopSize: 512,
+  /** Sounding range the detector looks in (Hz). */
+  minHz: 75,
+  maxHz: 1400,
+  /** Frames less clear than this have no pitch (0 to 1). */
+  clarityThreshold: 0.9,
+  /** A later peak must reach this share of the best one to be taken as the pitch. */
+  peakPickRatio: 0.9,
+  /** The mic signal is low-passed here so the metronome click cannot be heard as a note (Hz). */
+  lowpassHz: 1800,
+  highpassHz: 60,
+  /** Default noise gate (RMS, 0 to 1) until the mic check measures the room. */
+  defaultNoiseGate: 0.01,
+  /** The gate is set this many times above the measured room noise. */
+  gateOverNoise: 4,
+  /** A jump in level by this factor, against the level ~35 ms earlier, is a new attack. */
+  onsetRatio: 1.7,
+  onsetLookbackFrames: 3,
+  /** Attacks closer together than this are one note (ms). */
+  minNoteGapMs: 70,
+  /** A pitch change of this many semitones, held this long, is a new note (legato). */
+  pitchChangeSemitones: 0.8,
+  pitchChangeMs: 40,
+  /** A note ends after this long below the gate or without a clear pitch (ms). */
+  releaseMs: 90,
+  /** Notes shorter than this are dropped as noise (ms). */
+  minNoteMs: 50,
+  /** Pitch match tolerance after tuning offset (cents). */
+  pitchCents: 50,
+  /** Timing tolerances (ms): early stages, and from P6/R5 on. */
+  early: { greenMs: 120, amberMs: 250 },
+  later: { greenMs: 70, amberMs: 150 },
+  laterFromPitchStage: 6,
+  laterFromRhythmStage: 5,
+  /** Count an exact octave error as correct when the detector was unsure (spec section 5). */
+  forgiveOctave: true,
+  octaveMaxClarity: 0.95,
+  /** Alignment scores: matching pitch, wrong pitch, a missed note, an extra note. */
+  align: { match: 2, mismatch: -1, missed: -1, extra: -0.6, perBeatOff: 1.5, maxTimePenalty: 2 },
+  /** Live colouring pairs a heard note with a written one this close in time (beats). */
+  liveWindowBeats: 0.6,
+  /** Clicks in the latency calibration. */
+  calibrationClicks: 8,
+  calibrationBpm: 80,
+} as const;
+
 export const STORAGE_KEYS = {
+  /** Mic calibration for this browser and device (never exported). */
+  calibration: 'malcotron.calibration',
+  /** Tone and other preferences. Moves to IndexedDB in M4. */
+  settings: 'malcotron.settings',
   /** Lesson progress. Moves to IndexedDB in M4. */
   progress: 'malcotron.progress',
   /** Manual theme override. Moves to the IndexedDB settings store in M3. */
