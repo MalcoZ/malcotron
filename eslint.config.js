@@ -28,5 +28,10 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // End-to-end tests reach into the page's debug object, which is untyped there.
+    files: ['tests/e2e/**/*.ts'],
+    rules: { '@typescript-eslint/no-explicit-any': 'off' },
+  },
   prettier,
 );
