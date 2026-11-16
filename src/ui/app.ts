@@ -45,13 +45,6 @@ export function startApp(root: HTMLElement): void {
     className: 'btn btn-quiet',
     id: 'theme-toggle',
   });
-  const header = h(
-    'header',
-    { className: 'app-header' },
-    h('h1', { className: 'app-name', textContent: 'Malcotron' }),
-    themeButton,
-  );
-
   // --- Dev bar: piece picker and staff zoom ------------------------------------
   const pieceSelect = h('select', { id: 'piece-select' });
   for (const p of pieces) {
@@ -75,6 +68,14 @@ export function startApp(root: HTMLElement): void {
     h('label', {}, h('span', { textContent: 'Staff size' }), zoomSelect),
   );
 
+  const header = h(
+    'header',
+    { className: 'app-header' },
+    h('h1', { className: 'app-name', textContent: 'Malcotron' }),
+    devBar,
+    themeButton,
+  );
+
   // --- Score -------------------------------------------------------------------
   const narrowNote = h('p', {
     className: 'narrow-note',
@@ -90,7 +91,7 @@ export function startApp(root: HTMLElement): void {
   const sheet = h(
     'div',
     { className: 'sheet' },
-    h('div', { className: 'piece-head' }, h('div', {}, titleEl, composerEl), metaEl),
+    h('div', { className: 'piece-head' }, titleEl, composerEl, metaEl),
     systemsEl,
   );
   const scoreArea = h('main', { className: 'score-area', id: 'score-area' }, narrowNote, sheet);
@@ -158,7 +159,7 @@ export function startApp(root: HTMLElement): void {
     aboutButton,
   );
 
-  root.replaceChildren(header, devBar, scoreArea, controls, footer, about);
+  root.replaceChildren(header, scoreArea, controls, footer, about);
 
   // --- Wiring ------------------------------------------------------------------------
   const renderer = new ScoreRenderer(systemsEl);
@@ -219,6 +220,7 @@ export function startApp(root: HTMLElement): void {
   function toggleTab(): void {
     renderer.setTabVisible(!renderer.isTabVisible);
     updateTabButton();
+    playhead.reveal();
   }
 
   function togglePlay(): void {

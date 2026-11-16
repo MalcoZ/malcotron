@@ -223,3 +223,67 @@ test('the About link credits the sample license', async ({ page }) => {
   await dialog.getByRole('button', { name: 'Close' }).click();
   await expect(dialog).toBeHidden();
 });
+
+test('fret, finger and string numbers are drawn in the UI font, not the music font', async ({
+  page,
+}) => {
+  await openPiece(page, 'p4-g-waltz');
+  await page.locator('#peek-tab').click();
+  const fonts = await page.evaluate(() => {
+    const family = (el: Element) => getComputedStyle(el).fontFamily;
+    return {
+      tab: [...document.querySelectorAll('.malco-tabnote text')].map(family),
+      marks: [...document.querySelectorAll('.malco-note text[font-weight="bold"]')].map(family),
+      texts: [...document.querySelectorAll('.malco-tabnote text')].map((el) => el.textContent),
+    };
+  });
+  expect(fonts.tab).toHaveLength(21);
+  for (const family of [...fonts.tab, ...fonts.marks]) {
+    expect(family).toContain('system-ui');
+    expect(family).not.toContain('Bravura');
+  }
+  // Every fret is a plain number.
+  for (const text of fonts.texts) expect(text).toMatch(/^\d+$/);
+});
+
+test('a one-line piece with its tab fits a laptop screen without scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  for (const id of ['p1-first-steps', 'p2-low-strings']) {
+    await openPiece(page, id);
+    await page.locator('#peek-tab').click();
+    const { view, content } = await page.evaluate(() => {
+      const area = document.querySelector('#score-area')!;
+      return { view: area.clientHeight, content: area.scrollHeight };
+    });
+    expect(content).toBeLessThanOrEqual(view);
+  }
+});
+
+test('systems are only as tall as their notes need, and nothing is clipped', async ({ page }) => {
+  await openPiece(page, 'p2-low-strings');
+  await page.locator('#peek-tab').click();
+  const low = (await page.locator('.system').first().boundingBox())!.height;
+  // Every stem, marker and tab number lies inside its system (systems clip what overflows).
+  const outside = async () =>
+    page.evaluate(() => {
+      let count = 0;
+      for (const system of document.querySelectorAll('.system')) {
+        const box = system.getBoundingClientRect();
+        // Stems and numbers: music glyphs are left out, as their text boxes are much taller
+        // than what is drawn.
+        for (const el of system.querySelectorAll(
+          '.vf-stem, .malco-tabnote text, .malco-note text[font-weight="bold"]',
+        )) {
+          const r = el.getBoundingClientRect();
+          if (r.top < box.top - 0.5 || r.bottom > box.bottom + 0.5) count++;
+        }
+      }
+      return count;
+    });
+  expect(await outside()).toBe(0);
+  await openPiece(page, 'ode-to-joy');
+  await page.locator('#peek-tab').click();
+  expect(await outside()).toBe(0);
+  // Ledger lines below the staff make the low piece's system taller than Ode to Joy's.
+  expect(low).toBeGreaterThan((await page.locator('.system').first().boundingBox())!.height);
+});

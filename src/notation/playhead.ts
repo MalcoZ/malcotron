@@ -124,14 +124,22 @@ export class Playhead {
     this.onNoteChange?.(handle);
   }
 
-  /** Scroll so the system being played is fully visible. */
+  /** The layout changed height (tab shown or hidden): keep the system being played in view. */
+  reveal(): void {
+    const system = this.renderer.systems[this.currentSystem];
+    if (system) this.keepInView(system.el);
+  }
+
+  /**
+   * If the system being played is not fully visible, scroll it to the top of
+   * the view, so the learner never has to scroll by hand and can see as much
+   * of what comes next as fits.
+   */
   private keepInView(systemEl: HTMLElement): void {
     const view = this.scroller.getBoundingClientRect();
     const rect = systemEl.getBoundingClientRect();
-    const margin = PLAYBACK.scrollMargin;
-    let delta = 0;
-    if (rect.bottom > view.bottom - margin) delta = rect.bottom - (view.bottom - margin);
-    if (rect.top - delta < view.top + margin) delta = rect.top - (view.top + margin);
+    if (rect.top >= view.top && rect.bottom <= view.bottom) return;
+    const delta = rect.top - (view.top + PLAYBACK.scrollMargin);
     if (Math.abs(delta) < 1) return;
     this.scroller.scrollBy({
       top: delta,

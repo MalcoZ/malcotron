@@ -64,8 +64,8 @@ p {
 .app-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 24px;
+  gap: 24px;
+  padding: 6px 24px;
   background: var(--surface);
   border-bottom: 1px solid color-mix(in srgb, var(--border) 35%, transparent);
 }
@@ -151,12 +151,11 @@ select {
 
 .dev-bar {
   display: flex;
+  flex: 1;
   align-items: center;
-  gap: 20px;
-  padding: 6px 24px;
+  gap: 16px;
   font-size: 0.875rem;
   color: var(--ink-muted);
-  border-bottom: 1px dashed color-mix(in srgb, var(--border) 50%, transparent);
 }
 
 .dev-bar label {
@@ -187,7 +186,7 @@ select {
   flex: 1 1 auto;
   min-height: 60vh;
   overflow: auto;
-  padding: 20px 24px 28px;
+  padding: 12px 24px 16px;
 }
 
 .narrow-note {
@@ -203,7 +202,7 @@ select {
 .sheet {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 22px 20px 12px;
+  padding: 12px 20px 6px;
   background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
   border-radius: 12px;
@@ -212,13 +211,16 @@ select {
 .piece-head {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: var(--gap);
-  padding: 0 12px 4px;
+  gap: 12px;
+  padding: 0 12px;
+}
+
+.piece-meta {
+  margin-left: auto;
 }
 
 .piece-title {
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 650;
 }
 
@@ -229,7 +231,7 @@ select {
 }
 
 .systems {
-  min-height: 160px;
+  min-height: 120px;
 }
 
 .system {
@@ -272,8 +274,8 @@ select {
 
 .playhead {
   position: absolute;
-  top: 8px;
-  bottom: 8px;
+  top: 4px;
+  bottom: 4px;
   left: 0;
   width: 2px;
   margin-left: -1px;
@@ -290,7 +292,7 @@ select {
   display: flex;
   align-items: center;
   gap: 24px;
-  padding: 12px 24px;
+  padding: 8px 24px;
   background: var(--surface);
   border-top: 1px solid color-mix(in srgb, var(--border) 35%, transparent);
 }
@@ -348,7 +350,7 @@ select {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 24px 8px;
+  padding: 0 24px 6px;
   font-size: 0.8rem;
   color: var(--ink-muted);
   background: var(--surface);

@@ -157,9 +157,11 @@ function buildStaves(
   firstInSystem: boolean,
   x: number,
   width: number,
+  staveY = 0,
+  tabStaveY = 0,
 ): { stave: Stave; tabStave: TabStave } {
-  const stave = new Stave(x, LAYOUT.notationTop, width);
-  const tabStave = new TabStave(x, LAYOUT.tabTop, width);
+  const stave = new Stave(x, staveY, width);
+  const tabStave = new TabStave(x, tabStaveY, width);
   if (firstInSystem) {
     // Guitar notation: treble clef with a small 8 below (sounds an octave lower).
     stave.addClef('treble', 'default', '8vb');
@@ -176,6 +178,73 @@ function buildStaves(
   stave.setNoteStartX(noteStartX);
   tabStave.setNoteStartX(noteStartX);
   return { stave, tabStave };
+}
+
+const LETTER_STEP = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 } as const;
+/** Staff step of the top line of the treble staff (written F5). */
+const TOP_LINE_STEP = 5 * 7 + LETTER_STEP.F;
+/** Staff step of the middle line (written B4): notes on or above it have stems down. */
+const MIDDLE_LINE_STEP = 4 * 7 + LETTER_STEP.B;
+
+interface SystemHeights {
+  /** Y of the notation and tab staves, as VexFlow wants them. */
+  staveY: number;
+  tabStaveY: number;
+  /** Baseline of the position label. */
+  labelY: number;
+  /** Height of the system with the tab hidden, and with it shown. */
+  notationHeight: number;
+  totalHeight: number;
+}
+
+/**
+ * Work out how tall a system must be from the notes on it: low notes need
+ * room for ledger lines below, high notes above, and markers sit above that.
+ */
+function measureSystemHeights(notes: readonly PieceNote[], level: FingeringLevel): SystemHeights {
+  // Distances are measured down from the top staff line; one staff step is half a line gap.
+  const probe = new Stave(0, 0, 100);
+  const lineGap = probe.getSpacingBetweenLines();
+  const topLineOffset = probe.getYForLine(0);
+  const staffHeight = probe.getYForLine(4) - topLineOffset;
+  const tabProbe = new TabStave(0, 0, 100);
+  const tabTopLineOffset = tabProbe.getYForLine(0);
+  const tabHeight = tabProbe.getYForLine(5) - tabTopLineOffset;
+
+  let top = -LAYOUT.clefAbove;
+  let bottom = staffHeight + LAYOUT.clefBelow;
+  let markers = false;
+  for (const note of notes) {
+    if (!note.pitch) continue;
+    const step = note.pitch.octave * 7 + LETTER_STEP[note.pitch.letter];
+    const y = ((TOP_LINE_STEP - step) * lineGap) / 2;
+    const stemDown = step >= MIDDLE_LINE_STEP;
+    // Beams can turn a stem either way, so allow a stem on both sides near the middle.
+    const nearMiddle = Math.abs(step - MIDDLE_LINE_STEP) <= 2;
+    top = Math.min(
+      top,
+      y - (stemDown && !nearMiddle ? LAYOUT.noteheadAllowance : LAYOUT.stemAllowance),
+    );
+    bottom = Math.max(
+      bottom,
+      y + (stemDown || nearMiddle ? LAYOUT.stemAllowance : LAYOUT.noteheadAllowance),
+    );
+    markers = true;
+  }
+  if (level !== 'none' && markers) top -= LAYOUT.markerAllowance;
+  const labelY = top - 3;
+  if (level !== 'none') top -= LAYOUT.positionLabelAllowance;
+
+  const origin = LAYOUT.systemPadding - top; // y of the top staff line
+  const notationHeight = origin + bottom + LAYOUT.systemPadding;
+  const tabTopLine = origin + bottom + LAYOUT.tabGap;
+  return {
+    staveY: origin - topLineOffset,
+    tabStaveY: tabTopLine - tabTopLineOffset,
+    labelY: origin + labelY,
+    notationHeight,
+    totalHeight: tabTopLine + tabHeight + LAYOUT.tabBelow + LAYOUT.systemPadding,
+  };
 }
 
 interface BarMeasure {
@@ -240,7 +309,6 @@ export class ScoreRenderer {
   private handleMap = new Map<string, NoteHandle>();
   private systemList: SystemInfo[] = [];
   private tabVisible = false;
-  private zoom = 1;
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -274,7 +342,6 @@ export class ScoreRenderer {
   /** Draw the piece into the container, replacing whatever was there. */
   render(piece: Piece, options: RenderOptions): void {
     const { zoom, fingeringLevel, colors } = options;
-    this.zoom = zoom;
     this.container.replaceChildren();
     this.container.classList.toggle('tab-visible', this.tabVisible);
     this.handleMap = new Map();
@@ -284,6 +351,12 @@ export class ScoreRenderer {
     MetricsDefaults.Stem.strokeStyle = colors.ink;
     MetricsDefaults.Stave.strokeStyle = colors.staff;
     MetricsDefaults.TabStave.strokeStyle = colors.staff;
+    // Numbers are drawn in the UI font, never the music font: a music font has no
+    // ordinary digits, and what a browser substitutes for them varies.
+    MetricsDefaults.TabNote.text.fontFamily = LAYOUT.numberFont;
+    MetricsDefaults.TabNote.text.fontSize = LAYOUT.tabNumberFontSize;
+    MetricsDefaults.FretHandFinger.fontFamily = LAYOUT.numberFont;
+    MetricsDefaults.StringNumber.fontFamily = LAYOUT.numberFont;
     Metrics.clear();
 
     const widthPx = this.container.clientWidth;
@@ -300,8 +373,13 @@ export class ScoreRenderer {
       el.dataset.system = String(systemIndex);
       this.container.append(el);
 
+      const systemNotes = system.widths.flatMap((_, i) => piece.bars[system.firstBar + i]!);
+      const heights = measureSystemHeights(systemNotes, fingeringLevel);
+      el.dataset.notationHeight = String(heights.notationHeight * zoom);
+      el.dataset.totalHeight = String(heights.totalHeight * zoom);
+
       const renderer = new Renderer(el as HTMLDivElement, Renderer.Backends.SVG);
-      renderer.resize(widthPx, LAYOUT.systemHeightWithTab * zoom);
+      renderer.resize(widthPx, heights.totalHeight * zoom);
       const ctx = renderer.getContext();
       ctx.scale(zoom, zoom);
       ctx.setFillStyle(colors.ink);
@@ -317,7 +395,15 @@ export class ScoreRenderer {
       let x = LAYOUT.systemMarginX;
       for (const [i, width] of system.widths.entries()) {
         const barIndex = system.firstBar + i;
-        const { stave, tabStave } = buildStaves(piece, barIndex, i === 0, x, width);
+        const { stave, tabStave } = buildStaves(
+          piece,
+          barIndex,
+          i === 0,
+          x,
+          width,
+          heights.staveY,
+          heights.tabStaveY,
+        );
         const parts = buildBar(piece, piece.bars[barIndex]!, fingeringLevel);
         for (const s of [stave, tabStave]) {
           s.setDefaultLedgerLineStyle({ strokeStyle: colors.ink, lineWidth: 1.4 });
@@ -372,12 +458,8 @@ export class ScoreRenderer {
       if (fingeringLevel !== 'none') {
         const first = drawn[0]!.stave;
         ctx.save();
-        ctx.setFont('system-ui, sans-serif', LAYOUT.positionLabelFontSize, '600');
-        ctx.fillText(
-          positionLabel(piece.position),
-          first.getX() + 2,
-          first.getYForLine(0) - LAYOUT.positionLabelRise,
-        );
+        ctx.setFont(LAYOUT.numberFont, LAYOUT.positionLabelFontSize, '600');
+        ctx.fillText(positionLabel(piece.position), first.getX() + 2, heights.labelY);
         ctx.restore();
       }
 
@@ -443,8 +525,7 @@ export class ScoreRenderer {
 
   /** Set the visible height of a system: taller when the tab is showing. */
   private sizeSystem(el: HTMLElement): void {
-    const height =
-      (this.tabVisible ? LAYOUT.systemHeightWithTab : LAYOUT.notationHeightNoTab) * this.zoom;
+    const height = this.tabVisible ? el.dataset.totalHeight : el.dataset.notationHeight;
     el.style.height = `${height}px`;
   }
 }

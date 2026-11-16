@@ -47,14 +47,30 @@ export const LAYOUT = {
   maxBarWidth: 420,
   /** Most bars allowed on one system. */
   maxBarsPerSystem: 4,
-  /** Vertical layout of one system (unzoomed px). */
-  notationTop: 46,
-  notationHeightNoTab: 172,
-  tabTop: 152,
-  systemHeightWithTab: 284,
-  /** Position label size and offset above the top staff line (unzoomed px). */
+  /**
+   * Vertical layout of one system (unzoomed px). Heights are worked out from
+   * the notes on each system, so a line with no ledger lines takes less room.
+   */
+  /** Room a stem needs beyond its notehead. */
+  stemAllowance: 36,
+  /** Room a notehead needs on the side without a stem. */
+  noteheadAllowance: 8,
+  /** Room for the circled string number above a note. */
+  markerAllowance: 22,
+  /** Room for the position label ("Open", "Pos. V") above everything else. */
+  positionLabelAllowance: 14,
   positionLabelFontSize: 9,
-  positionLabelRise: 34,
+  /** How far the clef reaches above the top line and (with its 8) below the bottom line. */
+  clefAbove: 16,
+  clefBelow: 26,
+  /** Padding above and below the notation, and the gap between notation and tab. */
+  systemPadding: 4,
+  tabGap: 12,
+  /** Room below the lowest tab line for fret numbers on string 6. */
+  tabBelow: 9,
+  /** Font for tab fret numbers, finger numbers and string numbers. */
+  numberFont: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+  tabNumberFontSize: 10,
   /** Breathing room between a barline (or signature) and the first note (unzoomed px). */
   noteStartPadding: 8,
 } as const;
@@ -69,8 +85,8 @@ export const PLAYBACK = {
   melodyVolumeDb: -4,
   /** Size of the sounding note while highlighted (spec section 8: about 1.08x). */
   highlightScale: 1.08,
-  /** How far above the bottom/top edge the current system is kept when scrolling (px). */
-  scrollMargin: 24,
+  /** Gap kept above the current system when the score scrolls to it (px). */
+  scrollMargin: 12,
 } as const;
 
 export const STORAGE_KEYS = {
