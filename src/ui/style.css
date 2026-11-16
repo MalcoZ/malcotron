@@ -285,8 +285,18 @@ select {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 12px;
+  gap: 8px 10px;
   padding: 8px 24px;
+  font-size: 0.95rem;
+}
+
+.controls .btn {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.controls .tempo {
+  gap: 8px;
 }
 
 .controls .control-label,
@@ -308,7 +318,7 @@ select {
 }
 
 .play {
-  min-width: 108px;
+  min-width: 96px;
   min-height: 46px;
   font-size: 1.05rem;
 }
@@ -327,7 +337,7 @@ select {
 }
 
 .tempo input[type='range'] {
-  width: 140px;
+  width: 110px;
   accent-color: var(--accent);
 }
 
@@ -430,13 +440,13 @@ select {
 .home {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   max-width: 900px;
   margin: 0 auto 8px;
 }
 
 .card {
-  padding: 14px 22px;
+  padding: 11px 22px;
   background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
   border-radius: 12px;
@@ -520,8 +530,9 @@ select {
   grid-template-columns: 1.6rem minmax(0, 17rem) 1fr auto;
   align-items: baseline;
   gap: 12px;
-  padding: 5px 4px;
-  font-size: 0.95rem;
+  padding: 3px 4px;
+  font-size: 0.93rem;
+  line-height: 1.35;
   color: var(--ink);
   text-decoration: none;
 }
