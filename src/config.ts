@@ -49,12 +49,14 @@ export const LAYOUT = {
   maxBarsPerSystem: 4,
   /** Vertical layout of one system (unzoomed px). */
   notationTop: 46,
-  notationHeightNoTab: 150,
-  tabTop: 150,
-  systemHeightWithTab: 268,
+  notationHeightNoTab: 172,
+  tabTop: 152,
+  systemHeightWithTab: 284,
   /** Position label size and offset above the top staff line (unzoomed px). */
-  positionLabelFontSize: 12,
+  positionLabelFontSize: 9,
   positionLabelRise: 34,
+  /** Breathing room between a barline (or signature) and the first note (unzoomed px). */
+  noteStartPadding: 8,
 } as const;
 
 export const PLAYBACK = {
