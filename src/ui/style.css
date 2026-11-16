@@ -250,12 +250,15 @@ select {
   display: inline;
 }
 
-/* The sounding note: accent colour plus a slight scale-up. */
-.malco-note.is-current *,
+/* The sounding note: accent colour plus a slight scale-up. VexFlow sets colours as
+   attributes on the note group, which CSS overrides; hollow shapes keep fill="none". */
+.malco-note.is-current,
+.malco-note.is-current [fill]:not([fill='none']),
 .malco-tabnote.is-current text {
   fill: var(--accent);
 }
 
+.malco-note.is-current,
 .malco-note.is-current [stroke]:not([stroke='none']) {
   stroke: var(--accent);
 }
