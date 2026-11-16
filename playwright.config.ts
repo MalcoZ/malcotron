@@ -24,7 +24,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run build && npm run preview -- --port 4173 --strictPort',
+    // CI builds in its own step first; locally the suite builds for itself.
+    command: process.env.CI
+      ? 'npm run preview -- --port 4173 --strictPort'
+      : 'npm run build && npm run preview -- --port 4173 --strictPort',
     url: 'http://localhost:4173/malcotron/',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
