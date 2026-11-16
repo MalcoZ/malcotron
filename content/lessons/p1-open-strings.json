@@ -18,7 +18,7 @@
         "key": "C",
         "time": "4/4",
         "position": 0,
-        "bars": ["G4/q B4/q E5/h"]
+        "bars": ["G4/q B4/q E5/q B4/q"]
       },
       "labels": "names",
       "showTab": true
@@ -34,7 +34,7 @@
         "key": "C",
         "time": "4/4",
         "position": 0,
-        "bars": ["G4/q B4/q E5/h"]
+        "bars": ["G4/q B4/q E5/q B4/q"]
       },
       "labels": [
         {

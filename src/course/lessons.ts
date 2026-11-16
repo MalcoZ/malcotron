@@ -120,6 +120,7 @@ export function validateLesson(
     if (step.type === 'explain' || step.type === 'example') explained = true;
     else if (!explained) {
       err(`a ${step.type} step comes before any explain or example step`, i);
+      explained = true; // report it once per lesson
     }
 
     // --- Text ---
@@ -154,7 +155,7 @@ export function validateLesson(
         title: step.title ?? lessonFile.title,
         composer: 'Malcotron',
         source: `Exercise from the lesson "${lessonFile.title}"`,
-        suggestedTempo: step.tempo ?? COURSE.defaultStepTempo,
+        suggestedTempo: COURSE.defaultStepTempo,
         requires: lessonFile.requires,
         ...step.score,
       };

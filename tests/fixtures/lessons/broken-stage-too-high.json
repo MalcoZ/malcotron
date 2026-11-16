@@ -1,0 +1,31 @@
+{
+  "id": "broken-stage-too-high",
+  "title": "Broken lesson",
+  "summary": "Deliberately broken test fixture.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "text": ["An explanation."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/w"]
+      }
+    },
+    {
+      "type": "check",
+      "text": ["Eighth notes need R3."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/8 B4/8 B4/q B4/h"]
+      }
+    }
+  ]
+}

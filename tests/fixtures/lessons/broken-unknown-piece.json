@@ -1,0 +1,26 @@
+{
+  "id": "broken-unknown-piece",
+  "title": "Broken lesson",
+  "summary": "Deliberately broken test fixture.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "text": ["An explanation."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/w"]
+      }
+    },
+    {
+      "type": "check",
+      "text": ["Play it."],
+      "piece": "no-such-piece"
+    }
+  ]
+}

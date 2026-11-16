@@ -1,0 +1,38 @@
+{
+  "id": "broken-bad-label",
+  "title": "Broken lesson",
+  "summary": "Deliberately broken test fixture.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "text": ["A label on a note that is not there."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/w"]
+      },
+      "labels": [
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "here"
+        }
+      ]
+    },
+    {
+      "type": "practice",
+      "text": ["No check at the end."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/w"]
+      }
+    }
+  ]
+}
