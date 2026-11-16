@@ -1,0 +1,402 @@
+/* Colours come from src/ui/theme.ts, which sets these custom properties on <html>.
+   The values here are the light palette, used only until the script runs. */
+:root {
+  --bg: #f3f1ec;
+  --surface: #fdfcfa;
+  --border: #8a8578;
+  --ink: #1a1c20;
+  --ink-muted: #565a63;
+  --staff: #5d616a;
+  --accent: #1f4fbf;
+  --on-accent: #ffffff;
+  --accent-soft: #d9e3fb;
+
+  --font-ui: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --radius: 8px;
+  --gap: 16px;
+  --highlight-scale: 1.08;
+
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* --- Header ------------------------------------------------------------- */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 35%, transparent);
+}
+
+.app-name {
+  font-size: 1.15rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+/* --- Buttons and fields --------------------------------------------------- */
+
+.btn {
+  font: inherit;
+  font-weight: 550;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  min-height: 40px;
+  cursor: pointer;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+
+.btn:disabled {
+  color: var(--ink-muted);
+  cursor: default;
+}
+
+.btn-quiet {
+  min-height: 34px;
+  padding: 5px 12px;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+  border-color: var(--accent);
+  filter: brightness(1.08);
+}
+
+.btn-primary:disabled {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--ink-muted);
+}
+
+.btn.is-on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.link {
+  font: inherit;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+select {
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  min-height: 34px;
+}
+
+/* --- Dev bar ---------------------------------------------------------------- */
+
+.dev-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 6px 24px;
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+  border-bottom: 1px dashed color-mix(in srgb, var(--border) 50%, transparent);
+}
+
+.dev-bar label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dev-bar select {
+  min-height: 30px;
+  padding: 3px 8px;
+}
+
+.dev-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+/* --- Score ------------------------------------------------------------------- */
+
+.score-area {
+  flex: 1 1 auto;
+  min-height: 60vh;
+  overflow: auto;
+  padding: 20px 24px 28px;
+}
+
+.narrow-note {
+  max-width: 1200px;
+  margin: 0 auto 12px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: var(--accent-soft);
+  border-radius: var(--radius);
+}
+
+.sheet {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 22px 20px 12px;
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
+  border-radius: 12px;
+}
+
+.piece-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gap);
+  padding: 0 12px 4px;
+}
+
+.piece-title {
+  font-size: 1.35rem;
+  font-weight: 650;
+}
+
+.piece-composer,
+.piece-meta {
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+}
+
+.systems {
+  min-height: 160px;
+}
+
+.system {
+  position: relative;
+  overflow: hidden;
+}
+
+.system svg {
+  display: block;
+}
+
+/* Peek tab: the tab is always laid out; this only shows it. */
+.malco-tab {
+  display: none;
+}
+
+.systems.tab-visible .malco-tab {
+  display: inline;
+}
+
+/* The sounding note: accent colour plus a slight scale-up. */
+.malco-note.is-current *,
+.malco-tabnote.is-current text {
+  fill: var(--accent);
+}
+
+.malco-note.is-current [stroke]:not([stroke='none']) {
+  stroke: var(--accent);
+}
+
+.malco-note.is-current .vf-notehead,
+.malco-tabnote.is-current text {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(var(--highlight-scale));
+}
+
+.playhead {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--accent);
+  border-radius: 1px;
+  opacity: 0.85;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* --- Control row -------------------------------------------------------------- */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 24px;
+  background: var(--surface);
+  border-top: 1px solid color-mix(in srgb, var(--border) 35%, transparent);
+}
+
+.play {
+  min-width: 150px;
+  min-height: 46px;
+  font-size: 1.05rem;
+}
+
+.tempo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.control-label,
+.field > span,
+.tempo-unit {
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+}
+
+.tempo input[type='range'] {
+  width: 260px;
+  accent-color: var(--accent);
+}
+
+.tempo-readout {
+  min-width: 3ch;
+  font-size: 1.7rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  line-height: 1;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#peek-tab {
+  min-width: 104px;
+}
+
+/* --- Footer and About ------------------------------------------------------------ */
+
+.app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 24px 8px;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  background: var(--surface);
+}
+
+.about {
+  max-width: 560px;
+  padding: 24px 28px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.about::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+.about h2 {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.about h3 {
+  font-size: 0.95rem;
+  margin: 18px 0 6px;
+}
+
+.about ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.about li {
+  margin-bottom: 8px;
+  font-size: 0.92rem;
+}
+
+.about a {
+  color: var(--accent);
+}
+
+.about-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
