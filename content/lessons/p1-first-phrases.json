@@ -1,0 +1,54 @@
+{
+  "id": "p1-first-phrases",
+  "title": "Putting it together",
+  "summary": "Read a whole phrase before you play it.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Read the shape",
+      "text": [
+        "You now have eight notes and three note lengths. As you read, watch the **shape** of the line: does the next note go up, go down, or stay?",
+        "A move to the very next line or space is the next letter of the alphabet."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C5/q D5/q E5/h"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "example",
+      "title": "Before you play",
+      "text": [
+        "Read this through before you touch the guitar. Name each note and spot the long ones.",
+        "Then press **Listen** to check that it sounds the way you expected."
+      ],
+      "piece": "p1-first-steps",
+      "labels": "names",
+      "showTab": false
+    },
+    {
+      "type": "practice",
+      "title": "First Steps",
+      "text": ["Now play it. Go slowly: steady is better than fast."],
+      "piece": "p1-first-steps"
+    },
+    {
+      "type": "check",
+      "title": "A new tune",
+      "text": ["A tune you have not seen, with no note names. Read it through first, then play."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E5/q D5/q C5/h", "D5/q E5/q F5/h", "G5/q F5/q E5/q D5/q", "C5/w"]
+      }
+    }
+  ]
+}

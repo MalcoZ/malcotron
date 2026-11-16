@@ -1,0 +1,77 @@
+{
+  "id": "p1-string-2",
+  "title": "2nd string: B, C and D",
+  "summary": "The same finger pattern, one string lower.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "B, C and D",
+      "text": [
+        "The open 2nd string is **B**, on the middle line. The space above it is **C**, at the 1st fret. The line above that is **D**, at the 3rd fret.",
+        "It is the same pattern as the 1st string: open, first finger, third finger."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q C5/q D5/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "Joining the strings",
+      "text": [
+        "After **D** on the 2nd string comes the open 1st string, **E**. So you can now read six notes in a row, straight up the staff."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q C5/q D5/q E5/q", "F5/q G5/q G5/h"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Up and back",
+      "text": ["First finger for C, third finger for D. Say the names as you play."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q C5/q D5/h", "D5/q C5/q B4/h"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Across two strings",
+      "text": [
+        "This one climbs from the 2nd string onto the 1st and comes back down. Watch for the string change between D and E."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q C5/q D5/q E5/q", "F5/q G5/q F5/q E5/q", "D5/q C5/q B4/h", "C5/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "B, C and D",
+      "text": ["Four bars, mostly on the 2nd string, with a visit to the open 1st string."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C5/q D5/q E5/h", "D5/q B4/q C5/h", "E5/q D5/q C5/q B4/q", "C5/w"]
+      }
+    }
+  ]
+}

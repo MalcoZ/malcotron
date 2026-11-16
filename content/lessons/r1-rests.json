@@ -1,0 +1,86 @@
+{
+  "id": "r1-rests",
+  "title": "Rests: counting silence",
+  "summary": "Beats where you play nothing, and keep counting.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Silence counts too",
+      "text": [
+        "A **rest** is a beat where you play nothing but keep counting. The squiggle is a **quarter rest**: one beat of silence.",
+        "Touch the string lightly with either hand to stop it ringing."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q r/q B4/q r/q"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "3"
+        }
+      ]
+    },
+    {
+      "type": "explain",
+      "title": "Longer rests",
+      "text": [
+        "A small block sitting **on** the middle line is a **half rest**: two beats of silence.",
+        "A block hanging **under** the line above it is a **whole rest**: a whole bar of silence."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/h r/h", "r/w"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1 2"
+        }
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "Play, stop, play",
+      "text": [
+        "Count every beat out loud, including the silent ones. On each rest, stop the string."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q r/q G4/q r/q", "B4/q B4/q r/h", "E5/h r/h", "B4/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Notes and rests",
+      "text": [
+        "Rests mixed with notes on the 2nd string. Keep the count going through every rest."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C5/q r/q D5/q r/q", "E5/h r/h", "D5/q C5/q r/q B4/q", "C5/w"]
+      }
+    }
+  ]
+}

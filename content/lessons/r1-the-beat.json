@@ -1,0 +1,153 @@
+{
+  "id": "r1-the-beat",
+  "title": "The beat: bars and quarter notes",
+  "summary": "How notation shows when to play.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Bars",
+      "text": [
+        "Music is divided into **bars** by vertical lines across the staff.",
+        "Bars help you keep your place: each one holds the same number of beats."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q B4/q B4/q B4/q", "B4/q B4/q B4/q B4/q"]
+      },
+      "fingering": "none"
+    },
+    {
+      "type": "explain",
+      "title": "The time signature",
+      "text": [
+        "The two numbers after the clef are the **time signature**. The top number says how many beats are in each bar.",
+        "**4/4** means four beats, so you count **1 2 3 4** in every bar."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q B4/q B4/q B4/q", "B4/q B4/q B4/q B4/q"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "2"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "3"
+        },
+        {
+          "bar": 1,
+          "note": 4,
+          "text": "4"
+        },
+        {
+          "bar": 2,
+          "note": 1,
+          "text": "1"
+        },
+        {
+          "bar": 2,
+          "note": 2,
+          "text": "2"
+        },
+        {
+          "bar": 2,
+          "note": 3,
+          "text": "3"
+        },
+        {
+          "bar": 2,
+          "note": 4,
+          "text": "4"
+        }
+      ]
+    },
+    {
+      "type": "explain",
+      "title": "Quarter notes",
+      "text": [
+        "A filled-in note with a stem is a **quarter note**. It lasts exactly one beat.",
+        "Four quarter notes fill one bar of 4/4."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q B4/q B4/q B4/q"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1 beat"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "1 beat"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "1 beat"
+        },
+        {
+          "bar": 1,
+          "note": 4,
+          "text": "1 beat"
+        }
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "Count out loud",
+      "text": [
+        "Press **Your turn**. Four clicks count you in, then play the open **B** string once on every click.",
+        "Count **1 2 3 4** out loud as you play."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q B4/q B4/q B4/q", "B4/q B4/q B4/q B4/q"]
+      },
+      "fingering": "first-of-bar"
+    },
+    {
+      "type": "check",
+      "title": "Keep counting",
+      "text": [
+        "The same steady beat, now moving between the three open strings. Keep counting **1 2 3 4**."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "G4/q G4/q B4/q B4/q",
+          "E5/q E5/q B4/q B4/q",
+          "G4/q B4/q E5/q B4/q",
+          "G4/q G4/q G4/q G4/q"
+        ]
+      }
+    }
+  ]
+}

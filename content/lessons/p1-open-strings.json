@@ -1,0 +1,104 @@
+{
+  "id": "p1-open-strings",
+  "title": "Three open strings: G, B and E",
+  "summary": "Your first three notes need no fretting at all.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Three notes to start",
+      "text": [
+        "Start with three notes you can play without fretting anything: the open **3rd**, **2nd** and **1st** strings.",
+        "Their names are **G**, **B** and **E**."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q B4/q E5/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "Where they sit",
+      "text": [
+        "**G** is on the second line from the bottom. **B** is on the middle line. **E** is in the top space.",
+        "The circled number above a note is the string. The small number beside it is the finger, and **0** means open."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q B4/q E5/h"]
+      },
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "2nd line"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "middle line"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "top space"
+        }
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "Up and down",
+      "text": [
+        "Press **Your turn**. After four clicks, play one note on each click.",
+        "For now every note lasts one click. The next lesson explains why."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q B4/q E5/q B4/q", "G4/q B4/q E5/q B4/q"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Mix them up",
+      "text": [
+        "The same three notes in a different order. Look at whether each note is on a line or in a space before you play it."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E5/q B4/q G4/q B4/q", "E5/q G4/q B4/q E5/q"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Without the names",
+      "text": [
+        "Four bars of open strings. The string numbers now appear only at the start of each bar, so read the rest from the staff."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "G4/q G4/q B4/q B4/q",
+          "E5/q E5/q B4/q G4/q",
+          "B4/q E5/q G4/q B4/q",
+          "E5/q B4/q G4/q G4/q"
+        ]
+      }
+    }
+  ]
+}

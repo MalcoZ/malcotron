@@ -1,0 +1,22 @@
+{
+  "chapters": [
+    {
+      "id": "chapter-1",
+      "title": "Chapter 1: First notes",
+      "summary": "Eight notes on the top three strings, and the rhythms to play them: quarter, half and whole notes, and rests.",
+      "stages": ["P1", "R1"],
+      "lessons": [
+        "p1-the-staff",
+        "p1-open-strings",
+        "r1-the-beat",
+        "r1-long-notes",
+        "p1-string-1",
+        "p1-string-2",
+        "p1-string-3",
+        "r1-rests",
+        "p1-first-phrases",
+        "piece-ode-to-joy"
+      ]
+    }
+  ]
+}

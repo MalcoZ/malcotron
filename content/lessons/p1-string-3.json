@@ -1,0 +1,83 @@
+{
+  "id": "p1-string-3",
+  "title": "3rd string: G and A",
+  "summary": "The last two notes of the chapter.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "G and A",
+      "text": [
+        "The open 3rd string is **G**, on the second line. The space above it is **A**, at the 2nd fret. Use your 2nd finger.",
+        "The next note up is one you know already: the open 2nd string, **B**."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q A4/q B4/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "The whole set",
+      "text": [
+        "That makes eight notes, from the open 3rd string up to the 3rd fret of the 1st string: **G A B C D E F G**.",
+        "Note names use the letters A to G, then start again."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q A4/q B4/q C5/q", "D5/q E5/q F5/q G5/q"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Up and back",
+      "text": ["Just the 3rd string and the open 2nd. Second finger for A."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q A4/q B4/h", "B4/q A4/q G4/h"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "All eight notes",
+      "text": [
+        "Up through all eight notes and back down again. Go slowly enough that you never have to stop."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "G4/q A4/q B4/q C5/q",
+          "D5/q E5/q F5/q G5/q",
+          "G5/q F5/q E5/q D5/q",
+          "C5/q B4/q A4/q G4/q"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "G and A",
+      "text": ["Four bars around the 3rd string."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q B4/q A4/q C5/q", "B4/h A4/h", "G4/q A4/q B4/q A4/q", "G4/w"]
+      }
+    }
+  ]
+}

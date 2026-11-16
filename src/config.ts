@@ -89,7 +89,33 @@ export const PLAYBACK = {
   scrollMargin: 12,
 } as const;
 
+export const COURSE = {
+  /** Lesson-writing limits (spec section 2: short text, one idea per step). */
+  maxWordsPerStep: 60,
+  maxParagraphsPerStep: 3,
+  maxLabelLength: 14,
+  /** Longest inline score, in bars, for explain/example steps and for practice/check steps. */
+  maxBarsExplain: 4,
+  maxBarsPractice: 8,
+  /** Tempo of a lesson exercise that does not set one (spec section 4: 60 BPM for new material). */
+  defaultStepTempo: 60,
+} as const;
+
+export const METRONOME = {
+  /** Bars of clicks before the first note in "Your turn". */
+  countInBars: 1,
+  /** Click levels in decibels: the first beat of each bar is louder. */
+  accentDb: -6,
+  beatDb: -14,
+  /** Lowest frequency let through, so the click is high and unpitched (Hz). */
+  highpassHz: 2500,
+  /** Click length (seconds). */
+  decaySeconds: 0.03,
+} as const;
+
 export const STORAGE_KEYS = {
+  /** Lesson progress. Moves to IndexedDB in M4. */
+  progress: 'malcotron.progress',
   /** Manual theme override. Moves to the IndexedDB settings store in M3. */
   theme: 'malcotron.theme',
 } as const;

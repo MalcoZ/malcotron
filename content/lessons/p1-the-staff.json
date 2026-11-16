@@ -1,0 +1,102 @@
+{
+  "id": "p1-the-staff",
+  "title": "Reading from the staff",
+  "summary": "What the five lines mean, and where the tab went.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Welcome",
+      "text": [
+        "You already know where the notes are on the neck. This course teaches you to read them from standard notation instead of tab.",
+        "Each lesson explains one idea, shows it, then asks you to play it. Press **Next** to carry on."
+      ]
+    },
+    {
+      "type": "explain",
+      "title": "Five lines",
+      "text": [
+        "Notation is written on a **staff** of five lines. The higher a note sits on the staff, the higher it sounds.",
+        "A note sits either **on a line** or **in a space** between two lines."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q A4/q B4/q C5/q"]
+      },
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "line"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "space"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "line"
+        },
+        {
+          "bar": 1,
+          "note": 4,
+          "text": "space"
+        }
+      ],
+      "fingering": "none"
+    },
+    {
+      "type": "explain",
+      "title": "The clef",
+      "text": [
+        "The curly sign at the start is the **treble clef**. Guitar music has a small **8** under it, because the guitar sounds an octave lower than written.",
+        "You don't have to do anything about it. It is simply how guitar music is printed."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/w"]
+      },
+      "fingering": "none"
+    },
+    {
+      "type": "example",
+      "title": "The tab is still there",
+      "text": [
+        "Whenever you are unsure, press **Peek tab** (or the **T** key) to see the tab under the staff. It is always free.",
+        "Here it is shown for you: four notes, with their names underneath."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q A4/q B4/q C5/q"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "check",
+      "title": "Try the controls",
+      "text": [
+        "Press **Listen** to hear these four notes. Then find them on your guitar and play them slowly, using the tab.",
+        "When you have tried it, press **Next**."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q A4/q B4/q C5/q"]
+      },
+      "labels": "names",
+      "showTab": true
+    }
+  ]
+}

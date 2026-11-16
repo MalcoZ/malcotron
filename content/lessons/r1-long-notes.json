@@ -1,0 +1,137 @@
+{
+  "id": "r1-long-notes",
+  "title": "Longer notes: half and whole notes",
+  "summary": "Notes that last two beats and four beats.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Half notes",
+      "text": [
+        "A hollow note with a stem is a **half note**. It lasts two beats.",
+        "Play it once, then let it ring through the next beat. Count **1 2** for each one."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/h B4/h"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1 2"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "3 4"
+        }
+      ]
+    },
+    {
+      "type": "explain",
+      "title": "Whole notes",
+      "text": [
+        "A hollow note with no stem is a **whole note**. It lasts four beats: a full bar of 4/4.",
+        "Play it once and count **1 2 3 4** while it rings."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/w"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1 2 3 4"
+        }
+      ]
+    },
+    {
+      "type": "example",
+      "title": "Side by side",
+      "text": [
+        "Here are all three lengths. The clicks never change speed. Only how long you hold each note changes."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q B4/q B4/q B4/q", "B4/h B4/h", "B4/w"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "2"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "3"
+        },
+        {
+          "bar": 1,
+          "note": 4,
+          "text": "4"
+        },
+        {
+          "bar": 2,
+          "note": 1,
+          "text": "1 2"
+        },
+        {
+          "bar": 2,
+          "note": 2,
+          "text": "3 4"
+        },
+        {
+          "bar": 3,
+          "note": 1,
+          "text": "1 2 3 4"
+        }
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "Hold the long ones",
+      "text": [
+        "Press **Your turn** and keep counting. Let each half note and whole note ring for its full length before you move on."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q G4/q G4/h", "B4/h B4/h", "E5/q E5/q E5/h", "B4/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Mixed lengths",
+      "text": [
+        "Quarter, half and whole notes on the open strings. Look at each note's shape as well as its place on the staff."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/h B4/h", "E5/q E5/q B4/h", "G4/q B4/q E5/h", "B4/w"]
+      }
+    }
+  ]
+}

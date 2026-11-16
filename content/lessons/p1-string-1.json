@@ -1,0 +1,98 @@
+{
+  "id": "p1-string-1",
+  "title": "1st string: E, F and G",
+  "summary": "Two fretted notes at the top of the staff.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Two new notes",
+      "text": [
+        "You know the open 1st string, **E**, in the top space.",
+        "One step up is the top line: **F**, at the 1st fret. One more step, sitting on top of the staff, is **G**, at the 3rd fret."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E5/q F5/q G5/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "Steps on the staff",
+      "text": [
+        "Moving from a space to the next line, or a line to the next space, moves one letter: E, F, G.",
+        "On the neck those steps are not all the same size. E to F is one fret. F to G is two."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E5/q F5/q G5/h"]
+      },
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "space"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "line"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "above"
+        }
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "Up and back",
+      "text": [
+        "Use your 1st finger for F and your 3rd finger for G. Say the note names as you play."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E5/q F5/q G5/h", "G5/q F5/q E5/h"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Skipping around",
+      "text": [
+        "Now with repeats and a skip from E straight to G. Read each note from the staff, not from memory."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E5/q E5/q F5/q F5/q", "G5/h F5/h", "E5/q G5/q F5/q G5/q", "E5/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "E, F and G",
+      "text": [
+        "Four bars on the 1st string. The finger numbers show only at the start of each bar."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E5/q F5/q G5/q F5/q", "E5/h G5/h", "F5/q F5/q G5/q E5/q", "F5/h E5/h"]
+      }
+    }
+  ]
+}

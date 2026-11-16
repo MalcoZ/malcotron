@@ -1,0 +1,57 @@
+{
+  "id": "piece-ode-to-joy",
+  "title": "First piece: Ode to Joy",
+  "summary": "Beethoven's most famous tune, in the eight notes you know.",
+  "requires": {
+    "pitchStage": "P1",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Your first piece",
+      "text": [
+        "**Ode to Joy** is the main theme of the last movement of Beethoven's Ninth Symphony, first performed in 1824.",
+        "It moves almost entirely by step, which makes it a good first piece to read."
+      ]
+    },
+    {
+      "type": "explain",
+      "title": "The first phrase",
+      "text": [
+        "Here are the first four bars. Notice the repeated notes, and the half note that ends bar 4.",
+        "The rhythm is slightly simplified here so that it uses only the note lengths you know."
+      ],
+      "piece": "ode-to-joy",
+      "bars": [1, 4],
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "First half",
+      "text": ["Bars 1 to 4. Read it through, listen if you like, then press **Your turn**."],
+      "piece": "ode-to-joy",
+      "bars": [1, 4],
+      "tempo": 60
+    },
+    {
+      "type": "practice",
+      "title": "Second half",
+      "text": [
+        "Bars 5 to 8 are almost the same. Only the last bar changes, to bring the tune home to **C**."
+      ],
+      "piece": "ode-to-joy",
+      "bars": [5, 8],
+      "tempo": 60
+    },
+    {
+      "type": "check",
+      "title": "The whole piece",
+      "text": [
+        "All eight bars. The music runs onto a second line, and the page follows you as you play."
+      ],
+      "piece": "ode-to-joy",
+      "tempo": 66
+    }
+  ]
+}
