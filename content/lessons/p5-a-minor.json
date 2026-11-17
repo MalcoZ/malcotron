@@ -1,0 +1,66 @@
+{
+  "id": "p5-a-minor",
+  "title": "A minor",
+  "summary": "No key signature, and one accidental that keeps returning.",
+  "requires": {
+    "pitchStage": "P5",
+    "rhythmStage": "R4"
+  },
+  "introduces": {
+    "keys": ["Am"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "A minor",
+      "text": [
+        "**A minor** has no sharps or flats in its key signature, like C. But its tunes often raise **G** to **G sharp** on the way up to A.",
+        "The sharp is written as an accidental each time."
+      ],
+      "score": {
+        "key": "Am",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E4/q F4/q G#4/q A4/q"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "practice",
+      "title": "Up and down",
+      "text": ["G sharp on the way up, plain G on the way down."],
+      "score": {
+        "key": "Am",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "A3/q B3/q C4/q D4/q",
+          "E4/q F4/q G#4/q A4/q",
+          "A4/q G4/q F4/q E4/q",
+          "D4/q C4/q B3/q A3/q"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "A tune in A minor",
+      "text": ["Eight bars in three, the last check of the chapter."],
+      "score": {
+        "key": "Am",
+        "time": "3/4",
+        "position": 0,
+        "bars": [
+          "A4/q C5/q E5/q",
+          "D5/h C5/q",
+          "B4/q G#4/q B4/q",
+          "A4/h.",
+          "E5/q D5/8 C5/8 B4/q",
+          "C5/q B4/8 A4/8 G#4/q",
+          "A4/q B4/q G#4/q",
+          "A4/h."
+        ]
+      }
+    }
+  ]
+}

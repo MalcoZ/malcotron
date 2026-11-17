@@ -1,0 +1,69 @@
+{
+  "id": "p2-string-4",
+  "title": "4th string: D, E and F",
+  "summary": "Three notes at the bottom of the staff.",
+  "requires": {
+    "pitchStage": "P2",
+    "rhythmStage": "R1"
+  },
+  "introduces": {
+    "pitches": ["D4", "E4", "F4"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Below the staff",
+      "text": [
+        "The open 4th string is **D**, hanging just below the bottom line.",
+        "**E** is on the bottom line, at the 2nd fret. **F** is in the first space, at the 3rd fret."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["D4/q E4/q F4/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "Second and third fingers",
+      "text": [
+        "The frets are open, 2 and 3, so use your 2nd and 3rd fingers. The small number beside each note is the finger, and here it matches the fret."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["D4/q E4/q F4/q E4/q"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Up and back",
+      "text": [
+        "Say the note names as you play. These notes ring longer than the high ones, so let each one last its full length."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["D4/q E4/q F4/h", "F4/q E4/q D4/h"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "check",
+      "title": "D, E and F",
+      "text": ["Four bars on the 4th string."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["D4/q F4/q E4/q E4/q", "D4/h F4/h", "E4/q F4/q E4/q D4/q", "D4/w"]
+      }
+    }
+  ]
+}

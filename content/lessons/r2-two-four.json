@@ -1,0 +1,77 @@
+{
+  "id": "r2-two-four",
+  "title": "Two beats in a bar",
+  "summary": "Short bars: 2/4.",
+  "requires": {
+    "pitchStage": "P2",
+    "rhythmStage": "R2"
+  },
+  "introduces": {
+    "meters": ["2/4"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Two-four time",
+      "text": [
+        "In **2/4** each bar has only two beats: count **1 2**.",
+        "The bars go by quickly, so keep your eyes a bar ahead of your fingers."
+      ],
+      "score": {
+        "key": "C",
+        "time": "2/4",
+        "position": 0,
+        "bars": ["B4/q B4/q", "B4/h"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "2"
+        },
+        {
+          "bar": 2,
+          "note": 1,
+          "text": "1 2"
+        }
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "Count in two",
+      "text": ["The count-in is two clicks."],
+      "score": {
+        "key": "C",
+        "time": "2/4",
+        "position": 0,
+        "bars": ["G4/q A4/q", "B4/h", "C5/q B4/q", "A4/h"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "In two",
+      "text": ["Eight short bars."],
+      "score": {
+        "key": "C",
+        "time": "2/4",
+        "position": 0,
+        "bars": [
+          "E5/q D5/q",
+          "C5/h",
+          "D5/q E5/q",
+          "F5/h",
+          "G5/q F5/q",
+          "E5/q D5/q",
+          "C5/q D5/q",
+          "C5/h"
+        ]
+      }
+    }
+  ]
+}

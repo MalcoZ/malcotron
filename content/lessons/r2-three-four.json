@@ -1,0 +1,73 @@
+{
+  "id": "r2-three-four",
+  "title": "Three beats in a bar",
+  "summary": "A new time signature: 3/4.",
+  "requires": {
+    "pitchStage": "P2",
+    "rhythmStage": "R2"
+  },
+  "introduces": {
+    "meters": ["3/4"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Three-four time",
+      "text": [
+        "The top number of the time signature can change. In **3/4** there are three beats in every bar, so you count **1 2 3**.",
+        "A dotted half note fills a whole bar. The count-in is three clicks."
+      ],
+      "score": {
+        "key": "C",
+        "time": "3/4",
+        "position": 0,
+        "bars": ["B4/q B4/q B4/q", "B4/h."]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "2"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "3"
+        },
+        {
+          "bar": 2,
+          "note": 1,
+          "text": "1 2 3"
+        }
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "Count in three",
+      "text": ["Count **1 2 3** out loud. Lean a little on beat 1."],
+      "score": {
+        "key": "C",
+        "time": "3/4",
+        "position": 0,
+        "bars": ["G4/q A4/q B4/q", "C5/h B4/q", "A4/q B4/q A4/q", "G4/h."]
+      }
+    },
+    {
+      "type": "check",
+      "title": "In three",
+      "text": ["Four bars of 3/4."],
+      "score": {
+        "key": "C",
+        "time": "3/4",
+        "position": 0,
+        "bars": ["E5/q D5/q C5/q", "D5/h E5/q", "F5/q E5/q D5/q", "C5/h."]
+      }
+    }
+  ]
+}

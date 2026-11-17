@@ -1,0 +1,71 @@
+{
+  "id": "p4-minor-keys",
+  "title": "Minor keys",
+  "summary": "The same signatures, with a different home note.",
+  "requires": {
+    "pitchStage": "P4",
+    "rhythmStage": "R3"
+  },
+  "introduces": {
+    "keys": ["Em", "Dm"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Same signature, different home",
+      "text": [
+        "Each key signature serves two keys. One sharp is G major, and also **E minor**, which sounds darker and comes to rest on E.",
+        "There is nothing new to read: every F is still sharp."
+      ],
+      "score": {
+        "key": "Em",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E4/q F#4/q G4/h"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "E minor",
+      "text": ["One sharp, resting on E."],
+      "score": {
+        "key": "Em",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E4/q F#4/q G4/q A4/q", "B4/h G4/h", "A4/q G4/q F#4/q G4/q", "E4/w"]
+      }
+    },
+    {
+      "type": "practice",
+      "title": "D minor",
+      "text": ["One flat can also be **D minor**, resting on D."],
+      "score": {
+        "key": "Dm",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["D4/q E4/q F4/q G4/q", "A4/h Bb4/h", "A4/q G4/q F4/q E4/q", "D4/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "A tune in E minor",
+      "text": ["Eight bars in three."],
+      "score": {
+        "key": "Em",
+        "time": "3/4",
+        "position": 0,
+        "bars": [
+          "E4/q G4/q B4/q",
+          "A4/h G4/q",
+          "F#4/q A4/q C5/q",
+          "B4/h.",
+          "E5/q D5/q B4/q",
+          "C5/h A4/q",
+          "G4/q F#4/8 E4/8 F#4/q",
+          "E4/h."
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "id": "p4-key-of-f",
+  "title": "One flat: B flat",
+  "summary": "A sign at the start that changes every B.",
+  "requires": {
+    "pitchStage": "P4",
+    "rhythmStage": "R3"
+  },
+  "introduces": {
+    "keys": ["F"],
+    "pitches": ["Bb3", "Bb4"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "A flat",
+      "text": [
+        "A **flat** lowers a note by one fret. A flat on the middle line at the start of each line is the key signature of **F**.",
+        "It makes every B a **B flat**."
+      ],
+      "score": {
+        "key": "F",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["A4/q Bb4/q C5/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "No open B",
+      "text": [
+        "B flat cannot be the open 2nd string. Play it at the 3rd fret of the 3rd string.",
+        "The low B flat is the 1st fret of the 5th string."
+      ],
+      "score": {
+        "key": "F",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["A3/q Bb3/q C4/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "practice",
+      "title": "Up from F",
+      "text": ["One flat at the start: every B is the 3rd fret of the 3rd string."],
+      "score": {
+        "key": "F",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["F4/q G4/q A4/q Bb4/q", "C5/q D5/q C5/h", "Bb4/q A4/q G4/q F4/q", "F4/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "B flat",
+      "text": ["Four bars in F."],
+      "score": {
+        "key": "F",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C5/q Bb4/q A4/q G4/q", "A4/h F4/h", "G4/q A4/q Bb4/q C5/q", "F4/w"]
+      }
+    }
+  ]
+}

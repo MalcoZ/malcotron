@@ -51,6 +51,13 @@ export interface PanelConfig {
   yourTurn: boolean;
   /** Offer the fingering-level control. */
   fingeringControl: boolean;
+  /**
+   * How takes count for the learning engine: `scheduled` work (lessons and
+   * sessions) moves the review schedule; `free` practice only updates stats.
+   */
+  practice: 'scheduled' | 'free';
+  /** Track the piece itself as a skill (pieces, not exercises). */
+  trackPiece?: boolean;
   /** Called when a take has a result: a grade, or the learner's own answer. */
   onOutcome?: (outcome: TurnOutcome) => void;
 }
@@ -76,6 +83,8 @@ export class ScorePanel {
   private grades = new Map<string, NoteGrade>();
   private selection: { first: number; last: number } | null = null;
   private dragFrom: number | null = null;
+  /** Takes of the loaded piece so far: a retry can earn Hard at best (spec section 4). */
+  private takes = 0;
   private readonly cleanup: (() => void)[] = [];
   private resizeTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -289,6 +298,7 @@ export class ScorePanel {
     this.renderer.setTabVisible(config.showTab);
     this.scoreEl.setAttribute('aria-label', `Notation: ${config.piece.title}`);
     this.selection = null;
+    this.takes = 0;
     this.clearGrades();
     this.updateButtons();
     this.draw();
@@ -412,7 +422,19 @@ export class ScorePanel {
     );
     this.paintGrades();
     this.renderResult();
-    this.config?.onOutcome?.({ accuracy: summarise(take.grade).accuracy, selfCheck: null });
+    const config = this.config;
+    if (config) {
+      this.ctx.engine.recordGrade(config.piece, take.grade, this.attemptOptions(config));
+      config.onOutcome?.({ accuracy: summarise(take.grade).accuracy, selfCheck: null });
+    }
+  }
+
+  private attemptOptions(config: PanelConfig) {
+    return {
+      firstTry: this.takes++ === 0,
+      scheduled: config.practice === 'scheduled',
+      includePiece: config.trackPiece === true,
+    };
   }
 
   /** Summary, feedback sentence and actions for the graded take. */
@@ -480,9 +502,12 @@ export class ScorePanel {
     gotIt.addEventListener('click', () => {
       verdict.textContent = 'Good. Press Next.';
       hint.hidden = true;
+      gotIt.disabled = true;
+      this.ctx.engine.recordSelfCheck(config.piece, true, this.attemptOptions(config));
       config.onOutcome?.({ accuracy: null, selfCheck: 'got-it' });
     });
     again.addEventListener('click', () => {
+      this.ctx.engine.recordSelfCheck(config.piece, false, this.attemptOptions(config));
       config.onOutcome?.({ accuracy: null, selfCheck: 'again' });
       this.run('turn');
     });
@@ -652,6 +677,8 @@ export class ScorePanel {
 
   private toggleTab(): void {
     this.renderer.setTabVisible(!this.renderer.isTabVisible);
+    // Peeking is free. It is only noted, per skill, as a private signal (spec section 2).
+    if (this.renderer.isTabVisible && this.config) this.ctx.engine.peek(this.config.piece);
     this.updateButtons();
     this.playhead.reveal();
   }

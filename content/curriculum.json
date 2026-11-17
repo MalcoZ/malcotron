@@ -17,6 +17,55 @@
         "p1-first-phrases",
         "piece-ode-to-joy"
       ]
+    },
+    {
+      "id": "chapter-2",
+      "title": "Chapter 2: The low strings",
+      "summary": "Nine notes on the 4th, 5th and 6th strings, and the ledger lines they sit on.",
+      "stages": ["P2", "R1"],
+      "lessons": ["p2-string-4", "p2-string-5", "p2-string-6", "p2-low-phrases"]
+    },
+    {
+      "id": "chapter-3",
+      "title": "Chapter 3: Three beats and two",
+      "summary": "The dotted half note, and bars of three and two beats.",
+      "stages": ["P2", "R2"],
+      "lessons": ["r2-dotted-half", "r2-three-four", "r2-two-four", "r2-waltz"]
+    },
+    {
+      "id": "chapter-4",
+      "title": "Chapter 4: The whole open position",
+      "summary": "Joining low and high, skips, and a tune everyone knows.",
+      "stages": ["P3", "R2"],
+      "lessons": ["p3-crossing", "p3-two-octaves", "p3-skips", "piece-twinkle"]
+    },
+    {
+      "id": "chapter-5",
+      "title": "Chapter 5: Eighth notes",
+      "summary": "Two notes to a beat, and the eighth rest.",
+      "stages": ["P3", "R3"],
+      "lessons": ["r3-eighths", "r3-eighth-melodies", "r3-eighth-rests", "r3-eighth-tunes"]
+    },
+    {
+      "id": "chapter-6",
+      "title": "Chapter 6: Key signatures",
+      "summary": "F sharp and B flat, the keys of G and F, and their minor keys.",
+      "stages": ["P4", "R3"],
+      "lessons": ["p4-key-of-g", "p4-g-tunes", "p4-key-of-f", "p4-minor-keys"]
+    },
+    {
+      "id": "chapter-7",
+      "title": "Chapter 7: Dots and ties",
+      "summary": "Ties, the dotted quarter note, and a waltz.",
+      "stages": ["P4", "R4"],
+      "lessons": ["r4-ties", "r4-dotted-quarter", "piece-g-waltz"]
+    },
+    {
+      "id": "chapter-8",
+      "title": "Chapter 8: Accidentals",
+      "summary": "Sharps, flats and naturals beside a note, the key of D, and A minor.",
+      "stages": ["P5", "R4"],
+      "lessons": ["p5-sharps", "p5-flats-naturals", "p5-key-of-d", "p5-a-minor"]
     }
   ]
 }

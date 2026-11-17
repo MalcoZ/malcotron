@@ -6,6 +6,12 @@
     "pitchStage": "P1",
     "rhythmStage": "R1"
   },
+  "bootstrap": true,
+  "introduces": {
+    "pitches": ["G4", "B4", "E5"],
+    "rhythms": ["q"],
+    "meters": ["4/4"]
+  },
   "steps": [
     {
       "type": "explain",

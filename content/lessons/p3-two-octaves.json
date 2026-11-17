@@ -1,0 +1,75 @@
+{
+  "id": "p3-two-octaves",
+  "title": "Seventeen notes",
+  "summary": "Every plain note in open position, bottom to top.",
+  "requires": {
+    "pitchStage": "P3",
+    "rhythmStage": "R2"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "The lower half",
+      "text": [
+        "Open position holds seventeen plain notes, from the open 6th string to **G** on the 1st. Here are the lowest eight."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E3/q F3/q G3/q A3/q", "B3/q C4/q D4/q E4/q"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "explain",
+      "title": "The upper half",
+      "text": [
+        "And the upper nine. The letters keep cycling **A** to **G** all the way up. Only the place on the staff changes."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["F4/q G4/q A4/q B4/q", "C5/q D5/q E5/q F5/q", "G5/w"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "All the way up and down",
+      "text": ["Eight bars, from the lowest note to the highest and most of the way back."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "E3/q F3/q G3/q A3/q",
+          "B3/q C4/q D4/q E4/q",
+          "F4/q G4/q A4/q B4/q",
+          "C5/q D5/q E5/q F5/q",
+          "G5/q F5/q E5/q D5/q",
+          "C5/q B4/q A4/q G4/q",
+          "F4/q E4/q D4/q C4/q",
+          "B3/q A3/q G3/h"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Top to bottom",
+      "text": ["Skips across the whole range."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "E3/q G3/q B3/q D4/q",
+          "F4/q A4/q C5/q E5/q",
+          "G5/q E5/q C5/q A4/q",
+          "F4/q D4/q B3/h"
+        ]
+      }
+    }
+  ]
+}

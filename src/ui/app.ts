@@ -11,6 +11,7 @@ import type { Piece } from '../content/types';
 import { buildPiece } from '../content/validate';
 import { loadCourse } from '../course/loader';
 import { Progress } from '../course/progress';
+import { Engine } from '../engine/engine';
 import { CalibrationStore } from '../listen/calibration';
 import { RealMic, SimulatedMic, type MicInput } from '../listen/mic';
 import { simulateNotes, simulateTake, type SimulatedMistakes } from '../listen/simulate';
@@ -23,6 +24,7 @@ import { createHome } from './home';
 import { createLessonDone, createLessonView } from './lesson-view';
 import { createMicView } from './mic-view';
 import { createPieceView } from './piece-view';
+import { createSessionView } from './session-view';
 import { parseRoute } from './router';
 import { ThemeController } from './theme';
 
@@ -46,6 +48,7 @@ export function startApp(root: HTMLElement): void {
   const store = storage();
   const progress = new Progress(store);
   const calibration = new CalibrationStore(store);
+  const engine = new Engine(store);
   let mic: MicInput = new RealMic();
 
   // Tones are created (and their samples fetched) only when first chosen.
@@ -122,6 +125,8 @@ export function startApp(root: HTMLElement): void {
 
   const about = createAboutDialog(() => {
     progress.reset();
+    engine.reset();
+    ctx.session = null;
     about.close();
     if (location.hash === '' || location.hash === '#/') show();
     else location.hash = '#/';
@@ -154,6 +159,8 @@ export function startApp(root: HTMLElement): void {
       return mic;
     },
     calibration,
+    engine,
+    session: null,
     zoom: LAYOUT.zoomDefault,
     navigate(path) {
       const hash = `#${path}`;
@@ -200,6 +207,13 @@ export function startApp(root: HTMLElement): void {
         );
         return;
       }
+    }
+    if (route.name === 'session') {
+      mount(
+        () => createSessionView(ctx, main),
+        'Space: listen · R: your turn · M: click · T: peek at tab · Enter: next',
+      );
+      return;
     }
     if (route.name === 'mic') {
       mount(() => createMicView(ctx), '');
@@ -320,6 +334,7 @@ export function startApp(root: HTMLElement): void {
     clock,
     theme,
     progress,
+    engine,
     course: ctx.course,
     get panel() {
       return view?.panel ?? null;

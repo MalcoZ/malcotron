@@ -33,6 +33,9 @@ export function createPieceView(ctx: AppContext, piece: Piece, scroller: HTMLEle
     showTab: false,
     yourTurn: true,
     fingeringControl: true,
+    // Free practice: stats are kept, but it is not a scheduled review (spec section 4).
+    practice: 'free',
+    trackPiece: true,
   });
   return {
     el,

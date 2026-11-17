@@ -13,13 +13,20 @@ import {
 import type { Course } from '../../src/course/types';
 import { parsePitch } from '../../src/content/music';
 import { parseRoute, routePath } from '../../src/ui/router';
-import { CONTENT_FILES, readContent, readJson } from './helpers';
+import { readContent, readJson } from './helpers';
 
+const contentDir = (dir: string) => fileURLToPath(new URL(`../../content/${dir}`, import.meta.url));
+
+/** Every piece and phrase under /content, by id. */
 const pieces = new Map<string, PieceFile>(
-  CONTENT_FILES.map((file) => {
-    const raw = readContent(file) as PieceFile;
-    return [raw.id, raw];
-  }),
+  ['pieces', 'phrases'].flatMap((dir) =>
+    readdirSync(contentDir(dir))
+      .filter((name) => name.endsWith('.json'))
+      .map((name) => {
+        const raw = readContent(`${dir}/${name}`) as PieceFile;
+        return [raw.id, raw] as const;
+      }),
+  ),
 );
 
 function lessonFiles(): { file: string; raw: unknown }[] {
@@ -38,10 +45,12 @@ function loadCourse(): Course {
 const messages = (issues: readonly { message: string }[]) => issues.map((i) => i.message);
 
 describe('Chapter 1', () => {
-  const course = loadCourse();
+  const full = loadCourse();
+  // Chapter 1 on its own: the checks below were written for it.
+  const course = { ...full, chapters: [full.chapters[0]!], lessons: full.chapters[0]!.lessons };
 
-  it('is one chapter of about ten lessons, covering P1 and R1', () => {
-    expect(course.chapters).toHaveLength(1);
+  it('is a chapter of about ten lessons, covering P1 and R1, and is followed by more chapters', () => {
+    expect(full.chapters.length).toBeGreaterThan(1);
     expect(course.chapters[0]!.stages).toEqual(['P1', 'R1']);
     expect(course.lessons.length).toBeGreaterThanOrEqual(9);
     expect(course.lessons.length).toBeLessThanOrEqual(12);
@@ -174,6 +183,8 @@ describe('lesson and curriculum rules', () => {
     title: 'Test',
     summary: 'Test.',
     requires: { pitchStage: 'P1', rhythmStage: 'R1' },
+    // The synthetic lessons here teach nothing, so the interleaving rule is not what is being tested.
+    bootstrap: true,
     steps,
     ...extra,
   });

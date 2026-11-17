@@ -6,6 +6,9 @@
     "pitchStage": "P1",
     "rhythmStage": "R1"
   },
+  "introduces": {
+    "pitches": ["A4"]
+  },
   "steps": [
     {
       "type": "explain",

@@ -6,6 +6,7 @@
     "pitchStage": "P1",
     "rhythmStage": "R1"
   },
+  "bootstrap": true,
   "steps": [
     {
       "type": "explain",

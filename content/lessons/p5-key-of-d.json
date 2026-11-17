@@ -1,0 +1,63 @@
+{
+  "id": "p5-key-of-d",
+  "title": "Two sharps: the key of D",
+  "summary": "A key signature with F sharp and C sharp.",
+  "requires": {
+    "pitchStage": "P5",
+    "rhythmStage": "R4"
+  },
+  "introduces": {
+    "keys": ["D"],
+    "pitches": ["C#4"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Two sharps",
+      "text": [
+        "The key of **D** has two sharps in its signature: F and C. Every F and every C is sharp.",
+        "The low **C sharp** is the 4th fret of the 5th string."
+      ],
+      "score": {
+        "key": "D",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["D4/q E4/q F#4/q G4/q", "A4/q B4/q C#5/q D5/q"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "practice",
+      "title": "Around D",
+      "text": ["Check the key signature first: two sharps."],
+      "score": {
+        "key": "D",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "D4/q F#4/q A4/q F#4/q",
+          "G4/q B4/q D5/h",
+          "C#5/q B4/q A4/q G4/q",
+          "F#4/q E4/q D4/h"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "A tune in D",
+      "text": ["Dotted quarters, in D. The last bar has the low C sharp."],
+      "score": {
+        "key": "D",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "A4/q. B4/8 C#5/q D5/q",
+          "E5/q. D5/8 C#5/h",
+          "B4/q A4/q G4/q F#4/q",
+          "E4/q C#4/q D4/h"
+        ]
+      }
+    }
+  ]
+}

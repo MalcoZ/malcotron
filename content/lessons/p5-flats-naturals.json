@@ -1,0 +1,68 @@
+{
+  "id": "p5-flats-naturals",
+  "title": "Flats and naturals",
+  "summary": "Lowering a note, and cancelling a sign.",
+  "requires": {
+    "pitchStage": "P5",
+    "rhythmStage": "R4"
+  },
+  "introduces": {
+    "pitches": ["Eb4", "Eb5"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Flats and naturals",
+      "text": [
+        "A flat beside a note lowers it one fret. A **natural** sign cancels a sharp or flat, whether from earlier in the bar or from the key signature."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q Bb4/q B4/q A4/q"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "E flat",
+      "text": [
+        "**E flat** cannot be an open string. The high one is the 4th fret of the 2nd string. The low one is the 1st fret of the 4th string."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["D5/q Eb5/q D4/q Eb4/q"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "practice",
+      "title": "One fret down",
+      "text": ["Flats on the 3rd and 4th strings."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q A4/q Bb4/q A4/q", "G4/h Eb4/h", "D4/q Eb4/q F4/q G4/q", "G4/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Flats and naturals",
+      "text": [
+        "In bar 2 the flat carries to the third note, and a natural cancels it on the fourth."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["D5/q Eb5/q D5/q C5/q", "Bb4/q A4/q Bb4/q B4/q", "C5/q D5/q Eb5/q D5/q", "C5/w"]
+      }
+    }
+  ]
+}

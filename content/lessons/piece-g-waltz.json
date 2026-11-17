@@ -1,0 +1,34 @@
+{
+  "id": "piece-g-waltz",
+  "title": "Piece: Little Waltz in G",
+  "summary": "A waltz that uses the last three chapters.",
+  "requires": {
+    "pitchStage": "P4",
+    "rhythmStage": "R4"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Before you play",
+      "text": [
+        "This waltz uses everything from the last three chapters: the key of G, eighth notes, and a dotted quarter note in bar 4.",
+        "Find the two F sharps before you start."
+      ],
+      "piece": "p4-g-waltz",
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Slowly first",
+      "text": ["Take it slowly. Count **1 2 3**, and **1 and 2 and 3 and** where the eighths are."],
+      "piece": "p4-g-waltz",
+      "tempo": 56
+    },
+    {
+      "type": "check",
+      "title": "Little Waltz in G",
+      "text": ["The whole waltz."],
+      "piece": "p4-g-waltz"
+    }
+  ]
+}

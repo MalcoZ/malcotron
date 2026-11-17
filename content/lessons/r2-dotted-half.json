@@ -1,0 +1,63 @@
+{
+  "id": "r2-dotted-half",
+  "title": "The dotted half note",
+  "summary": "A note that lasts three beats.",
+  "requires": {
+    "pitchStage": "P2",
+    "rhythmStage": "R2"
+  },
+  "introduces": {
+    "rhythms": ["h."]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "A dot adds half",
+      "text": [
+        "A dot after a note makes it half as long again. A half note is two beats, so a **dotted half note** is three.",
+        "Count **1 2 3** while it rings."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/h. B4/q"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1 2 3"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "4"
+        }
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "Three and one",
+      "text": ["Each bar is a dotted half note and a quarter note: three beats, then one."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/h. A4/q", "B4/h. C5/q", "D5/q C5/q B4/h", "G4/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Dotted halves",
+      "text": ["Hold each dotted note for all three beats before you move."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E5/h. D5/q", "C5/h. B4/q", "A4/q B4/q C5/h", "C5/w"]
+      }
+    }
+  ]
+}

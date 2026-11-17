@@ -1,0 +1,63 @@
+{
+  "id": "r4-ties",
+  "title": "Ties",
+  "summary": "Two notes joined into one longer note.",
+  "requires": {
+    "pitchStage": "P4",
+    "rhythmStage": "R4"
+  },
+  "introduces": {
+    "rhythms": ["tie"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "A tie joins two notes",
+      "text": [
+        "A curved line joining two notes of the same pitch is a **tie**. Play the first note and hold it for the length of both.",
+        "Do not play the second note."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/h_ B4/q B4/q"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1 2 3"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "4"
+        }
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "Hold through the tie",
+      "text": ["Count through each tied note. The tab shows a tied note in brackets."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/h_ G4/q A4/q", "B4/h_ B4/q C5/q", "D5/q C5/q B4/q_ B4/q", "G4/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Ties",
+      "text": ["Play each tied pair once."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C5/h_ C5/q D5/q", "E5/q D5/q_ D5/q C5/q", "B4/h_ B4/q A4/q", "G4/w"]
+      }
+    }
+  ]
+}

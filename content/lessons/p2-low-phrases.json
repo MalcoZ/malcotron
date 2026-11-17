@@ -1,0 +1,53 @@
+{
+  "id": "p2-low-phrases",
+  "title": "The low strings together",
+  "summary": "Nine low notes, and a tune that uses them.",
+  "requires": {
+    "pitchStage": "P2",
+    "rhythmStage": "R1"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Nine low notes",
+      "text": [
+        "That is nine new notes, from the open 6th string up to F on the 4th: **E F G A B C D E F**.",
+        "With Chapter 1, you can now read every plain note in open position."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E3/q F3/q G3/q A3/q", "B3/q C4/q D4/q E4/q", "F4/w"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "example",
+      "title": "Before you play",
+      "text": [
+        "Read this through first. Name each note, counting ledger lines where you need to. Then press **Listen**."
+      ],
+      "piece": "p2-low-strings",
+      "labels": "names",
+      "showTab": false
+    },
+    {
+      "type": "practice",
+      "title": "Down Low",
+      "text": ["Now play it. Slow and steady."],
+      "piece": "p2-low-strings"
+    },
+    {
+      "type": "check",
+      "title": "Skips in the bass",
+      "text": ["A new line that skips from string to string. No note names this time."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E3/q G3/q B3/q D4/q", "C4/h A3/h", "F3/q A3/q C4/q E4/q", "D4/w"]
+      }
+    }
+  ]
+}

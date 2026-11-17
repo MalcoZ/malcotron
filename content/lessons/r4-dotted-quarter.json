@@ -1,0 +1,82 @@
+{
+  "id": "r4-dotted-quarter",
+  "title": "The dotted quarter note",
+  "summary": "A beat and a half, then a quick note.",
+  "requires": {
+    "pitchStage": "P4",
+    "rhythmStage": "R4"
+  },
+  "introduces": {
+    "rhythms": ["q."]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "A beat and a half",
+      "text": [
+        "A dot adds half again, so a **dotted quarter note** lasts a beat and a half. A single eighth note nearly always follows it.",
+        "Count **1 2 and**: the eighth lands on the **and** of 2."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q. B4/8 B4/h"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1 2"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "and"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "3 4"
+        }
+      ]
+    },
+    {
+      "type": "explain",
+      "title": "Think of a tie",
+      "text": [
+        "It is the same as a quarter note tied to an eighth. If the rhythm feels slippery, count every eighth, **1 and 2 and**, and play on 1 and on the second **and**."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q_ B4/8 B4/8 B4/h"]
+      },
+      "fingering": "none"
+    },
+    {
+      "type": "practice",
+      "title": "Long, short",
+      "text": ["Each bar starts with the dotted rhythm."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G4/q. A4/8 B4/h", "C5/q. B4/8 A4/h", "B4/q. C5/8 D5/q C5/q", "B4/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Dotted quarters",
+      "text": ["Keep counting the eighths in your head."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E5/q. D5/8 C5/q D5/q", "E5/q. F5/8 G5/h", "F5/q. E5/8 D5/q B4/q", "C5/w"]
+      }
+    }
+  ]
+}

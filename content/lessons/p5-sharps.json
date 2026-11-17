@@ -1,0 +1,68 @@
+{
+  "id": "p5-sharps",
+  "title": "Sharps beside a note",
+  "summary": "Accidentals: a sign that lasts one bar.",
+  "requires": {
+    "pitchStage": "P5",
+    "rhythmStage": "R4"
+  },
+  "introduces": {
+    "pitches": ["C#5", "G#4"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "A sharp beside a note",
+      "text": [
+        "A sharp written just before one note is an **accidental**. It raises that note one fret.",
+        "It lasts until the end of the bar. The next bar line cancels it."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["F4/q F#4/q G4/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "Two new sharps",
+      "text": [
+        "**C sharp** is the 2nd fret of the 2nd string. **G sharp** is the 1st fret of the 3rd string.",
+        "A sharp is always one fret above the plain note."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C5/q C#5/q G4/q G#4/q"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "practice",
+      "title": "One fret up",
+      "text": ["In bar 3 the sharp is written once, and the second C in that bar is sharp too."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E4/q F#4/q G4/q G#4/q", "A4/h C5/h", "C#5/q D5/q C#5/q D5/q", "E5/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Sharps",
+      "text": ["Watch for sharps that carry through the bar."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["A4/q G#4/q A4/q B4/q", "C5/q C#5/q D5/h", "E5/q D5/q C#5/q D5/q", "A4/w"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "p3-crossing",
+  "title": "From low to high",
+  "summary": "Joining the low strings to the high ones.",
+  "requires": {
+    "pitchStage": "P3",
+    "rhythmStage": "R2"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Where the halves meet",
+      "text": [
+        "The low notes and the high notes meet between the 4th and 3rd strings. After **F** on the 4th string comes the open 3rd string, **G**."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["D4/q E4/q F4/q G4/q", "A4/q B4/q C5/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "A scale",
+      "text": [
+        "Eight notes in a row, from one letter to the same letter higher up, make a **scale**. This is the scale of C, from the C on the 5th string to the C on the 2nd."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C4/q D4/q E4/q F4/q", "G4/q A4/q B4/q C5/q"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "The C scale",
+      "text": ["Up the scale and back down. It crosses four strings."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "C4/q D4/q E4/q F4/q",
+          "G4/q A4/q B4/q C5/q",
+          "C5/q B4/q A4/q G4/q",
+          "F4/q E4/q D4/q C4/q"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Across the join",
+      "text": ["Four bars that keep crossing between the 4th and 3rd strings."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C4/q E4/q G4/q C5/q", "B4/h G4/h", "A4/q F4/q D4/q B3/q", "C4/w"]
+      }
+    }
+  ]
+}

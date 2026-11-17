@@ -1,0 +1,76 @@
+{
+  "id": "p4-key-of-g",
+  "title": "One sharp: F sharp",
+  "summary": "A sign at the start that changes every F.",
+  "requires": {
+    "pitchStage": "P4",
+    "rhythmStage": "R3"
+  },
+  "introduces": {
+    "keys": ["G"],
+    "pitches": ["F#3", "F#4", "F#5"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Sharps at the start",
+      "text": [
+        "A **sharp** raises a note by one fret. A sharp at the start of every line, on the F line, is a **key signature**.",
+        "It makes every F in the piece **F sharp**, with nothing written beside the note."
+      ],
+      "score": {
+        "key": "G",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E4/q F#4/q G4/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "Three F sharps",
+      "text": [
+        "Open position has three: the 4th fret of the 4th string, the 2nd fret of the 1st string, and the 2nd fret of the 6th.",
+        "The one key signature covers them all."
+      ],
+      "score": {
+        "key": "G",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["F#3/q F#4/q F#5/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "practice",
+      "title": "Up to G and back",
+      "text": [
+        "Check the start of the line before you play: one sharp. The F near the top is the 2nd fret."
+      ],
+      "score": {
+        "key": "G",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "G4/q A4/q B4/q C5/q",
+          "D5/q E5/q F#5/q G5/q",
+          "G5/q F#5/q E5/q D5/q",
+          "C5/q B4/q A4/q G4/q"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "F sharp on the 4th string",
+      "text": ["Now the lower F sharp: 4th fret, 4th finger."],
+      "score": {
+        "key": "G",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["D4/q E4/q F#4/q G4/q", "A4/h F#4/h", "G4/q F#4/q E4/q D4/q", "G4/w"]
+      }
+    }
+  ]
+}

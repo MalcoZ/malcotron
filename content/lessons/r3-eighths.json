@@ -1,0 +1,108 @@
+{
+  "id": "r3-eighths",
+  "title": "Eighth notes",
+  "summary": "Two notes to every beat.",
+  "requires": {
+    "pitchStage": "P3",
+    "rhythmStage": "R3"
+  },
+  "introduces": {
+    "rhythms": ["8"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Two to a beat",
+      "text": [
+        "An **eighth note** lasts half a beat, so two fit in one beat. Pairs are joined by a **beam**.",
+        "Count **1 and 2 and**: play on the number, and again on the **and**."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/8 B4/8 B4/8 B4/8 B4/q B4/q"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "1"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "and"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "2"
+        },
+        {
+          "bar": 1,
+          "note": 4,
+          "text": "and"
+        },
+        {
+          "bar": 1,
+          "note": 5,
+          "text": "3"
+        },
+        {
+          "bar": 1,
+          "note": 6,
+          "text": "4"
+        }
+      ]
+    },
+    {
+      "type": "explain",
+      "title": "Keep the beat where it was",
+      "text": [
+        "With a pick, play down on the number and up on the **and**. With fingers, alternate two fingers.",
+        "The clicks do not speed up. Eighth notes are twice as many, not rushed."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["B4/q B4/8 B4/8 B4/q B4/8 B4/8"]
+      },
+      "fingering": "none"
+    },
+    {
+      "type": "practice",
+      "title": "Open strings",
+      "text": ["Count **1 and 2 and 3 and 4 and** all the way through, even on the long notes."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "G4/q G4/8 G4/8 B4/q B4/8 B4/8",
+          "E5/8 E5/8 E5/8 E5/8 B4/h",
+          "G4/8 G4/8 B4/8 B4/8 E5/q B4/q",
+          "G4/w"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Eighths on open strings",
+      "text": ["Keep the count even."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "B4/8 B4/8 B4/q E5/8 E5/8 E5/q",
+          "G4/q B4/8 B4/8 E5/h",
+          "E5/8 E5/8 B4/8 B4/8 G4/8 G4/8 B4/q",
+          "E5/w"
+        ]
+      }
+    }
+  ]
+}

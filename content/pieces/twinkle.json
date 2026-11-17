@@ -1,0 +1,28 @@
+{
+  "id": "twinkle",
+  "title": "Twinkle, Twinkle (Ah! vous dirai-je, maman)",
+  "composer": "Traditional (French)",
+  "source": "French melody, first published in 1761; arranged for this app in C for open position",
+  "key": "C",
+  "time": "4/4",
+  "position": 0,
+  "suggestedTempo": 80,
+  "requires": {
+    "pitchStage": "P3",
+    "rhythmStage": "R1"
+  },
+  "bars": [
+    "C4/q C4/q G4/q G4/q",
+    "A4/q A4/q G4/h",
+    "F4/q F4/q E4/q E4/q",
+    "D4/q D4/q C4/h",
+    "G4/q G4/q F4/q F4/q",
+    "E4/q E4/q D4/h",
+    "G4/q G4/q F4/q F4/q",
+    "E4/q E4/q D4/h",
+    "C4/q C4/q G4/q G4/q",
+    "A4/q A4/q G4/h",
+    "F4/q F4/q E4/q E4/q",
+    "D4/q D4/q C4/h"
+  ]
+}

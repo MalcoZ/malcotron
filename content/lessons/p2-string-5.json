@@ -1,0 +1,79 @@
+{
+  "id": "p2-string-5",
+  "title": "5th string: A, B and C",
+  "summary": "Notes that sit on extra lines below the staff.",
+  "requires": {
+    "pitchStage": "P2",
+    "rhythmStage": "R1"
+  },
+  "introduces": {
+    "pitches": ["A3", "B3", "C4"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Ledger lines",
+      "text": [
+        "Notes lower than the staff sit on short extra lines called **ledger lines**.",
+        "**C** is on the first ledger line below the staff: the 3rd fret of the 5th string."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C4/q D4/q E4/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "B and A",
+      "text": [
+        "**B** hangs just under that ledger line, at the 2nd fret. The open 5th string, **A**, sits on a second ledger line."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["A3/q B3/q C4/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "practice",
+      "title": "Up and back",
+      "text": ["Open, 2nd finger, 3rd finger: the same shape as the 4th string."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["A3/q B3/q C4/h", "C4/q B3/q A3/h"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Across two strings",
+      "text": ["From the open 5th string up to F on the 4th, and back down."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["A3/q B3/q C4/q D4/q", "E4/q F4/q E4/q D4/q", "C4/q B3/q A3/h", "A3/w"]
+      }
+    },
+    {
+      "type": "check",
+      "title": "A, B and C",
+      "text": ["Four bars on the 5th and 4th strings."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C4/q B3/q A3/q B3/q", "C4/h D4/h", "E4/q C4/q B3/q A3/q", "A3/w"]
+      }
+    }
+  ]
+}

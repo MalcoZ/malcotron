@@ -1,0 +1,78 @@
+{
+  "id": "r3-eighth-rests",
+  "title": "The eighth rest",
+  "summary": "Half a beat of silence.",
+  "requires": {
+    "pitchStage": "P3",
+    "rhythmStage": "R3"
+  },
+  "introduces": {
+    "rhythms": ["r8"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Wait, then play",
+      "text": [
+        "The **eighth rest** looks like a small 7. It is half a beat of silence.",
+        "When it falls on the number, you wait and play on the **and**."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["r/8 B4/8 r/8 B4/8 B4/h"]
+      },
+      "fingering": "none",
+      "labels": [
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "and"
+        },
+        {
+          "bar": 1,
+          "note": 4,
+          "text": "and"
+        },
+        {
+          "bar": 1,
+          "note": 5,
+          "text": "3 4"
+        }
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "Off the beat",
+      "text": ["Say the number silently on each rest, then play on the **and**."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "B4/q r/8 B4/8 B4/q r/8 B4/8",
+          "G4/8 G4/8 r/8 G4/8 B4/h",
+          "r/8 E5/8 E5/q r/8 B4/8 B4/q",
+          "G4/w"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Eighth rests",
+      "text": ["Rests on the beat, with notes that move."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "C5/q r/8 C5/8 D5/q r/8 D5/8",
+          "E5/8 D5/8 r/8 C5/8 D5/h",
+          "r/8 E5/8 D5/8 C5/8 B4/q G4/q",
+          "C5/w"
+        ]
+      }
+    }
+  ]
+}

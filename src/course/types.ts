@@ -39,7 +39,22 @@ export interface LessonFile {
   title: string;
   summary: string;
   requires: { pitchStage: PitchStage; rhythmStage: RhythmStage };
+  /** What this lesson teaches for the first time (checked by the interleaving rule). */
+  introduces?: Introduces;
+  /** The first lessons must use a note and a rhythm before either can be taught. */
+  bootstrap?: boolean;
   steps: StepFile[];
+}
+
+export interface Introduces {
+  /** Written pitches, for example ["F5", "G5"] or ["F#4"]. */
+  pitches?: string[];
+  /** Rhythm values: q h w h. 8 q. 16, rests rq rh rw r8, and tie. */
+  rhythms?: string[];
+  /** Time signatures, for example ["3/4"]. */
+  meters?: string[];
+  /** Keys other than C, for example ["G"]. */
+  keys?: string[];
 }
 
 export interface ChapterFile {
@@ -75,6 +90,8 @@ export interface Lesson {
   readonly title: string;
   readonly summary: string;
   readonly requires: { readonly pitchStage: PitchStage; readonly rhythmStage: RhythmStage };
+  readonly introduces: Required<Introduces>;
+  readonly bootstrap: boolean;
   readonly steps: readonly Step[];
   readonly file: string;
 }

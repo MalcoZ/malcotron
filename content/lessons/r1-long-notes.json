@@ -6,6 +6,9 @@
     "pitchStage": "P1",
     "rhythmStage": "R1"
   },
+  "introduces": {
+    "rhythms": ["h", "w"]
+  },
   "steps": [
     {
       "type": "explain",

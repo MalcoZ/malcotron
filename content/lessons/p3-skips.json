@@ -1,0 +1,87 @@
+{
+  "id": "p3-skips",
+  "title": "Skips: line to line, space to space",
+  "summary": "Reading notes that miss out a letter.",
+  "requires": {
+    "pitchStage": "P3",
+    "rhythmStage": "R2"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Steps and skips",
+      "text": [
+        "Most moves so far have been **steps**: from a line to the next space. A **skip** jumps from one line to the next line, missing a letter."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E4/q G4/q B4/q D5/q"]
+      },
+      "labels": [
+        {
+          "bar": 1,
+          "note": 1,
+          "text": "line"
+        },
+        {
+          "bar": 1,
+          "note": 2,
+          "text": "line"
+        },
+        {
+          "bar": 1,
+          "note": 3,
+          "text": "line"
+        },
+        {
+          "bar": 1,
+          "note": 4,
+          "text": "line"
+        }
+      ]
+    },
+    {
+      "type": "explain",
+      "title": "Space to space",
+      "text": [
+        "Skips between spaces look the same. **F A C E** are the four spaces of the staff, from the bottom up."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["F4/q A4/q C5/q E5/q"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Lines, then spaces",
+      "text": ["Up the lines and down, then up the spaces and down."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "E4/q G4/q B4/q D5/q",
+          "F5/q D5/q B4/q G4/q",
+          "F4/q A4/q C5/q E5/q",
+          "C5/q A4/q F4/h"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Skips",
+      "text": ["Each bar skips up and comes back."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C4/q E4/q G4/q E4/q", "D4/q F4/q A4/q F4/q", "E4/q G4/q B4/q G4/q", "C5/w"]
+      }
+    }
+  ]
+}

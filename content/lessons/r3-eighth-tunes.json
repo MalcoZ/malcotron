@@ -1,0 +1,59 @@
+{
+  "id": "r3-eighth-tunes",
+  "title": "Tunes with eighth notes",
+  "summary": "Rhythms that repeat from bar to bar.",
+  "requires": {
+    "pitchStage": "P3",
+    "rhythmStage": "R3"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Spot the pattern",
+      "text": [
+        "In most real music a rhythm repeats from bar to bar. In the next two tunes, find the bars that share a rhythm.",
+        "Once you have the pattern, you only have to read the notes."
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "In two",
+      "text": ["Bars 1, 2, 3, 5 and 6 all have the same rhythm."],
+      "score": {
+        "key": "C",
+        "time": "2/4",
+        "position": 0,
+        "bars": [
+          "G4/8 A4/8 B4/q",
+          "C5/8 B4/8 A4/q",
+          "B4/8 C5/8 D5/q",
+          "E5/h",
+          "D5/8 C5/8 B4/q",
+          "C5/8 B4/8 A4/q",
+          "B4/8 A4/8 G4/8 A4/8",
+          "G4/h"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "In three",
+      "text": ["A quarter, two eighths and a quarter, again and again."],
+      "score": {
+        "key": "C",
+        "time": "3/4",
+        "position": 0,
+        "bars": [
+          "C4/q E4/8 F4/8 G4/q",
+          "A4/q G4/8 F4/8 E4/q",
+          "D4/q F4/8 G4/8 A4/q",
+          "G4/h.",
+          "C5/q B4/8 A4/8 G4/q",
+          "A4/q G4/8 F4/8 E4/q",
+          "D4/8 E4/8 F4/q D4/q",
+          "C4/h."
+        ]
+      }
+    }
+  ]
+}

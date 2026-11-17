@@ -1,0 +1,41 @@
+{
+  "id": "piece-twinkle",
+  "title": "Piece: Twinkle, Twinkle",
+  "summary": "A tune everyone knows, across three strings.",
+  "requires": {
+    "pitchStage": "P3",
+    "rhythmStage": "R2"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "A French tune",
+      "text": [
+        "This French melody from the 1700s is known around the world as **Twinkle, Twinkle, Little Star**. Mozart wrote a famous set of variations on it.",
+        "It runs from the 5th string up to the 3rd."
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "First line",
+      "text": ["Bars 1 to 4. The second half of each pair of bars ends on a half note."],
+      "piece": "twinkle",
+      "bars": [1, 4],
+      "tempo": 70
+    },
+    {
+      "type": "practice",
+      "title": "Middle",
+      "text": ["Bars 5 to 8: the same two bars, played twice."],
+      "piece": "twinkle",
+      "bars": [5, 8],
+      "tempo": 70
+    },
+    {
+      "type": "check",
+      "title": "The whole tune",
+      "text": ["All twelve bars. The last four are the first four again. The page follows you."],
+      "piece": "twinkle"
+    }
+  ]
+}

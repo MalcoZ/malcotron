@@ -1,0 +1,83 @@
+{
+  "id": "p2-string-6",
+  "title": "6th string: E, F and G",
+  "summary": "The three lowest notes on the guitar.",
+  "requires": {
+    "pitchStage": "P2",
+    "rhythmStage": "R1"
+  },
+  "introduces": {
+    "pitches": ["E3", "F3", "G3"]
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "The lowest notes",
+      "text": [
+        "The 6th string goes lowest of all. **G**, at the 3rd fret, hangs under the second ledger line.",
+        "**F**, at the 1st fret, sits on a third ledger line. The open string, **E**, hangs below that."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E3/q F3/q G3/h"]
+      },
+      "labels": "names",
+      "showTab": true
+    },
+    {
+      "type": "explain",
+      "title": "Count the lines",
+      "text": [
+        "To read a low note, count its ledger lines. On the second line is **A**. On the third line is **F**. The notes in between hang under a line."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["A3/q G3/q F3/q E3/q"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Up and back",
+      "text": ["Open, 1st finger, 3rd finger."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["E3/q F3/q G3/h", "G3/q F3/q E3/h"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Three strings",
+      "text": ["From the bottom of the guitar up to F on the 4th string, then back."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "E3/q F3/q G3/q A3/q",
+          "B3/q C4/q D4/q E4/q",
+          "F4/q E4/q D4/q C4/q",
+          "B3/q A3/q G3/h"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "E, F and G",
+      "text": ["Four bars around the 6th string."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["G3/q F3/q E3/h", "F3/q G3/q A3/h", "G3/q A3/q B3/q C4/q", "A3/w"]
+      }
+    }
+  ]
+}

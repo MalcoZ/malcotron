@@ -3,10 +3,11 @@
  * Pure: the CLI in tools/ and the app's loader both use it.
  */
 import { COURSE, TEMPO, type FingeringLevel } from '../config';
-import { formatLocation, type ContentLocation, type Pitch } from '../content/music';
+import { formatLocation, pitchToString, type ContentLocation, type Pitch } from '../content/music';
 import { stageNumber } from '../content/stages';
 import type { Piece, PieceFile } from '../content/types';
 import { validatePiece, type Issue } from '../content/validate';
+import { rhythmKinds } from '../engine/skills';
 import type {
   Chapter,
   Course,
@@ -268,6 +269,13 @@ export function validateLesson(
       title: lessonFile.title,
       summary: lessonFile.summary,
       requires: { ...lessonFile.requires },
+      introduces: {
+        pitches: lessonFile.introduces?.pitches ?? [],
+        rhythms: lessonFile.introduces?.rhythms ?? [],
+        meters: lessonFile.introduces?.meters ?? [],
+        keys: lessonFile.introduces?.keys ?? [],
+      },
+      bootstrap: lessonFile.bootstrap === true,
       steps,
       file,
     },
@@ -355,7 +363,79 @@ export function validateCourse(
   for (const id of lessons.keys()) {
     if (!listed.has(id)) err(`lesson "${id}" is not listed in any chapter`);
   }
+  errors.push(...checkInterleaving(chapters.flatMap((c) => c.lessons)));
 
   if (errors.length > 0) return { errors };
   return { errors, course: { chapters, lessons: chapters.flatMap((c) => c.lessons) } };
+}
+
+/** What a lesson's scores actually use. */
+function usedBy(lesson: Lesson) {
+  const used = {
+    pitches: new Set<string>(),
+    rhythms: new Set<string>(),
+    meters: new Set<string>(),
+    keys: new Set<string>(),
+  };
+  for (const step of lesson.steps) {
+    if (!step.piece) continue;
+    used.meters.add(step.piece.time);
+    if (step.piece.key !== 'C') used.keys.add(step.piece.key);
+    for (const note of step.piece.bars.flat()) {
+      for (const kind of rhythmKinds(note.token)) used.rhythms.add(kind);
+      if (note.pitch) used.pitches.add(pitchToString(note.pitch));
+    }
+  }
+  return used;
+}
+
+/**
+ * The interleaving rule (spec section 3), over the lessons in book order:
+ * nothing is used before it is taught; a lesson introduces pitches (or keys)
+ * or rhythms (or meters), not both; and what it says it introduces, it uses.
+ * Lessons marked `bootstrap` are exempt from the first two: the very first
+ * exercise needs a note and a rhythm before either has been explained.
+ */
+export function checkInterleaving(lessons: readonly Lesson[]): Issue[] {
+  const issues: Issue[] = [];
+  const taught = {
+    pitches: new Set<string>(),
+    rhythms: new Set<string>(),
+    meters: new Set<string>(),
+    keys: new Set<string>(),
+  };
+  const kinds = ['pitches', 'rhythms', 'meters', 'keys'] as const;
+  const noun = {
+    pitches: 'the note',
+    rhythms: 'the rhythm value',
+    meters: 'the time signature',
+    keys: 'the key of',
+  };
+  for (const lesson of lessons) {
+    const err = (detail: string) => issues.push(issue(detail, { file: lesson.file }));
+    const used = usedBy(lesson);
+    const intro = lesson.introduces;
+    const pitchSide = intro.pitches.length + intro.keys.length > 0;
+    const rhythmSide = intro.rhythms.length + intro.meters.length > 0;
+    if (pitchSide && rhythmSide && !lesson.bootstrap) {
+      err('introduces both pitch material and rhythm material; a lesson teaches one new thing');
+    }
+    for (const kind of kinds) {
+      for (const item of intro[kind]) {
+        if (!used[kind].has(item))
+          err(`says it introduces ${noun[kind]} ${item} but never uses it`);
+        if (taught[kind].has(item))
+          err(`says it introduces ${noun[kind]} ${item}, which an earlier lesson already taught`);
+      }
+      if (!lesson.bootstrap) {
+        for (const item of used[kind]) {
+          if (!taught[kind].has(item) && !intro[kind].includes(item)) {
+            err(`uses ${noun[kind]} ${item} before any lesson has taught it`);
+          }
+        }
+      }
+      for (const item of intro[kind]) taught[kind].add(item);
+    }
+  }
+  return issues;
 }

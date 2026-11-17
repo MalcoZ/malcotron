@@ -2,6 +2,8 @@ import type { Player } from '../audio/player';
 import type { Piece } from '../content/types';
 import type { Progress } from '../course/progress';
 import type { Course } from '../course/types';
+import type { Engine } from '../engine/engine';
+import type { SessionPlan } from '../engine/session';
 import type { CalibrationStore } from '../listen/calibration';
 import type { MicInput } from '../listen/mic';
 import type { ScorePanel } from './score-panel';
@@ -18,10 +20,23 @@ export interface AppContext {
   readonly progress: Progress;
   readonly mic: MicInput;
   readonly calibration: CalibrationStore;
+  /** Skill tracking, scheduling and session planning. */
+  readonly engine: Engine;
+  /** The session in progress, if any. */
+  session: ActiveSession | null;
   /** Staff zoom, shared by all screens (dev control in the header). */
   zoom: number;
   /** Go to a route such as "/lesson/p1-open-strings/2". */
   navigate(path: string): void;
+}
+
+/** A session the learner is part-way through. */
+export interface ActiveSession {
+  plan: SessionPlan;
+  /** Index of the current item. */
+  index: number;
+  /** Accuracy of each graded take so far. */
+  accuracies: number[];
 }
 
 /** One screen. The shell puts `el` in the scrolling area and `bottomEl` in the fixed bar under it. */

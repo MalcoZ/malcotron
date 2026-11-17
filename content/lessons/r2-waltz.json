@@ -1,0 +1,59 @@
+{
+  "id": "r2-waltz",
+  "title": "The feel of three",
+  "summary": "Two longer tunes in 3/4.",
+  "requires": {
+    "pitchStage": "P2",
+    "rhythmStage": "R2"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "ONE two three",
+      "text": [
+        "Music in 3/4 leans on the first beat of each bar: **ONE** two three. Many dances are in three, the waltz most famously.",
+        "Feel the first click of each bar as the strong one."
+      ]
+    },
+    {
+      "type": "practice",
+      "title": "A small waltz",
+      "text": ["Eight bars. Notice that the rhythm of bars 1 and 2 comes back in bars 5 and 6."],
+      "score": {
+        "key": "C",
+        "time": "3/4",
+        "position": 0,
+        "bars": [
+          "C5/h D5/q",
+          "E5/h C5/q",
+          "D5/q E5/q F5/q",
+          "E5/h.",
+          "G5/h E5/q",
+          "F5/h D5/q",
+          "E5/q D5/q B4/q",
+          "C5/h."
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Another waltz",
+      "text": ["Eight bars, with skips up the strings in bars 1 and 3."],
+      "score": {
+        "key": "C",
+        "time": "3/4",
+        "position": 0,
+        "bars": [
+          "G4/q B4/q D5/q",
+          "C5/h B4/q",
+          "A4/q C5/q E5/q",
+          "D5/h.",
+          "E5/q D5/q C5/q",
+          "B4/h A4/q",
+          "G4/q A4/q B4/q",
+          "C5/h."
+        ]
+      }
+    }
+  ]
+}

@@ -88,6 +88,7 @@ export function createLessonView(
       showTab: step.showTab,
       yourTurn: canPlay,
       fingeringControl: false,
+      practice: 'scheduled',
       // The mic's grade, or the learner's own answer without a mic. The best result is kept.
       onOutcome: (outcome) => {
         const before = outcomes.get(answerKey);
@@ -124,6 +125,8 @@ export function createLessonView(
     }
     const outcome = outcomes.get(answerKey);
     ctx.progress.complete(lesson.id, outcome?.selfCheck ?? null, outcome?.accuracy ?? null);
+    // Everything the lesson used is now being learned.
+    ctx.engine.completeLesson(lesson);
     ctx.navigate(`/lesson/${lesson.id}/done`);
   };
   back.addEventListener('click', goBack);
@@ -163,6 +166,21 @@ export function createLessonDone(ctx: AppContext, lesson: Lesson): View {
   });
   home.addEventListener('click', () => ctx.navigate('/'));
   const actions = h('div', { className: 'done-actions' }, home);
+  const session = ctx.session;
+  if (session) {
+    // The lesson was part of a session: carry on with it.
+    const back = h('button', {
+      type: 'button',
+      className: 'btn btn-primary btn-large',
+      id: 'back-to-session',
+      textContent: 'Back to the session',
+    });
+    back.addEventListener('click', () => {
+      session.index++;
+      ctx.navigate('/session');
+    });
+    actions.prepend(back);
+  }
   const card = h(
     'section',
     { className: 'card hero done', id: 'lesson-done' },
@@ -172,7 +190,7 @@ export function createLessonDone(ctx: AppContext, lesson: Lesson): View {
   if (following) {
     const go = h('button', {
       type: 'button',
-      className: 'btn btn-primary btn-large',
+      className: session ? 'btn' : 'btn btn-primary btn-large',
       id: 'done-next',
       textContent: 'Next lesson',
     });

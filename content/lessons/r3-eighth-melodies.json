@@ -1,0 +1,58 @@
+{
+  "id": "r3-eighth-melodies",
+  "title": "Eighths that move",
+  "summary": "Reading beamed pairs as shapes.",
+  "requires": {
+    "pitchStage": "P3",
+    "rhythmStage": "R3"
+  },
+  "steps": [
+    {
+      "type": "explain",
+      "title": "Read in pairs",
+      "text": [
+        "When eighth notes change pitch, read each beamed pair as one shape: up, down, or the same.",
+        "Keep your eyes on the next pair while you play this one."
+      ],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": ["C5/8 D5/8 E5/8 F5/8 G5/h"]
+      },
+      "labels": "names"
+    },
+    {
+      "type": "practice",
+      "title": "Up in pairs",
+      "text": ["Each bar climbs a little higher."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "C5/8 D5/8 E5/q E5/8 D5/8 C5/q",
+          "D5/8 E5/8 F5/q F5/8 E5/8 D5/q",
+          "E5/8 F5/8 G5/8 F5/8 E5/8 D5/8 C5/q",
+          "C5/w"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "title": "Running eighths",
+      "text": ["This one starts on the 5th string and crosses to the 2nd."],
+      "score": {
+        "key": "C",
+        "time": "4/4",
+        "position": 0,
+        "bars": [
+          "C4/8 D4/8 E4/8 F4/8 G4/q E4/q",
+          "A4/8 G4/8 F4/8 E4/8 D4/h",
+          "E4/8 F4/8 G4/8 A4/8 B4/8 C5/8 D5/q",
+          "C5/w"
+        ]
+      }
+    }
+  ]
+}

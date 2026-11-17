@@ -9,6 +9,18 @@ export function createHome(ctx: AppContext): View {
   const nextLesson = next ? course.lessons.find((l) => l.id === next.lesson) : undefined;
   const started = progress.completedCount > 0 || progress.current !== null;
 
+  // Once some notes are known, the day's work is a session: reviews, then the next lesson.
+  const skills = ctx.engine.summary();
+  const hasSkills = skills.learning + skills.mastered > 0;
+  const startSession = () => {
+    const plan = ctx.engine.plan({
+      nextLesson: nextLesson ? { id: nextLesson.id, title: nextLesson.title } : null,
+      pieces: ctx.pieces,
+    });
+    ctx.session = { plan, index: 0, accuracies: [] };
+    ctx.navigate('/session');
+  };
+
   const hero = h('section', { className: 'card hero' });
   if (nextLesson && next) {
     const number = ids.indexOf(nextLesson.id) + 1;
@@ -31,6 +43,7 @@ export function createHome(ctx: AppContext): View {
       ),
       button,
     );
+    if (hasSkills) button.className = 'btn btn-large';
   } else {
     hero.append(
       h(
@@ -43,6 +56,28 @@ export function createHome(ctx: AppContext): View {
           textContent: 'More chapters are on the way. Any lesson can be read again below.',
         }),
       ),
+    );
+  }
+
+  if (hasSkills) {
+    const plan = ctx.engine.plan({
+      nextLesson: nextLesson ? { id: nextLesson.id, title: nextLesson.title } : null,
+      pieces: ctx.pieces,
+    });
+    const session = h('button', {
+      type: 'button',
+      className: 'btn btn-primary btn-large',
+      id: 'start-session',
+      textContent: `Start session · about ${plan.minutes} min`,
+    });
+    session.addEventListener('click', startSession);
+    hero.append(session);
+    hero.firstElementChild?.append(
+      h('p', {
+        className: 'muted small',
+        id: 'skill-summary',
+        textContent: `${skills.due} to review today · ${skills.learning} skills being learned · ${skills.mastered} mastered`,
+      }),
     );
   }
 
