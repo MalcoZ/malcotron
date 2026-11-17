@@ -11,11 +11,9 @@
       "type": "explain",
       "title": "Before you play",
       "text": [
-        "This waltz uses everything from the last three chapters: the key of G, eighth notes, and a dotted quarter note in bar 4.",
-        "Find the two F sharps before you start."
+        "This waltz uses everything from the last three chapters: the key of G, eighth notes, and a dotted quarter note in bar 4. Find the two F sharps before you start."
       ],
-      "piece": "p4-g-waltz",
-      "labels": "names"
+      "piece": "p4-g-waltz"
     },
     {
       "type": "practice",
