@@ -434,18 +434,28 @@ test('the bar band and the visual metronome follow the clock; subdivisions add c
   await expect(page.locator('.bar-band')).toHaveCount(0);
 });
 
-test('Home fits one screen, with the current chapter open', async ({ page }) => {
-  await openRoute(page);
-  expect(
-    await page.evaluate(() => {
+test('Home fits 1280 x 720, with the current chapter shown, before and after skills exist', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  const homeOverflow = () =>
+    page.evaluate(() => {
       const area = document.querySelector('#score-area')!;
       return area.scrollHeight - area.clientHeight;
-    }),
-  ).toBeLessThanOrEqual(0);
-  await expect(page.locator('details[data-chapter="chapter-1"]')).toHaveAttribute('open', '');
+    });
+  await openRoute(page);
+  expect(await homeOverflow()).toBeLessThanOrEqual(0);
+  await expect(page.locator('.chapter-pane')).toHaveAttribute('data-chapter', 'chapter-1');
   await expect(page.locator('.lesson-list li')).toHaveCount(10);
   await expect(page.locator('.lesson-list li').last()).toBeInViewport({ ratio: 1 });
   await expect(page.locator('#continue')).toBeInViewport({ ratio: 1 });
+  // Once a lesson is done the hero also offers a session and a skill summary: still one screen.
+  await openRoute(page, '/lesson/p1-open-strings/5');
+  await page.locator('#next').click();
+  await page.locator('#done-home').click();
+  await expect(page.locator('#start-session')).toBeVisible();
+  expect(await homeOverflow()).toBeLessThanOrEqual(0);
+  await expect(page.locator('.lesson-list li').last()).toBeInViewport({ ratio: 1 });
 });
 
 test('mic setup shows the level in numbers and can save a test recording', async ({ page }) => {

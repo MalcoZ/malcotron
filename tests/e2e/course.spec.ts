@@ -29,21 +29,49 @@ const overflow = (page: Page) =>
     return area.scrollHeight - area.clientHeight;
   });
 
-test('Home says where to start and lists the chapter', async ({ page }) => {
+test('Home says where to start and lists the chapters', async ({ page }) => {
   const errors = trackErrors(page);
   await openRoute(page);
   await expect(page.locator('#next-title')).toHaveText('Lesson 1: Reading from the staff');
   await expect(page.locator('#continue')).toHaveText('Start');
-  await expect(page.locator('[data-chapter] h3')).toHaveText('Chapter 1: First notes');
+  // No skills yet, so no session to offer.
+  await expect(page.locator('#start-session')).toHaveCount(0);
+  // Eight chapters down the side; the current one's lessons beside them.
+  await expect(page.locator('.chapter-tab .chapter-name')).toHaveText([
+    'First notes',
+    'The low strings',
+    'Three beats and two',
+    'The whole open position',
+    'Eighth notes',
+    'Key signatures',
+    'Dots and ties',
+    'Accidentals',
+  ]);
+  await expect(page.locator('[data-chapter-tab="chapter-1"]')).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(page.locator('.chapter-pane h3')).toHaveText('Chapter 1: First notes');
   await expect(page.locator('.lesson-list li')).toHaveCount(10);
-  await expect(page.locator('[data-chapter] .chapter-count')).toHaveText('0 of 10 lessons done');
+  await expect(page.locator('.chapter-pane .chapter-count')).toHaveText('0 of 10 lessons done');
   await expect(page.locator('.lesson-list li.is-next .lesson-title')).toHaveText(
     'Reading from the staff',
   );
+  // Choosing another chapter shows its lessons, numbered through the course.
+  await page.locator('[data-chapter-tab="chapter-2"]').click();
+  await expect(page.locator('.chapter-pane h3')).toHaveText('Chapter 2: The low strings');
+  await expect(page.locator('.lesson-list li')).toHaveCount(4);
+  await expect(page.locator('.lesson-list a').first()).toHaveAttribute(
+    'href',
+    '#/lesson/p2-string-4/1',
+  );
+  // Numbered through the course: the list's counter starts after Chapter 1's ten lessons.
+  await expect(page.locator('.lesson-list')).toHaveCSS('counter-reset', 'lesson 10');
+  await page.locator('[data-chapter-tab="chapter-1"]').click();
   // Pieces are folded away until asked for.
   await expect(page.locator('.piece-list')).toBeHidden();
   await page.locator('#pieces summary').click();
-  await expect(page.locator('.piece-list li')).toHaveCount(4);
+  await expect(page.locator('.piece-list li')).toHaveCount(5);
 
   await page.locator('#continue').click();
   await expect(page).toHaveURL(/#\/lesson\/p1-the-staff\/1$/);
@@ -119,7 +147,7 @@ test('moving to another step stops playback', async ({ page }) => {
 test('every step of every lesson draws without errors and fits the screen without scrolling', async ({
   page,
 }) => {
-  test.setTimeout(120_000);
+  test.setTimeout(600_000);
   const errors = trackErrors(page);
   await openRoute(page);
   const lessons = await page.evaluate(() =>
@@ -128,16 +156,18 @@ test('every step of every lesson draws without errors and fits the screen withou
       steps: l.steps.map((s: any) => ({
         title: s.title,
         notes: s.piece ? s.piece.bars.flat().length : 0,
+        bars: s.piece ? s.piece.bars.length : 0,
         labels: s.labels.size,
       })),
     })),
   );
-  expect(lessons).toHaveLength(10);
+  expect(lessons).toHaveLength(37);
   let steps = 0;
   const tooTall: string[] = [];
+  const longSteps: string[] = [];
   for (const lesson of lessons as {
     id: string;
-    steps: { title: string; notes: number; labels: number }[];
+    steps: { title: string; notes: number; bars: number; labels: number }[];
   }[]) {
     for (const [i, step] of lesson.steps.entries()) {
       await page.evaluate((hash) => (location.hash = hash), `#/lesson/${lesson.id}/${i + 1}`);
@@ -147,8 +177,13 @@ test('every step of every lesson draws without errors and fits the screen withou
       await expect(page.locator('#step-title')).toHaveText(step.title);
       await expect(page.locator('.malco-note')).toHaveCount(step.notes);
       await expect(page.locator('.malco-labels text')).toHaveCount(step.labels);
+      // A whole piece longer than 8 bars may run past the bottom; the page then follows
+      // the playhead (spec section 1, "Everything fits"; tested for Twinkle below).
       const extra = await overflow(page);
-      if (extra > 0) tooTall.push(`${lesson.id} step ${i + 1}: ${extra}px too tall`);
+      if (extra > 0 && step.bars <= 8) {
+        tooTall.push(`${lesson.id} step ${i + 1}: ${extra}px too tall`);
+      }
+      if (step.bars > 8) longSteps.push(`${lesson.id} step ${i + 1}`);
       // Nothing is cut off sideways either.
       const wide = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -158,7 +193,8 @@ test('every step of every lesson draws without errors and fits the screen withou
     }
   }
   expect(tooTall).toEqual([]);
-  expect(steps).toBe(48);
+  expect(longSteps).toEqual(['piece-twinkle step 4']);
+  expect(steps).toBe(146);
   expect(errors).toEqual([]);
 });
 
@@ -326,14 +362,14 @@ test('finishing a lesson ticks it off, moves Continue on, and survives a reload'
   await page.locator('#done-home').click();
   await expect(page.locator('#next-title')).toHaveText('Lesson 2: Three open strings: G, B and E');
   await expect(page.locator('#continue')).toHaveText('Continue');
-  await expect(page.locator('[data-chapter] .chapter-count')).toHaveText('1 of 10 lessons done');
+  await expect(page.locator('.chapter-pane .chapter-count')).toHaveText('1 of 10 lessons done');
   await expect(page.locator('.lesson-list li').first().locator('.lesson-state')).toHaveText(
     '✓ Done',
   );
 
   await page.reload();
   await expect(page.locator('#app')).toHaveAttribute('data-ready', 'true');
-  await expect(page.locator('[data-chapter] .chapter-count')).toHaveText('1 of 10 lessons done');
+  await expect(page.locator('.chapter-pane .chapter-count')).toHaveText('1 of 10 lessons done');
   await expect(page.locator('#next-title')).toHaveText('Lesson 2: Three open strings: G, B and E');
 
   // Continue returns to the step the learner was on.
@@ -352,8 +388,17 @@ test('the lesson-complete panel leads to the next lesson', async ({ page }) => {
   await expect(page.locator('#lesson-title')).toHaveText(
     'Lesson 2: Three open strings: G, B and E',
   );
+  // The end of a chapter says so, and leads into the next chapter.
   await openRoute(page, '/lesson/piece-ode-to-joy/done');
-  await expect(page.locator('#lesson-done')).toContainText('last lesson of the chapter');
+  await expect(page.locator('#lesson-done')).toContainText(
+    'Chapter 1 is finished. Next: 4th string',
+  );
+  await page.locator('#done-next').click();
+  await expect(page.locator('#lesson-title')).toHaveText('Lesson 11: 4th string: D, E and F');
+  // The last lesson of the course has nowhere further to go.
+  await openRoute(page, '/lesson/p5-a-minor/done');
+  await expect(page.locator('#lesson-done')).toContainText('Lesson 37 complete');
+  await expect(page.locator('#lesson-done')).toContainText('last lesson of the course so far');
   await expect(page.locator('#done-next')).toHaveCount(0);
 });
 
@@ -361,11 +406,11 @@ test('progress can be reset from the About dialog', async ({ page }) => {
   await openRoute(page, '/lesson/p1-the-staff/5');
   await page.locator('#next').click();
   await page.locator('#done-home').click();
-  await expect(page.locator('[data-chapter] .chapter-count')).toHaveText('1 of 10 lessons done');
+  await expect(page.locator('.chapter-pane .chapter-count')).toHaveText('1 of 10 lessons done');
   page.once('dialog', (dialog) => void dialog.accept());
   await page.locator('#about-link').click();
   await page.locator('#reset-progress').click();
-  await expect(page.locator('[data-chapter] .chapter-count')).toHaveText('0 of 10 lessons done');
+  await expect(page.locator('.chapter-pane .chapter-count')).toHaveText('0 of 10 lessons done');
   await expect(page.locator('#continue')).toHaveText('Start');
 });
 
@@ -437,4 +482,23 @@ test('the final check of Chapter 1 plays the whole of Ode to Joy and the page fo
   await expect.poll(systemOfPlayhead, { timeout: 15_000 }).toBe('1');
   await expect(page.locator('.system[data-system="1"]')).toBeInViewport({ ratio: 0.95 });
   await expect(page.locator('#play')).toHaveText('Listen', { timeout: 15_000 });
+});
+
+test('the 12-bar check of Twinkle runs past the screen, and the page follows to the last line', async ({
+  page,
+}) => {
+  await openRoute(page, '/lesson/piece-twinkle/4');
+  await waitForSound(page);
+  await expect(page.locator('.malco-note')).toHaveCount(42);
+  await expect(page.locator('.system')).toHaveCount(3);
+  expect(await overflow(page)).toBeGreaterThan(0);
+  await setTempo(page, 220);
+  await page.locator('#play').click();
+  const systemOfPlayhead = () =>
+    page.evaluate(
+      () => document.querySelector<HTMLElement>('.playhead')?.parentElement?.dataset.system ?? null,
+    );
+  await expect.poll(systemOfPlayhead, { timeout: 20_000 }).toBe('2');
+  await expect(page.locator('.system[data-system="2"]')).toBeInViewport({ ratio: 0.95 });
+  await expect(page.locator('#play')).toHaveText('Listen', { timeout: 20_000 });
 });
