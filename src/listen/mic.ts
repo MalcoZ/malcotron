@@ -2,6 +2,10 @@
  * Mic input (spec section 5, step 1). Audio is handed to listeners in memory
  * and never stored or sent anywhere.
  *
+ * The mic is only open while something is listening (a Your turn pass, or the
+ * mic setup screen). `stop()` releases the device, so the browser's "mic in
+ * use" indicator goes away.
+ *
  * `RealMic` uses getUserMedia and an AudioWorklet on the same audio context
  * as playback, so its times are on the clock's time base. `SimulatedMic` is a
  * stand-in that tests feed with synthesized audio.
@@ -60,6 +64,7 @@ abstract class BaseMic implements MicInput {
 export class RealMic extends BaseMic {
   private stream: MediaStream | null = null;
   private nodes: { disconnect(): void }[] = [];
+  private static workletLoaded = false;
 
   get sampleRate(): number {
     return Tone.getContext().sampleRate;
@@ -79,7 +84,10 @@ export class RealMic extends BaseMic {
       });
       await Tone.start();
       const context = Tone.getContext();
-      await context.addAudioWorkletModule(`${import.meta.env.BASE_URL}capture-worklet.js`);
+      if (!RealMic.workletLoaded) {
+        await context.addAudioWorkletModule(`${import.meta.env.BASE_URL}capture-worklet.js`);
+        RealMic.workletLoaded = true;
+      }
       const source = context.createMediaStreamSource(this.stream);
       const capture = context.createAudioWorkletNode('malcotron-capture', {
         numberOfInputs: 1,

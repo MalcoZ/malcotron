@@ -16,7 +16,7 @@ const STRING_NAMES = ['6th (E)', '5th (A)', '4th (D)', '3rd (G)', '2nd (B)', '1s
 const STATE_TEXT = {
   off: 'The mic is off.',
   starting: 'Waiting for permission…',
-  on: 'The mic is on. Audio is analysed in this browser and never stored or sent anywhere.',
+  on: 'The mic is on. Audio is analysed in this browser and never stored or sent anywhere. Away from this screen it only listens during Your turn.',
   denied: 'Mic access was refused. Allow it in the browser’s site settings, then try again.',
   unavailable: 'No mic could be opened on this device.',
 } as const;
@@ -310,20 +310,24 @@ export function createMicView(ctx: AppContext): View {
     }),
   );
 
+  /** Open the mic for this screen. `remember` records the choice to be graded by the mic. */
+  async function openMic(remember: boolean): Promise<void> {
+    const state = await mic.start();
+    if (remember) calibration.update({ micEnabled: state === 'on' });
+    // A real mic may run at a different sample rate than assumed before it opened.
+    analyser = new FrameAnalyser(mic.sampleRate);
+    analyser.noiseGate = calibration.value.noiseGate;
+    segmenter = new Segmenter(calibration.value.noiseGate);
+    refresh();
+  }
+
   toggle.addEventListener('click', () => {
     if (mic.state === 'on') {
       mic.stop();
       calibration.update({ micEnabled: false });
       return;
     }
-    void mic.start().then((state) => {
-      calibration.update({ micEnabled: state === 'on' });
-      // A real mic may run at a different sample rate than assumed before it opened.
-      analyser = new FrameAnalyser(mic.sampleRate);
-      analyser.noiseGate = calibration.value.noiseGate;
-      segmenter = new Segmenter(calibration.value.noiseGate);
-      refresh();
-    });
+    void openMic(true);
   });
   noiseButton.addEventListener('click', () => {
     noise = { squares: 0, samples: 0 };
@@ -344,6 +348,8 @@ export function createMicView(ctx: AppContext): View {
 
   document.title = 'Microphone setup · Malcotron';
   refresh();
+  // The mic was switched on earlier: open it here so the checks can be used straight away.
+  if (calibration.value.micEnabled && mic.state === 'off') void openMic(false);
   return {
     el,
     bottomEl: null,
@@ -351,6 +357,8 @@ export function createMicView(ctx: AppContext): View {
       if (offsets) player.stop();
       recording = null;
       for (const fn of cleanup) fn();
+      // Leaving the screen lets go of the mic; it opens again for each Your turn.
+      if (mic.state === 'on') mic.stop();
     },
   };
 }

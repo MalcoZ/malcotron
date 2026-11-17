@@ -965,3 +965,18 @@ select {
 .mic-view .row {
   margin-top: 6px;
 }
+
+.header-link {
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+.mic-link.is-live::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--bad);
+}

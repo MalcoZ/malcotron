@@ -218,6 +218,8 @@ export class ScorePanel {
         if (end.mode !== 'turn') return;
         const listener = this.listener;
         this.listener = null;
+        // The take is over: let go of the mic until the next one.
+        if (listener) this.ctx.mic.stop();
         if (!end.completed) {
           listener?.cancel();
           this.clearGrades();
@@ -364,7 +366,10 @@ export class ScorePanel {
   destroy(): void {
     this.destroyed = true;
     clearTimeout(this.resizeTimer);
-    this.listener?.cancel();
+    if (this.listener) {
+      this.listener.cancel();
+      this.ctx.mic.stop();
+    }
     this.ctx.player.unload();
     this.playhead.onFrame = null;
     this.playhead.clear();

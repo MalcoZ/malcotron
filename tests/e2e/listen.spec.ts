@@ -205,7 +205,7 @@ test('mic setup: room noise, six open strings with tuning, tuner and timing', as
   const errors = trackErrors(page);
   await openRoute(page);
   await simulateLearner(page);
-  await page.locator('#mic-link').click();
+  await page.locator('#mic-setup').click();
   await expect(page.locator('#mic-status')).toContainText('The mic is on');
   await expect(page.locator('#mic-status')).toContainText('never stored or sent');
   // The whole setup screen fits without scrolling.
@@ -266,7 +266,7 @@ test('mic setup: room noise, six open strings with tuning, tuner and timing', as
 test('timing calibration with nothing played says so and changes nothing', async ({ page }) => {
   await openRoute(page);
   await simulateLearner(page);
-  await page.locator('#mic-link').click();
+  await page.locator('#mic-setup').click();
   await page.locator('#calibrate').click();
   await expect(page.locator('#latency-result')).toContainText('Not enough notes', {
     timeout: 20_000,
@@ -451,7 +451,7 @@ test('Home fits one screen, with the current chapter open', async ({ page }) => 
 test('mic setup shows the level in numbers and can save a test recording', async ({ page }) => {
   await openRoute(page);
   await simulateLearner(page);
-  await page.locator('#mic-link').click();
+  await page.locator('#mic-setup').click();
   await page.locator('#record').click();
   await expect(page.locator('#record')).toHaveText('Stop and save');
   // A very quiet note: the numbers appear, with advice about the level.
