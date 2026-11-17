@@ -100,20 +100,51 @@ test('a wrong note and a missed note are marked, named and explained; a mark can
   await expect(page.locator('.mark')).toHaveCount(12);
 });
 
-test('late playing is amber with a clock mark, and the feedback says late', async ({ page }) => {
+test('a take that is evenly late is the audio path, not the player: it is graded on time', async ({
+  page,
+}) => {
   await openRoute(page, '/lesson/r1-the-beat/4');
   await waitForSound(page);
   await simulateLearner(page, { lateMs: 180 });
   await setTempo(page, 120);
   await page.locator('#turn').click();
   await expect(page.locator('#take-result')).toBeVisible({ timeout: 20_000 });
-  await expect(page.locator('#take-score')).toHaveText('8 of 8 notes right, 0 on time');
-  expect(await statuses(page)).toEqual(Array(8).fill('amber'));
-  await expect(page.locator('.mark').first()).toHaveText('◷');
-  await expect(page.locator('#take-feedback')).toContainText('8 notes were a little late');
+  await expect(page.locator('#take-score')).toHaveText('8 of 8 notes right, 8 on time');
+  expect(await statuses(page)).toEqual(Array(8).fill('green'));
 });
 
-test('timing calibration removes a constant delay', async ({ page }) => {
+test('a note that is late against the rest gets a clock mark, and the feedback says late', async ({
+  page,
+}) => {
+  await openRoute(page, '/lesson/r1-the-beat/4');
+  await waitForSound(page);
+  await simulateLearner(page, { skip: true });
+  await setTempo(page, 120);
+  // Play the take by hand: every note on the beat except the fifth, half a beat (250 ms) late.
+  await page.evaluate(() => {
+    const m = (window as any).malcotron;
+    m.player.onStateChange((playing: boolean) => {
+      if (!playing || m.player.currentMode !== 'turn') return;
+      const notes = [...Array(8).keys()].map((beat) => ({
+        beat: beat + (beat === 4 ? 0.5 : 0),
+        midi: 59,
+        durationBeats: beat === 3 ? 1.2 : 0.8,
+      }));
+      m.simulateNotes(notes);
+    });
+  });
+  await page.locator('#turn').click();
+  await expect(page.locator('#take-result')).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator('#take-score')).toHaveText('8 of 8 notes right, 7 on time');
+  const marks = await statuses(page);
+  expect(marks[4]).toBe('amber');
+  await expect(page.locator('.mark').nth(4)).toHaveText('◷');
+  await expect(page.locator('#take-feedback')).toContainText('One note was a little late');
+});
+
+test('a measured timing correction and the automatic one do not add up to an error', async ({
+  page,
+}) => {
   await openRoute(page, '/lesson/r1-the-beat/4');
   await waitForSound(page);
   await simulateLearner(page, { lateMs: 180 });

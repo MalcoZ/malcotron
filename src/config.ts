@@ -166,11 +166,27 @@ export const LISTEN = {
   minNoteMs: 50,
   /** Pitch match tolerance after tuning offset (cents). */
   pitchCents: 50,
-  /** Timing tolerances (ms): early stages, and from P6/R5 on. */
-  early: { greenMs: 120, amberMs: 250 },
+  /**
+   * Timing tolerances (ms): early stages, and from P6/R5 on. The early ones
+   * are wider than the spec's 120 / 250 after the first try on a real guitar.
+   */
+  early: { greenMs: 160, amberMs: 320 },
   later: { greenMs: 70, amberMs: 150 },
   laterFromPitchStage: 6,
   laterFromRhythmStage: 5,
+  /**
+   * A whole take that is evenly late (or early) is the audio path, not the
+   * player: the take's typical offset is removed before timing is graded, up
+   * to this much (ms).
+   */
+  maxBiasMs: 350,
+  /** Live colouring starts correcting for that offset after this many notes. */
+  liveBiasAfterNotes: 3,
+  /** A slurred note (pitch change with no attack) must be at least this clear to count. */
+  slurMinClarity: 0.9,
+  /** Stray sounds are left out of "Hear what I played" unless this clear and this long (ms). */
+  replayMinClarity: 0.9,
+  replayMinMs: 150,
   /** Count an exact octave error as correct when the detector was unsure (spec section 5). */
   forgiveOctave: true,
   octaveMaxClarity: 0.95,

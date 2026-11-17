@@ -10,6 +10,7 @@ import {
   expectedNotes,
   gradeLive,
   gradeTake,
+  timingBias,
   toleranceFor,
   type ExpectedNote,
   type HeardNote,
@@ -42,6 +43,8 @@ export class TakeListener {
   private readonly latencySeconds: number;
   private unsubscribe: (() => void) | null = null;
   private lastTime = 0;
+  /** Offsets of the right notes heard so far, for the take's even lateness. */
+  private readonly liveOffsets: number[] = [];
   /** Called as soon as a note is heard and paired with a written one. */
   onLive: ((grade: NoteGrade) => void) | null = null;
   /** Called with every analysis frame (for a level meter or tuner). */
@@ -103,9 +106,18 @@ export class TakeListener {
   private noteStarted(note: PlayedNote): void {
     const heard = this.toHeard(note);
     if (heard.beat < -0.5) return; // played during the count-in
-    const grade = gradeLive(this.expected, this.liveTaken, heard, this.clock.tempo, this.tolerance);
+    const bias = timingBias(this.liveOffsets);
+    const grade = gradeLive(
+      this.expected,
+      this.liveTaken,
+      heard,
+      this.clock.tempo,
+      this.tolerance,
+      bias,
+    );
     if (!grade) return;
     this.liveTaken.add(grade.expected.index);
+    if (grade.pitchCorrect && grade.offsetMs !== null) this.liveOffsets.push(grade.offsetMs + bias);
     this.onLive?.(grade);
   }
 

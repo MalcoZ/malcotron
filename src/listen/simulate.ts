@@ -16,6 +16,8 @@ export interface SimulatedMistakes {
   missed?: number[];
   /** Play everything this many milliseconds late (negative for early). */
   lateMs?: number;
+  /** Play nothing (a test is feeding the notes itself). */
+  skip?: boolean;
 }
 
 export interface SimClock {
@@ -68,6 +70,7 @@ export function simulateTake(
   timeline: Timeline,
   mistakes: SimulatedMistakes = {},
 ): () => void {
+  if (mistakes.skip) return () => {};
   const played = timeline.events
     .filter((e) => !e.isRest && !e.tiedFromPrevious)
     .flatMap((e, i) => {

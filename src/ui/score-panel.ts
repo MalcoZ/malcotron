@@ -11,7 +11,7 @@ import { fracToNumber } from '../content/music';
 import type { Piece } from '../content/types';
 import type { SelfCheck } from '../course/progress';
 import { feedbackFor, soundingName } from '../listen/feedback';
-import { flipGrade, summarise, type NoteGrade } from '../listen/grade';
+import { flipGrade, replayNotes, summarise, type NoteGrade } from '../listen/grade';
 import { TakeListener, type TakeResult } from '../listen/listener';
 import { Playhead } from '../notation/playhead';
 import { handleKey, ScoreRenderer } from '../notation/renderer';
@@ -356,8 +356,9 @@ export class ScorePanel {
       return;
     }
     if (mode === 'turn') void this.startTurn();
-    else if (mode === 'heard') void player.play('heard', this.lastTake?.heard ?? []);
-    else void player.play('listen');
+    else if (mode === 'heard' && this.lastTake) {
+      void player.play('heard', replayNotes(this.lastTake.grade, clock.tempo));
+    } else void player.play('listen');
   }
 
   destroy(): void {

@@ -45,12 +45,16 @@ export interface NoteGrade {
   octaveForgiven: boolean;
   /** The learner corrected this grade by hand. */
   flipped: boolean;
+  /** The heard note matched to this one, if any. */
+  heard: HeardNote | null;
 }
 
 export interface TakeGrade {
   notes: NoteGrade[];
   /** Heard notes that matched nothing written. */
   extras: HeardNote[];
+  /** The even lateness removed from every note before timing was graded (ms). */
+  biasMs: number;
 }
 
 export interface Tolerance {
@@ -155,6 +159,7 @@ function gradeOne(
   heard: HeardNote | undefined,
   bpm: number,
   tolerance: Tolerance,
+  biasMs = 0,
 ): NoteGrade {
   if (!heard) {
     return {
@@ -166,16 +171,18 @@ function gradeOne(
       offsetMs: null,
       octaveForgiven: false,
       flipped: false,
+      heard: null,
     };
   }
   const match = pitchMatch(expected.midi, heard);
-  const offsetMs = ((heard.beat - expected.beat) * 60000) / bpm;
+  const offsetMs = ((heard.beat - expected.beat) * 60000) / bpm - biasMs;
   const base = {
     expected,
     heardMidi: Math.round(heard.midi),
     offsetMs,
     octaveForgiven: match === 'octave',
     flipped: false,
+    heard,
   };
   if (match === 'no') return { ...base, status: 'red', reason: 'wrong', pitchCorrect: false };
   const late = Math.abs(offsetMs);
@@ -188,7 +195,26 @@ function gradeOne(
   return { ...base, status: 'red', reason: 'timing', pitchCorrect: true };
 }
 
-/** Grade a whole take. Heard notes must already be on the beat grid. */
+/**
+ * The even lateness of a set of offsets: their median, limited to what an
+ * audio path could plausibly add. Needs a few notes to mean anything.
+ */
+export function timingBias(offsetsMs: readonly number[]): number {
+  if (offsetsMs.length < LISTEN.liveBiasAfterNotes) return 0;
+  const sorted = [...offsetsMs].sort((a, b) => a - b);
+  const mid = sorted.length >> 1;
+  const median = sorted.length % 2 ? sorted[mid]! : (sorted[mid - 1]! + sorted[mid]!) / 2;
+  return Math.max(-LISTEN.maxBiasMs, Math.min(LISTEN.maxBiasMs, median));
+}
+
+/**
+ * Grade a whole take. Heard notes must already be on the beat grid.
+ *
+ * Timing is judged after removing the take's own even lateness: a player who
+ * is the same amount late on every note is hearing the delay of their
+ * speakers, mic and browser, not playing badly. What is graded is whether
+ * each note sits where the others say the beat is.
+ */
 export function gradeTake(
   expected: readonly ExpectedNote[],
   heard: readonly HeardNote[],
@@ -197,12 +223,17 @@ export function gradeTake(
 ): TakeGrade {
   const matched = align(expected, heard);
   const used = new Set(matched.filter((j): j is number => j !== null));
+  const pair = (i: number) => {
+    const j = matched[i];
+    return j === null || j === undefined ? undefined : heard[j];
+  };
+  const raw = expected.map((e, i) => gradeOne(e, pair(i), bpm, tolerance));
+  const biasMs = timingBias(raw.filter((g) => g.pitchCorrect).map((g) => g.offsetMs!));
   return {
-    notes: expected.map((e, i) => {
-      const j = matched[i];
-      return gradeOne(e, j === null || j === undefined ? undefined : heard[j], bpm, tolerance);
-    }),
+    notes:
+      biasMs === 0 ? raw : expected.map((e, i) => gradeOne(e, pair(i), bpm, tolerance, biasMs)),
     extras: heard.filter((_, j) => !used.has(j)),
+    biasMs,
   };
 }
 
@@ -217,15 +248,18 @@ export function gradeLive(
   heard: HeardNote,
   bpm: number,
   tolerance: Tolerance,
+  biasMs = 0,
 ): NoteGrade | null {
+  // Where the note would be on the grid without the audio path's delay.
+  const at = heard.beat - (biasMs * bpm) / 60000;
   let best: ExpectedNote | null = null;
   for (const e of expected) {
     if (taken.has(e.index)) continue;
-    const distance = Math.abs(e.beat - heard.beat);
+    const distance = Math.abs(e.beat - at);
     if (distance > LISTEN.liveWindowBeats) continue;
-    if (!best || distance < Math.abs(best.beat - heard.beat)) best = e;
+    if (!best || distance < Math.abs(best.beat - at)) best = e;
   }
-  return best ? gradeOne(best, heard, bpm, tolerance) : null;
+  return best ? gradeOne(best, heard, bpm, tolerance, biasMs) : null;
 }
 
 /** The learner says the mic got one note wrong: swap its grade (spec section 5). */
@@ -305,4 +339,36 @@ export function fitToOwnTempo(
       durationBeats: p.duration / secondsPerBeat,
     })),
   };
+}
+
+/**
+ * The notes to play back for "Hear what I played": what the learner played
+ * for each written note, where they played it, plus any extra note that was
+ * clearly a note. Stray blips the mic picked up (a string squeak, a harmonic
+ * as a note dies away) are left out, so the playback sounds like the take.
+ */
+export function replayNotes(
+  grade: TakeGrade,
+  bpm: number,
+): { beat: number; midi: number; durationBeats: number }[] {
+  const shift = (grade.biasMs * bpm) / 60000;
+  const minBeats = (LISTEN.replayMinMs * bpm) / 60000;
+  const notes = grade.notes
+    .filter((g) => g.heard !== null)
+    .map((g) => ({
+      beat: g.heard!.beat - shift,
+      // A right note is played at its written pitch (never an octave slip of the detector).
+      midi: g.pitchCorrect ? g.expected.midi : Math.round(g.heard!.midi),
+    }));
+  for (const extra of grade.extras) {
+    if (extra.clarity >= LISTEN.replayMinClarity && extra.durationBeats >= minBeats) {
+      notes.push({ beat: extra.beat - shift, midi: Math.round(extra.midi) });
+    }
+  }
+  notes.sort((a, b) => a.beat - b.beat);
+  // Each note lasts until the next one, like a single line on a guitar.
+  return notes.map((n, i) => ({
+    ...n,
+    durationBeats: Math.max(0.25, Math.min(4, (notes[i + 1]?.beat ?? n.beat + 2) - n.beat)),
+  }));
 }

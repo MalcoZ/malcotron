@@ -10,7 +10,9 @@ import {
   flipGrade,
   gradeLive,
   gradeTake,
+  replayNotes,
   summarise,
+  timingBias,
   toleranceFor,
   type HeardNote,
   type TakeGrade,
@@ -191,11 +193,11 @@ describe('mistakes are graded as that mistake', () => {
   it('a late note is amber, a very late one is a timing miss with the pitch credited', () => {
     const { grade } = play(ode, 80, (n) =>
       n.map((x, i) =>
-        i === 4 ? { ...x, time: x.time + 0.18 } : i === 9 ? { ...x, time: x.time + 0.3 } : x,
+        i === 4 ? { ...x, time: x.time + 0.22 } : i === 9 ? { ...x, time: x.time + 0.4 } : x,
       ),
     );
     expect(grade.notes[4]).toMatchObject({ status: 'amber', reason: 'timing', pitchCorrect: true });
-    expect(grade.notes[4]!.offsetMs!).toBeGreaterThan(150);
+    expect(grade.notes[4]!.offsetMs!).toBeGreaterThan(180);
     expect(grade.notes[9]).toMatchObject({ status: 'red', reason: 'timing', pitchCorrect: true });
     expect(summarise(grade)).toMatchObject({
       total: 30,
@@ -210,7 +212,7 @@ describe('mistakes are graded as that mistake', () => {
 
   it('rushing is reported as early', () => {
     const { grade } = play(ode, 80, (n) =>
-      n.map((x, i) => (i >= 20 ? { ...x, time: x.time - 0.16 } : x)),
+      n.map((x, i) => (i >= 20 ? { ...x, time: x.time - 0.22 } : x)),
     );
     expect(
       statuses(grade)
@@ -325,6 +327,86 @@ describe('grading rules', () => {
 
   it('names sounding pitches', () => {
     expect([40, 53, 54, 60, 70].map(soundingName)).toEqual(['E', 'F', 'F♯', 'C', 'B♭']);
+  });
+});
+
+describe('timing allows for the delay of the audio path', () => {
+  const piece = loadPiece('pieces/ode-to-joy.json');
+
+  it('a take that is evenly late is graded on time, and the delay is reported', () => {
+    for (const ms of [120, 250]) {
+      const { grade } = play(piece, 80, (n) => n.map((x) => ({ ...x, time: x.time + ms / 1000 })));
+      expect(summarise(grade)).toMatchObject({ pitchCorrect: 30, onTime: 30 });
+      expect(Math.abs(grade.biasMs - ms)).toBeLessThan(40);
+    }
+  });
+
+  it('a note that is late against the rest of the take is still caught', () => {
+    const { grade } = play(piece, 80, (n) =>
+      n.map((x, i) => ({ ...x, time: x.time + 0.2 + (i === 7 ? 0.25 : 0) })),
+    );
+    expect(grade.notes[7]).toMatchObject({ status: 'amber', reason: 'timing' });
+    expect(summarise(grade).onTime).toBe(29);
+  });
+
+  it('only removes a delay an audio path could cause, and needs a few notes to judge', () => {
+    expect(timingBias([200, 210, 190, 205])).toBe(202.5);
+    expect(timingBias([900, 950, 1000])).toBe(350);
+    expect(timingBias([-500, -600, -700])).toBe(-350);
+    expect(timingBias([200, 210])).toBe(0);
+    expect(timingBias([])).toBe(0);
+  });
+});
+
+describe('hear what I played', () => {
+  const piece = loadPiece('phrases/p1-first-steps.json');
+  const expected = expectedNotes(buildTimeline(piece));
+  const heardAt = (i: number, extra: Partial<HeardNote> = {}): HeardNote => ({
+    beat: expected[i]!.beat,
+    midi: expected[i]!.midi,
+    clarity: 0.97,
+    durationBeats: 0.2,
+    ...extra,
+  });
+
+  it('plays the notes that were played, where they were played, and leaves out stray blips', () => {
+    const take: HeardNote[] = [
+      ...expected.map((_, i) => heardAt(i, i === 1 ? { midi: expected[1]!.midi + 2 } : {})),
+      // A squeak and a dying harmonic: short or unclear, and matching nothing.
+      { beat: 2.6, midi: 88.3, clarity: 0.82, durationBeats: 0.5 },
+      { beat: 5.4, midi: 76, clarity: 0.95, durationBeats: 0.05 },
+    ];
+    const grade = gradeTake(expected, take, 60, LISTEN.early);
+    const replay = replayNotes(grade, 60);
+    expect(replay).toHaveLength(expected.length);
+    expect(replay.map((n) => n.midi)).toEqual(
+      expected.map((e, i) => (i === 1 ? e.midi + 2 : e.midi)),
+    );
+    expect(replay.map((n) => n.beat)).toEqual(expected.map((e) => e.beat));
+    // Each note lasts until the next (C5 D5 E5/h: one beat, one beat, two beats).
+    expect(replay.slice(0, 3).map((n) => n.durationBeats)).toEqual([1, 1, 2]);
+  });
+
+  it('keeps a clear extra note, and plays an octave slip of the detector at the written pitch', () => {
+    const take: HeardNote[] = [
+      heardAt(0),
+      { beat: 0.5, midi: 67, clarity: 0.98, durationBeats: 0.4 },
+      heardAt(1, { midi: expected[1]!.midi - 12, clarity: 0.85 }),
+      ...expected.slice(2).map((_, i) => heardAt(i + 2)),
+    ];
+    const replay = replayNotes(gradeTake(expected, take, 60, LISTEN.early), 60);
+    expect(replay.slice(0, 3).map((n) => [n.beat, n.midi])).toEqual([
+      [0, expected[0]!.midi],
+      [0.5, 67],
+      [1, expected[1]!.midi],
+    ]);
+  });
+
+  it('shifts the playback back by the delay that was removed from the take', () => {
+    const late = expected.map((_, i) => heardAt(i, { beat: expected[i]!.beat + 0.2 }));
+    const grade = gradeTake(expected, late, 60, LISTEN.early);
+    expect(grade.biasMs).toBeCloseTo(200);
+    expect(replayNotes(grade, 60)[3]!.beat).toBeCloseTo(expected[3]!.beat);
   });
 });
 

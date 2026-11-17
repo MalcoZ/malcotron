@@ -102,7 +102,10 @@ export class Segmenter {
         note.off ??= { since: frame.time, pitches: [], clarities: [] };
         note.off.pitches.push(frame.midi);
         note.off.clarities.push(frame.clarity);
-        if ((frame.time - note.off.since) * 1000 >= LISTEN.pitchChangeMs) {
+        const steady =
+          note.off.clarities.reduce((a, b) => a + b, 0) / note.off.clarities.length >=
+          LISTEN.slurMinClarity;
+        if ((frame.time - note.off.since) * 1000 >= LISTEN.pitchChangeMs && steady) {
           // The pitch moved and stayed: a new note without a new attack (legato).
           const moved = note.off;
           this.close(moved.since, events);
