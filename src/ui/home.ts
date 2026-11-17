@@ -1,4 +1,4 @@
-/** Home: what comes next, the chapters (folded unless current), and pieces for free practice. */
+/** Home: what comes next, the course outline, and pieces for free practice. */
 import type { AppContext, View } from './context';
 import { h } from './dom';
 
@@ -81,13 +81,50 @@ export function createHome(ctx: AppContext): View {
     );
   }
 
-  // The chapter holding the next lesson is open; the rest are folded, so Home fits one screen.
+  // The course outline is one card: the chapters down the left, and the lessons of
+  // one chapter on the right (the one holding the next lesson, until another is
+  // chosen). With eight chapters, stacking them would push Home past one screen.
   const currentChapter =
     course.chapters.find((c) => c.lessons.some((l) => l.id === nextLesson?.id)) ??
-    course.chapters.at(-1);
-  const chapters = course.chapters.map((chapter) => {
-    const done = chapter.lessons.filter((l) => progress.isCompleted(l.id)).length;
+    course.chapters.at(-1)!;
+  const doneIn = (chapter: (typeof course.chapters)[number]) =>
+    chapter.lessons.filter((l) => progress.isCompleted(l.id)).length;
+  const pane = h('div', { className: 'chapter-pane' });
+  const chapterNav = h('nav', { className: 'chapter-nav', ariaLabel: 'Chapters' });
+  const tabs = course.chapters.map((chapter, index) => {
+    const done = doneIn(chapter);
+    const all = chapter.lessons.length;
+    const tab = h(
+      'button',
+      {
+        type: 'button',
+        className: 'chapter-tab',
+        title: chapter.summary,
+        dataset: { chapterTab: chapter.id },
+      },
+      h('span', { className: 'chapter-number', textContent: String(index + 1) }),
+      h('span', {
+        className: 'chapter-name',
+        textContent: chapter.title.replace(/^Chapter \d+:\s*/, ''),
+      }),
+      h('span', {
+        className: 'chapter-tally',
+        textContent: done === all ? '✓' : done > 0 ? `${done}/${all}` : '',
+      }),
+    );
+    tab.addEventListener('click', () => showChapter(chapter));
+    chapterNav.append(tab);
+    return tab;
+  });
+
+  const showChapter = (chapter: (typeof course.chapters)[number]) => {
+    for (const [i, tab] of tabs.entries()) {
+      tab.setAttribute('aria-pressed', String(course.chapters[i] === chapter));
+    }
+    // Lessons are numbered through the whole course, as on the "next up" card.
     const list = h('ol', { className: 'lesson-list' });
+    const first = course.lessons.findIndex((l) => l.id === chapter.lessons[0]?.id);
+    list.style.counterReset = `lesson ${Math.max(first, 0)}`;
     for (const lesson of chapter.lessons) {
       const completed = progress.isCompleted(lesson.id);
       const isNext = lesson.id === nextLesson?.id;
@@ -113,27 +150,23 @@ export function createHome(ctx: AppContext): View {
         ),
       );
     }
-    const details = h(
-      'details',
-      {
-        className: 'card chapter',
-        open: chapter === currentChapter,
-        dataset: { chapter: chapter.id },
-      },
+    pane.dataset.chapter = chapter.id;
+    pane.replaceChildren(
       h(
-        'summary',
+        'div',
         { className: 'chapter-head' },
         h('h3', { textContent: chapter.title }),
-        h('span', { className: 'muted chapter-summary', textContent: chapter.summary }),
         h('span', {
           className: 'muted chapter-count',
-          textContent: `${done} of ${chapter.lessons.length} lessons done`,
+          textContent: `${doneIn(chapter)} of ${chapter.lessons.length} lessons done`,
         }),
       ),
+      h('p', { className: 'muted chapter-summary', textContent: chapter.summary }),
       list,
     );
-    return details;
-  });
+  };
+  showChapter(currentChapter);
+  const outline = h('section', { className: 'card course', id: 'course' }, chapterNav, pane);
 
   const pieceList = h('ul', { className: 'piece-list' });
   for (const piece of ctx.pieces) {
@@ -166,6 +199,6 @@ export function createHome(ctx: AppContext): View {
     pieceList,
   );
 
-  const el = h('div', { className: 'home', id: 'home' }, hero, ...chapters, pieces);
+  const el = h('div', { className: 'home', id: 'home' }, hero, outline, pieces);
   return { el, bottomEl: null, destroy() {} };
 }

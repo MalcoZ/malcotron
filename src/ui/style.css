@@ -441,7 +441,7 @@ select {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-width: 900px;
+  max-width: 1040px;
   margin: 0 auto 8px;
 }
 
@@ -509,6 +509,89 @@ select {
 
 .chapter-count {
   font-size: 0.88rem;
+}
+
+/* The course outline: chapters down the left, one chapter's lessons on the right. */
+.course {
+  display: grid;
+  grid-template-columns: 15.5rem minmax(0, 1fr);
+  gap: 20px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.chapter-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 16px;
+  border-right: 1px solid color-mix(in srgb, var(--border) 25%, transparent);
+}
+
+.chapter-tab {
+  display: grid;
+  grid-template-columns: 1.3rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 8px;
+  padding: 5px 8px;
+  font: inherit;
+  font-size: 0.93rem;
+  text-align: left;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.chapter-tab:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.chapter-tab[aria-pressed='true'] {
+  font-weight: 650;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.chapter-number,
+.chapter-tally {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.chapter-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chapter-pane .chapter-head {
+  grid-template-columns: 1fr auto;
+  cursor: default;
+}
+
+.chapter-pane .chapter-summary {
+  margin-top: 2px;
+  white-space: normal;
+}
+
+.chapter-pane .lesson-list {
+  display: grid;
+  grid-template-columns: 1.6rem max-content minmax(0, 1fr) auto;
+}
+
+.chapter-pane .lesson-list li,
+.chapter-pane .lesson-list a {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+.chapter-pane .lesson-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lesson-list,

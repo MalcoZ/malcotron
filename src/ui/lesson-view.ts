@@ -195,15 +195,26 @@ export function createLessonDone(ctx: AppContext, lesson: Lesson): View {
       textContent: 'Next lesson',
     });
     go.addEventListener('click', () => ctx.navigate(`/lesson/${following.id}/1`));
+    // Say so when this lesson finished a chapter.
+    const chapterOf = (id: string) =>
+      ctx.course.chapters.find((c) => c.lessons.some((l) => l.id === id));
+    const finished = chapterOf(lesson.id);
+    const chapterDone =
+      finished && finished !== chapterOf(following.id)
+        ? `${finished.title.replace(/:.*/, '')} is finished. `
+        : '';
     card.append(
-      h('p', { className: 'muted', textContent: `Next: ${following.title}. ${following.summary}` }),
+      h('p', {
+        className: 'muted',
+        textContent: `${chapterDone}Next: ${following.title}. ${following.summary}`,
+      }),
     );
     actions.prepend(go);
   } else {
     card.append(
       h('p', {
         className: 'muted',
-        textContent: 'That was the last lesson of the chapter. More chapters are on the way.',
+        textContent: 'That was the last lesson of the course so far. More chapters are on the way.',
       }),
     );
   }
