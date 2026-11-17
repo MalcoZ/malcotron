@@ -100,8 +100,8 @@ describe('clean takes grade 100%', () => {
         expect(statuses(grade).every((s) => s === 'green')).toBe(true);
         expect(grade.extras).toEqual([]);
         expect(summarise(grade).accuracy).toBe(1);
-        // Onsets are found to within 30 ms.
-        for (const note of grade.notes) expect(Math.abs(note.offsetMs!)).toBeLessThan(30);
+        // Onsets are found to within 50 ms (the on-time window is 120 ms).
+        for (const note of grade.notes) expect(Math.abs(note.offsetMs!)).toBeLessThan(50);
         expect(feedbackFor(grade, piece)).toBe('Every note right and on time.');
       });
     }
@@ -118,6 +118,39 @@ describe('clean takes grade 100%', () => {
     const piece = loadPiece('phrases/p1-first-steps.json');
     const flat = play(piece, 80, (notes) => notes.map((n) => ({ ...n, midi: n.midi - 0.25 })));
     expect(summarise(flat.grade).accuracy).toBe(1);
+  });
+});
+
+describe('a real laptop mic: quiet, with weak low fundamentals', () => {
+  it('a very quiet take (automatic gain off) still grades 100%', () => {
+    const piece = loadPiece('pieces/ode-to-joy.json');
+    // Peaks around 1% of full scale, over a faint hiss.
+    const { grade, heard } = play(piece, 80, (n) => n, { gain: 0.02, noise: 0.0001, seed: 5 });
+    expect(heard).toHaveLength(30);
+    expect(summarise(grade)).toMatchObject({ pitchCorrect: 30, onTime: 30 });
+  });
+
+  it('low strings with almost no fundamental are still read at the right octave', () => {
+    const piece = loadPiece('phrases/p2-low-strings.json');
+    const { grade } = play(piece, 70, (n) => n, { fundamental: 0.1, gain: 0.05, noise: 0.0002 });
+    expect(summarise(grade).pitchCorrect).toBe(13);
+    expect(grade.notes.every((n) => !n.octaveForgiven)).toBe(true);
+  });
+
+  it('every open string is heard, quiet and with a weak fundamental', () => {
+    const notes = [40, 45, 50, 55, 59, 64].map((midi, i) => ({
+      time: 0.5 + i * 1.2,
+      midi,
+      duration: 1,
+    }));
+    const samples = renderTake(notes, 48000, 8, { fundamental: 0.15, gain: 0.03, noise: 0.0002 });
+    const heard = analyseSamples(samples, 48000);
+    expect(heard.map((n) => Math.round(n.midi))).toEqual([40, 45, 50, 55, 59, 64]);
+  });
+
+  it('room hiss alone is still heard as nothing', () => {
+    expect(analyseSamples(renderTake([], RATE, 4, { noise: 0.003, seed: 9 }), RATE)).toEqual([]);
+    expect(analyseSamples(renderTake([], RATE, 4, { noise: 0.0002, seed: 9 }), RATE)).toEqual([]);
   });
 });
 

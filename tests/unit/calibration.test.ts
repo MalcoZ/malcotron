@@ -8,6 +8,8 @@ import {
   openStringFor,
   parseCalibration,
 } from '../../src/listen/calibration';
+import { encodeWav } from '../../src/listen/wav';
+import { readWav } from '../../tools/detect-harness';
 
 describe('calibration', () => {
   it('starts with the mic off and nothing measured', () => {
@@ -78,5 +80,21 @@ describe('calibration', () => {
     expect(latencyFromOffsets([60, 55, 70, 62, 58, 340, 61, 63])).toBe(61);
     // Too few notes on the clicks: no result.
     expect(latencyFromOffsets([60, 55, 70])).toBeNull();
+  });
+});
+
+describe('test recording', () => {
+  it('writes a WAV file the harness can read back', () => {
+    const samples = Float32Array.from({ length: 480 }, (_, i) => Math.sin(i / 10) * 0.5);
+    const wav = encodeWav(samples, 48000);
+    expect(wav.length).toBe(44 + 960);
+    const back = readWav(Buffer.from(wav));
+    expect(back.sampleRate).toBe(48000);
+    expect(back.samples).toHaveLength(480);
+    for (let i = 0; i < 480; i += 37) expect(back.samples[i]!).toBeCloseTo(samples[i]!, 3);
+    // Out-of-range samples are clipped, not wrapped.
+    const loud = readWav(Buffer.from(encodeWav(Float32Array.from([2, -2]), 44100))).samples;
+    expect(loud[0]!).toBeCloseTo(1, 3);
+    expect(loud[1]!).toBeCloseTo(-1, 3);
   });
 });

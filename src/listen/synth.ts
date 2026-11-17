@@ -25,6 +25,10 @@ export interface SynthOptions {
   clickLevel?: number;
   /** Seed for the noise, so takes are repeatable. */
   seed?: number;
+  /** Strength of the fundamental, 0 to 1 (a small laptop mic barely picks up low fundamentals). */
+  fundamental?: number;
+  /** Overall gain applied to the finished take (a mic with automatic gain off is very quiet). */
+  gain?: number;
 }
 
 function random(seed: number): () => number {
@@ -60,7 +64,9 @@ export function renderTake(
       let x = 0;
       for (let k = 1; k <= partials; k++) {
         // Higher partials start weaker and die away faster, like a plucked string.
-        x += (Math.sin(2 * Math.PI * k * hz * t + k) / k) * Math.exp(-t * (1.2 + 0.9 * k));
+        const weight = k === 1 ? (options.fundamental ?? 1) : 1;
+        x +=
+          ((weight * Math.sin(2 * Math.PI * k * hz * t + k)) / k) * Math.exp(-t * (1.2 + 0.9 * k));
       }
       const attack = Math.min(1, i / (0.003 * sampleRate));
       // Damped when the note ends, unless it is left to ring.
@@ -85,5 +91,6 @@ export function renderTake(
         out[start + i]! += high * (options.clickLevel ?? 0.5) * Math.exp(-i / (0.008 * sampleRate));
     }
   }
+  if (options.gain !== undefined) for (let i = 0; i < out.length; i++) out[i]! *= options.gain;
   return out;
 }

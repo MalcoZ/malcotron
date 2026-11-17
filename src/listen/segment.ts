@@ -46,6 +46,8 @@ export class Segmenter {
   private lastOnset = -Infinity;
   /** An attack was heard but no clear pitch has arrived yet. */
   private pendingOnset: number | null = null;
+  /** A jump in level waiting to be confirmed as an attack. */
+  private candidate: { time: number; level: number; framesLeft: number } | null = null;
 
   constructor(private noiseGate: number = LISTEN.defaultNoiseGate) {}
 
@@ -60,15 +62,28 @@ export class Segmenter {
     levels.push(frame.level);
     if (levels.length > LISTEN.onsetLookbackFrames) levels.shift();
 
+    // The frame carries the gate in force (it follows the room); fall back to our own.
+    const gate = Math.min(frame.gate ?? this.noiseGate, this.noiseGate);
     const attack =
-      frame.level >= this.noiseGate &&
-      frame.level > Math.max(earlier, this.noiseGate / 2) * LISTEN.onsetRatio &&
+      frame.level >= gate &&
+      frame.level > Math.max(earlier, gate / 2) * LISTEN.onsetRatio &&
       (frame.time - this.lastOnset) * 1000 >= LISTEN.minNoteGapMs;
 
-    if (attack) {
-      if (this.note) this.close(frame.time, events);
-      this.lastOnset = frame.time;
-      this.pendingOnset = frame.time;
+    if (attack && !this.candidate) {
+      this.candidate = {
+        time: frame.time,
+        level: frame.level,
+        framesLeft: LISTEN.onsetConfirmFrames,
+      };
+    } else if (this.candidate && --this.candidate.framesLeft <= 0) {
+      const candidate = this.candidate;
+      this.candidate = null;
+      if (frame.level >= candidate.level * LISTEN.onsetConfirmRatio) {
+        // Still sounding: a real attack. The new note began when the level first jumped.
+        if (this.note) this.close(candidate.time, events);
+        this.lastOnset = candidate.time;
+        this.pendingOnset = candidate.time;
+      }
     }
 
     if (frame.midi !== null) {

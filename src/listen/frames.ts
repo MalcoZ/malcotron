@@ -13,6 +13,8 @@ export interface Frame {
   clarity: number;
   /** Level of the newest hop (RMS, 0 to 1). Used for attacks, as it reacts fastest. */
   level: number;
+  /** The noise gate in force for this frame (it follows the room). */
+  gate: number;
 }
 
 const DECIMATE = 2;
@@ -61,8 +63,12 @@ export class FrameAnalyser {
   private filled = 0;
   private sinceHop = 0;
   private samplesSeen = 0;
-  /** Frames quieter than this have no pitch. */
+  /** The highest the gate may go. Frames quieter than the gate in force have no pitch. */
   noiseGate: number = LISTEN.defaultNoiseGate;
+  /** Quietest level in each recent quarter second, for following the room's noise floor. */
+  private readonly blockMinima: number[] = [];
+  private blockMin = Infinity;
+  private blockFrames = 0;
 
   /**
    * @param a4 tuning reference; the mic check sets it from the guitar's offset
@@ -115,7 +121,8 @@ export class FrameAnalyser {
         const hopStart = startTime + (i + 1 - hop) / this.sampleRate;
         let midi: number | null = null;
         let clarity = 0;
-        if (level >= this.noiseGate) {
+        const gate = this.currentGate(level);
+        if (level >= gate) {
           const half = this.half;
           for (let j = 0; j < half.length; j++) half[j] = buffer[j * DECIMATE]!;
           const estimate = this.detector.detect(half);
@@ -124,10 +131,34 @@ export class FrameAnalyser {
             midi = hzToMidi(estimate.hz, this.a4);
           }
         }
-        frames.push({ time: hopStart, midi, clarity, level });
+        frames.push({ time: hopStart, midi, clarity, level, gate });
       }
     }
     return frames;
+  }
+
+  /**
+   * The gate for this frame: a few times above the quietest level heard
+   * lately, but never above `noiseGate` nor below the configured floor.
+   */
+  private currentGate(level: number): number {
+    const perBlock = Math.max(1, Math.round((0.25 * this.sampleRate) / LISTEN.hopSize));
+    this.blockMin = Math.min(this.blockMin, level);
+    if (++this.blockFrames >= perBlock) {
+      this.blockMinima.push(this.blockMin);
+      const keep = Math.round(LISTEN.floorWindowSeconds / 0.25);
+      if (this.blockMinima.length > keep) this.blockMinima.shift();
+      this.blockMin = Infinity;
+      this.blockFrames = 0;
+    }
+    if (this.blockMinima.length === 0) return this.noiseGate;
+    const floor = Math.min(...this.blockMinima);
+    return Math.min(this.noiseGate, Math.max(LISTEN.minNoiseGate, floor * LISTEN.gateOverNoise));
+  }
+
+  /** The room's noise floor as last measured (RMS), or null before any audio. */
+  get noiseFloor(): number | null {
+    return this.blockMinima.length ? Math.min(...this.blockMinima) : null;
   }
 
   /** Seconds of audio that must arrive before the first frame. */

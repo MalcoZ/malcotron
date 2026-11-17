@@ -3,6 +3,10 @@
 Put the product owner's test takes here (spec section 5: about 20 short takes of open and 5th
 position lines, 60 to 120 BPM, played into the laptop mic). Then run `npm run harness`.
 
+The easiest way to make a take: open the app, go to **Mic** in the header, press **Record a test
+take**, play, then **Stop and save**. The browser saves `malcotron-take.wav`; rename it and put it
+here.
+
 Each take is a WAV file (mono or stereo, 16-bit, 24-bit or float) with a JSON file of the same name
 beside it:
 

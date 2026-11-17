@@ -117,26 +117,44 @@ export const METRONOME = {
 } as const;
 
 export const LISTEN = {
-  /** Analysis frame and hop, in samples (spec section 5). */
-  frameSize: 2048,
+  /**
+   * Analysis frame and hop, in samples. The spec suggests 2048; 4096 gives the
+   * low strings enough periods to be read reliably from a real mic.
+   */
+  frameSize: 4096,
   hopSize: 512,
   /** Sounding range the detector looks in (Hz). */
   minHz: 75,
   maxHz: 1400,
   /** Frames less clear than this have no pitch (0 to 1). */
-  clarityThreshold: 0.9,
+  clarityThreshold: 0.8,
   /** A later peak must reach this share of the best one to be taken as the pitch. */
   peakPickRatio: 0.9,
   /** The mic signal is low-passed here so the metronome click cannot be heard as a note (Hz). */
   lowpassHz: 1800,
   highpassHz: 60,
-  /** Default noise gate (RMS, 0 to 1) until the mic check measures the room. */
+  /** Highest the noise gate may be (RMS, 0 to 1), until the mic check measures the room. */
   defaultNoiseGate: 0.01,
+  /**
+   * The gate follows the room: it sits this many times above the quietest
+   * level heard in the last few seconds, never above the gate just given and
+   * never below the floor. A laptop mic with automatic gain off is very quiet.
+   */
+  minNoiseGate: 0.0004,
+  floorWindowSeconds: 8,
+  /** Below this level while a note is sounding, the mic is too quiet to trust. */
+  lowLevelWarning: 0.004,
   /** The gate is set this many times above the measured room noise. */
   gateOverNoise: 4,
   /** A jump in level by this factor, against the level ~35 ms earlier, is a new attack. */
   onsetRatio: 1.7,
   onsetLookbackFrames: 3,
+  /**
+   * An attack only counts if the level is still at least this share of it a few
+   * frames later: a plucked note rings on, a click or knock is gone by then.
+   */
+  onsetConfirmFrames: 3,
+  onsetConfirmRatio: 0.5,
   /** Attacks closer together than this are one note (ms). */
   minNoteGapMs: 70,
   /** A pitch change of this many semitones, held this long, is a new note (legato). */

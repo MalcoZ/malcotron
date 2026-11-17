@@ -416,3 +416,25 @@ test('Home fits one screen, with the current chapter open', async ({ page }) => 
   await expect(page.locator('.lesson-list li').last()).toBeInViewport({ ratio: 1 });
   await expect(page.locator('#continue')).toBeInViewport({ ratio: 1 });
 });
+
+test('mic setup shows the level in numbers and can save a test recording', async ({ page }) => {
+  await openRoute(page);
+  await simulateLearner(page);
+  await page.locator('#mic-link').click();
+  await page.locator('#record').click();
+  await expect(page.locator('#record')).toHaveText('Stop and save');
+  // A very quiet note: the numbers appear, with advice about the level.
+  await page.evaluate(() =>
+    (window as any).malcotron.feedInstant([{ time: 0.2, midi: 57, duration: 1.5 }], 2, {
+      gain: 0.004,
+      noise: 0.00005,
+    }),
+  );
+  await expect(page.locator('#mic-numbers')).toContainText('Loudest lately');
+  await expect(page.locator('#mic-numbers')).toContainText('very quiet');
+  await expect(page.locator('#tuner-note')).toHaveText('A'); // still heard, quiet as it is
+  const download = page.waitForEvent('download');
+  await page.locator('#record').click();
+  expect((await download).suggestedFilename()).toBe('malcotron-take.wav');
+  await expect(page.locator('#record-result')).toContainText('Saved 2.0 s');
+});

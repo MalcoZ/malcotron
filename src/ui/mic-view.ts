@@ -8,6 +8,7 @@ import { latencyFromOffsets, median, OPEN_STRINGS, openStringFor } from '../list
 import { soundingName } from '../listen/feedback';
 import { FrameAnalyser } from '../listen/frames';
 import { Segmenter } from '../listen/segment';
+import { encodeWav } from '../listen/wav';
 import type { AppContext, View } from './context';
 import { h } from './dom';
 
@@ -33,12 +34,14 @@ export function createMicView(ctx: AppContext): View {
     h('div', { className: 'meter-fill', id: 'mic-level' }),
   );
   const fill = meter.firstElementChild as HTMLElement;
+  const levelText = h('p', { className: 'muted small', id: 'mic-numbers' });
   const onCard = h(
     'section',
     { className: 'card mic-card' },
     h('h3', { textContent: '1. Microphone' }),
     status,
     h('div', { className: 'row' }, toggle, meter),
+    levelText,
     h('p', {
       className: 'muted small',
       textContent:
@@ -112,6 +115,60 @@ export function createMicView(ctx: AppContext): View {
     h('div', { className: 'row' }, timingButton, timingText),
   );
 
+  // --- 5. Test recording ---------------------------------------------------------------
+  const recordButton = h('button', {
+    type: 'button',
+    className: 'btn',
+    id: 'record',
+    textContent: 'Record a test take',
+  });
+  const recordText = h('span', { className: 'muted', id: 'record-result' });
+  const recordCard = h(
+    'section',
+    { className: 'card mic-card mic-wide' },
+    h('h3', { textContent: '5. Test recording (for tuning the listener)' }),
+    h(
+      'div',
+      { className: 'row' },
+      recordButton,
+      recordText,
+      h('span', {
+        className: 'muted small',
+        textContent:
+          'Records up to 30 seconds of what the mic hears and saves it as a WAV file on this computer. Nothing is uploaded.',
+      }),
+    ),
+  );
+  let recording: Float32Array[] | null = null;
+  const finishRecording = () => {
+    const chunks = recording;
+    recording = null;
+    recordButton.textContent = 'Record a test take';
+    if (!chunks || chunks.length === 0) return;
+    const samples = new Float32Array(chunks.reduce((n, c) => n + c.length, 0));
+    let at = 0;
+    for (const chunk of chunks) {
+      samples.set(chunk, at);
+      at += chunk.length;
+    }
+    const url = URL.createObjectURL(
+      new Blob([encodeWav(samples, mic.sampleRate) as BlobPart], { type: 'audio/wav' }),
+    );
+    const link = h('a', { href: url, download: 'malcotron-take.wav' });
+    link.click();
+    URL.revokeObjectURL(url);
+    recordText.textContent = `Saved ${(samples.length / mic.sampleRate).toFixed(1)} s as malcotron-take.wav.`;
+  };
+  recordButton.addEventListener('click', () => {
+    if (recording) {
+      finishRecording();
+      return;
+    }
+    recording = [];
+    recordButton.textContent = 'Stop and save';
+    recordText.textContent = 'Recording…';
+  });
+
   const el = h(
     'div',
     { className: 'home mic-view', id: 'mic-view' },
@@ -121,7 +178,7 @@ export function createMicView(ctx: AppContext): View {
       h('a', { className: 'crumb', href: '#/', textContent: '‹ All lessons' }),
       h('h2', { textContent: 'Microphone setup' }),
     ),
-    h('div', { className: 'mic-grid' }, onCard, noiseCard, stringsCard, timingCard),
+    h('div', { className: 'mic-grid' }, onCard, noiseCard, stringsCard, timingCard, recordCard),
   );
 
   // --- Analysis ------------------------------------------------------------------
@@ -132,6 +189,8 @@ export function createMicView(ctx: AppContext): View {
   const heardStrings = new Map<number, number>();
   let offsets: number[] | null = null;
   let shown = 0;
+  let peak = 0;
+  let framesSeen = 0;
 
   function refresh(): void {
     const state = mic.state;
@@ -139,7 +198,8 @@ export function createMicView(ctx: AppContext): View {
     status.textContent = STATE_TEXT[state];
     toggle.textContent = state === 'on' ? 'Turn the mic off' : 'Turn on the mic';
     toggle.disabled = state === 'starting';
-    for (const button of [noiseButton, timingButton]) button.disabled = state !== 'on';
+    for (const button of [noiseButton, timingButton, recordButton])
+      button.disabled = state !== 'on';
     if (!noise) {
       noiseText.textContent = c.measured.noise
         ? `Measured. Gate set at ${(c.noiseGate * 100).toFixed(1)}% level.`
@@ -160,6 +220,10 @@ export function createMicView(ctx: AppContext): View {
   cleanup.push(
     mic.onStateChange(refresh),
     mic.onChunk((samples, time) => {
+      if (recording) {
+        recording.push(samples.slice());
+        if (recording.length * samples.length >= 30 * mic.sampleRate) finishRecording();
+      }
       if (noise) {
         for (const x of samples) noise.squares += x * x;
         noise.samples += samples.length;
@@ -182,6 +246,17 @@ export function createMicView(ctx: AppContext): View {
         // The meter jumps up at once and falls back slowly, so short sounds can be seen.
         shown = Math.max(Math.min(100, Math.sqrt(frame.level) * 140), shown * 0.93);
         fill.style.width = `${shown.toFixed(0)}%`;
+        // Plain numbers, so a quiet mic can be spotted (and reported) at a glance.
+        peak = Math.max(frame.level, peak * 0.995);
+        if (++framesSeen % 8 === 0) {
+          const floor = analyser.noiseFloor;
+          const quiet = peak < LISTEN.lowLevelWarning;
+          levelText.textContent =
+            `Loudest lately ${(peak * 100).toFixed(2)}%, room ${floor === null ? '–' : (floor * 100).toFixed(3) + '%'}.` +
+            (quiet
+              ? ' That is very quiet: play closer to the mic, or raise the input level in your sound settings.'
+              : '');
+        }
         if (frame.midi !== null) {
           const nearest = Math.round(frame.midi);
           const cents = Math.round((frame.midi - nearest) * 100);
@@ -274,6 +349,7 @@ export function createMicView(ctx: AppContext): View {
     bottomEl: null,
     destroy() {
       if (offsets) player.stop();
+      recording = null;
       for (const fn of cleanup) fn();
     },
   };

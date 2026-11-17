@@ -953,3 +953,15 @@ select {
 .tuner-needle.in-tune {
   background: var(--good);
 }
+
+.mic-wide {
+  grid-column: 1 / -1;
+}
+
+.mic-view .card {
+  padding: 9px 20px;
+}
+
+.mic-view .row {
+  margin-top: 6px;
+}
