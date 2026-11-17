@@ -1,5 +1,8 @@
 # Handoff: milestone 3 in progress
 
+> **Superseded (2026-11-17):** milestone 3 was finished and deployed after this note was
+> written; see `DECISIONS.md` entries 109 to 120. Kept for the record.
+
 Written 2026-11-17 for a fresh session. Read this, then `SPEC.md` (revision 2) and `M3-BRIEF.md`.
 `DECISIONS.md` (entries 1 to 108) has the reasoning behind everything built so far.
 

@@ -5,16 +5,19 @@ pitch and rhythm, in every position. The learner plays real guitar into the mic;
 checks each note and adapts what comes next.
 
 - Full specification: [`SPEC.md`](SPEC.md)
-- Milestone briefs: [`M0-BRIEF.md`](M0-BRIEF.md), [`M1-BRIEF.md`](M1-BRIEF.md), [`M2-BRIEF.md`](M2-BRIEF.md)
+- Milestone briefs: [`M0-BRIEF.md`](M0-BRIEF.md), [`M1-BRIEF.md`](M1-BRIEF.md), [`M2-BRIEF.md`](M2-BRIEF.md), [`M3-BRIEF.md`](M3-BRIEF.md)
 - Choices made while building: [`DECISIONS.md`](DECISIONS.md)
 - Third-party assets and licenses: [`ASSETS.md`](ASSETS.md)
 
-**Status: milestone 2 (listen).** Opening the site starts a guided course. Chapter 1 takes a tab
-reader from the five lines of the staff to playing Ode to Joy, in ten short lessons: each step
-explains one idea, shows it on the staff with labels, and has you play it with a count-in and click.
+**Status: milestone 3 (learning engine).** Opening the site starts a guided course of eight
+chapters and 37 lessons, from the five lines of the staff, through the whole open position, key
+signatures and accidentals, and from quarter notes through eighth notes, dotted rhythms and ties.
+Each step explains one idea, shows it on the staff, and has you play it with a count-in and click.
 With the mic on, the app listens while you play, marks every note right, late or wrong, and says
-what to fix. Without a mic you check yourself. The listening has been tested on synthesized guitar
-only; it still needs real recordings (see `recordings/README.md`).
+what to fix; without a mic you check yourself. The app remembers how well you know each note and
+rhythm, schedules reviews with FSRS, and offers a daily session: a warm-up, reviews, the next
+lesson and a piece. The listening has been tested on synthesized guitar only; it still needs real
+recordings (see `recordings/README.md`).
 
 Live site: <https://malcoz.github.io/malcotron/>
 

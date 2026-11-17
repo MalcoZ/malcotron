@@ -20,10 +20,11 @@ project follows that (stricter) label.
 
 ## Runtime libraries (in the built site)
 
-| Library                                       | Version | License | Used for                               |
-| --------------------------------------------- | ------- | ------- | -------------------------------------- |
-| [vexflow](https://github.com/vexflow/vexflow) | 5.0.0   | MIT     | Drawing notation and tab               |
-| [tone](https://github.com/Tonejs/Tone.js)     | 15.1.22 | MIT     | Sampler, Transport (clock), scheduling |
+| Library                                                      | Version | License | Used for                                         |
+| ------------------------------------------------------------ | ------- | ------- | ------------------------------------------------ |
+| [vexflow](https://github.com/vexflow/vexflow)                | 5.0.0   | MIT     | Drawing notation and tab                         |
+| [tone](https://github.com/Tonejs/Tone.js)                    | 15.1.22 | MIT     | Sampler, Transport (clock), scheduling           |
+| [ts-fsrs](https://github.com/open-spaced-repetition/ts-fsrs) | 5.4.2   | MIT     | Review scheduling (FSRS) for the learning engine |
 
 ## Development tools (not shipped)
 
