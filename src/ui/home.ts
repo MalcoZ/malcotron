@@ -144,7 +144,11 @@ export function createHome(ctx: AppContext): View {
             'a',
             { href: `#/lesson/${lesson.id}/1`, dataset: { lesson: lesson.id } },
             h('span', { className: 'lesson-title', textContent: lesson.title }),
-            h('span', { className: 'lesson-summary', textContent: lesson.summary }),
+            h('span', {
+              className: 'lesson-summary',
+              title: lesson.summary,
+              textContent: lesson.summary,
+            }),
             h('span', { className: 'lesson-state', textContent: state }),
           ),
         ),
@@ -161,7 +165,11 @@ export function createHome(ctx: AppContext): View {
           textContent: `${doneIn(chapter)} of ${chapter.lessons.length} lessons done`,
         }),
       ),
-      h('p', { className: 'muted chapter-summary', textContent: chapter.summary }),
+      h('p', {
+        className: 'muted chapter-summary',
+        title: chapter.summary,
+        textContent: chapter.summary,
+      }),
       list,
     );
   };

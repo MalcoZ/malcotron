@@ -514,7 +514,7 @@ select {
 /* The course outline: chapters down the left, one chapter's lessons on the right. */
 .course {
   display: grid;
-  grid-template-columns: 15.5rem minmax(0, 1fr);
+  grid-template-columns: 16rem minmax(0, 1fr);
   gap: 20px;
   padding-top: 14px;
   padding-bottom: 14px;
@@ -572,8 +572,8 @@ select {
 }
 
 .chapter-pane .chapter-summary {
+  display: block;
   margin-top: 2px;
-  white-space: normal;
 }
 
 .chapter-pane .lesson-list {
@@ -588,7 +588,8 @@ select {
   grid-template-columns: subgrid;
 }
 
-.chapter-pane .lesson-title {
+.chapter-pane .lesson-title,
+.chapter-pane .lesson-summary {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
