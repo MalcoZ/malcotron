@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "tone": "15.1.22",
+    "ts-fsrs": "5.4.2",
     "vexflow": "5.0.0"
   },
   "devDependencies": {

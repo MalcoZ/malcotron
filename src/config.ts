@@ -207,7 +207,57 @@ export const TONES = [
 ] as const;
 export type ToneId = (typeof TONES)[number]['id'];
 
+export const ENGINE = {
+  /** FSRS target retention (spec section 4). */
+  retention: 0.9,
+  /** Rating thresholds: below `again` is Again, below `good` is Hard, below 1 is Good. */
+  again: 0.6,
+  good: 0.9,
+  /** Mastery: this accuracy or better in this many sessions on this many different days. */
+  masteryAccuracy: 0.9,
+  masterySessions: 3,
+  /** How many past results are kept for each skill. */
+  historyLength: 20,
+  /** What a self-check stands for when there is no mic: Got it, and Again. */
+  selfCheckGotIt: 0.92,
+  selfCheckAgain: 0.5,
+  /** Difficulty: step up after this many exercises above `upAccuracy`, down after this many below `downAccuracy`. */
+  upAccuracy: 0.95,
+  upAfter: 3,
+  downAccuracy: 0.7,
+  downAfter: 2,
+  tempoStep: 8,
+  /** Suggested tempo for new material, and the range the dial may move it in. */
+  startTempo: 60,
+  minTempo: 44,
+  maxTempo: 132,
+  /** Exercise lengths in bars, easiest first. */
+  lengths: [2, 4, 8],
+  /** Session blocks in minutes (spec section 4), and the backlog rule. */
+  session: {
+    warmUp: 2,
+    reviews: 5,
+    fresh: 5,
+    apply: 3,
+    backlogMinutes: 10,
+    freshWhenBacklogged: 2,
+  },
+  /** Rough time one item takes, for the estimate on Home (minutes). */
+  minutesPerExercise: 1,
+  minutesPerLesson: 5,
+  minutesPerPiece: 3,
+  /** Skills one generated exercise is asked to cover. */
+  skillsPerExercise: 4,
+  /** A confusion seen at least this often earns a side-by-side drill. */
+  confusionDrillAfter: 2,
+  /** A perfect learner should finish a chapter and master 80% of it within this many daily sessions. */
+  sessionsPerChapter: 14,
+  stageMasteredShare: 0.8,
+} as const;
+
 export const STORAGE_KEYS = {
+  /** Skill states, confusions and difficulty. Moves to IndexedDB in M4. */
+  engine: 'malcotron.engine',
   /** Mic calibration for this browser and device (never exported). */
   calibration: 'malcotron.calibration',
   /** Tone and other preferences. Moves to IndexedDB in M4. */
