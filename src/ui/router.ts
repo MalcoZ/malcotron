@@ -1,10 +1,11 @@
-/** Hash routes: `#/`, `#/lesson/<id>/<step>`, `#/lesson/<id>/done`, `#/piece/<id>`, `#/mic`. */
+/** Hash routes: `#/`, `#/lesson/<id>/<step>`, `#/lesson/<id>/done`, `#/piece/<id>`, `#/mic`, `#/mic/notes`. */
 export type Route =
   | { name: 'home' }
   | { name: 'lesson'; id: string; step: number }
   | { name: 'lesson-done'; id: string }
   | { name: 'piece'; id: string }
   | { name: 'mic' }
+  | { name: 'note-check' }
   | { name: 'session' };
 
 /** Parse a location hash. Steps are counted from 1 in the URL and from 0 in the route. */
@@ -20,7 +21,7 @@ export function parseRoute(hash: string): Route {
     };
   }
   if (parts[0] === 'piece' && parts[1]) return { name: 'piece', id: parts[1] };
-  if (parts[0] === 'mic') return { name: 'mic' };
+  if (parts[0] === 'mic') return parts[1] === 'notes' ? { name: 'note-check' } : { name: 'mic' };
   if (parts[0] === 'session') return { name: 'session' };
   return { name: 'home' };
 }
@@ -37,6 +38,8 @@ export function routePath(route: Route): string {
       return `/piece/${encodeURIComponent(route.id)}`;
     case 'mic':
       return '/mic';
+    case 'note-check':
+      return '/mic/notes';
     case 'session':
       return '/session';
   }

@@ -126,16 +126,22 @@ export function createMicView(ctx: AppContext): View {
   const recordCard = h(
     'section',
     { className: 'card mic-card mic-wide' },
-    h('h3', { textContent: '5. Test recording (for tuning the listener)' }),
+    h('h3', { textContent: '5. Tests (if the app hears the wrong notes)' }),
     h(
       'div',
       { className: 'row' },
+      h('a', {
+        className: 'btn',
+        href: '#/mic/notes',
+        id: 'note-check-link',
+        textContent: 'Note check',
+      }),
       recordButton,
       recordText,
       h('span', {
         className: 'muted small',
         textContent:
-          'Records up to 30 seconds of what the mic hears and saves it as a WAV file on this computer. Nothing is uploaded.',
+          'Note check: play ten notes and see what the app hears. Test take: up to 30 s saved as a WAV on this computer. Nothing is uploaded.',
       }),
     ),
   );

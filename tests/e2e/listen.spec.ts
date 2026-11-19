@@ -479,3 +479,51 @@ test('mic setup shows the level in numbers and can save a test recording', async
   expect((await download).suggestedFilename()).toBe('malcotron-take.wav');
   await expect(page.locator('#record-result')).toContainText('Saved 2.0 s');
 });
+
+test('the note check names each note by string and fret and reports what it heard', async ({
+  page,
+}) => {
+  const errors = trackErrors(page);
+  await openRoute(page, '/mic');
+  await simulateLearner(page);
+  await page.locator('#note-check-link').click();
+  await expect(page).toHaveURL(/#\/mic\/notes$/);
+  await expect(page.locator('#check-prompt')).toHaveText('Play: 6th string, open (E)');
+  await expect(page.locator('#check-count')).toHaveText('Note 1 of 10');
+
+  // Ten notes, 1.5 s apart; the first is played an octave too high (as an overtone would sound).
+  const wanted = [40, 43, 45, 48, 52, 55, 57, 60, 64, 67];
+  const played = [52, ...wanted.slice(1)];
+  await page.evaluate(
+    (notes) =>
+      (window as any).malcotron.feedInstant(
+        notes.map((midi: number, i: number) => ({ time: 0.3 + i * 1.5, midi, duration: 1.1 })),
+        16,
+      ),
+    played,
+  );
+  await expect(page.locator('#check-prompt')).toHaveText('Check complete');
+  await expect(page.locator('.check-row')).toHaveCount(10);
+  await expect(page.locator('.check-row.is-right')).toHaveCount(9);
+  await expect(page.locator('.check-row').first()).toHaveClass(/is-octave/);
+  await expect(page.locator('.check-row').first().locator('.check-heard')).toHaveText(
+    'heard E3 (wanted E2)',
+  );
+  await expect(page.locator('#check-diagnosis')).toContainText(
+    '9 of 10 notes were heard as played',
+  );
+  await expect(page.locator('#check-diagnosis')).toContainText('wrong octave');
+  await expect(page.locator('#check-report')).toHaveValue(/6th string fret 0: wanted E2, heard E3/);
+
+  const download = page.waitForEvent('download');
+  await page.locator('#check-save').click();
+  expect((await download).suggestedFilename()).toBe('malcotron-note-check.wav');
+
+  // Skip works, and Start again starts over.
+  await page.locator('#check-again').click();
+  await expect(page.locator('#check-count')).toHaveText('Note 1 of 10');
+  await page.locator('#check-skip').click();
+  await expect(page.locator('.check-row.is-nothing')).toHaveCount(1);
+  await expect(page.locator('#check-count')).toHaveText('Note 2 of 10');
+  expect(errors).toEqual([]);
+});

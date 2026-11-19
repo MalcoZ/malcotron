@@ -1064,3 +1064,65 @@ select {
   border-radius: 50%;
   background: var(--bad);
 }
+
+/* --- Note check ------------------------------------------------------------------- */
+
+.check-prompt {
+  font-size: 1.6rem;
+}
+
+.check-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.check-row {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 16rem) 1fr auto;
+  align-items: baseline;
+  gap: 12px;
+  padding: 3px 22px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 25%, transparent);
+}
+
+.check-mark {
+  font-weight: 700;
+  text-align: center;
+}
+
+.check-row.is-right .check-mark {
+  color: var(--good);
+}
+
+.check-row:not(.is-right) .check-mark,
+.check-row:not(.is-right) .lesson-state {
+  color: var(--bad);
+}
+
+.check-summary ul {
+  margin: 6px 0 10px;
+  padding-left: 1.2rem;
+}
+
+.check-report {
+  width: 100%;
+  margin-top: 8px;
+  font:
+    0.8rem / 1.4 ui-monospace,
+    monospace;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  border-radius: 8px;
+}
+
+a.btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.mic-view .btn {
+  white-space: nowrap;
+}

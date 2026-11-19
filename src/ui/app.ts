@@ -23,6 +23,7 @@ import { h } from './dom';
 import { createHome } from './home';
 import { createLessonDone, createLessonView } from './lesson-view';
 import { createMicView } from './mic-view';
+import { createNoteCheckView } from './note-check-view';
 import { createPieceView } from './piece-view';
 import { createSessionView } from './session-view';
 import { parseRoute } from './router';
@@ -213,6 +214,10 @@ export function startApp(root: HTMLElement): void {
         () => createSessionView(ctx, main),
         'Space: listen · R: your turn · M: click · T: peek at tab · Enter: next',
       );
+      return;
+    }
+    if (route.name === 'note-check') {
+      mount(() => createNoteCheckView(ctx), '');
       return;
     }
     if (route.name === 'mic') {
